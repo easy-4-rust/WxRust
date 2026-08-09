@@ -1,0 +1,31 @@
+//! 对应 Java `me.chanjar.weixin.cp.bean.intelligentrobot` 包（生成）。
+
+pub mod wx_cp_intelligent_robot;
+pub mod wx_cp_intelligent_robot_chat_request;
+pub mod wx_cp_intelligent_robot_chat_response;
+pub mod wx_cp_intelligent_robot_create_request;
+pub mod wx_cp_intelligent_robot_create_response;
+pub mod wx_cp_intelligent_robot_message;
+pub mod wx_cp_intelligent_robot_send_message_request;
+pub mod wx_cp_intelligent_robot_send_message_response;
+pub mod wx_cp_intelligent_robot_update_request;
+
+pub use wx_cp_intelligent_robot::WxCpIntelligentRobot;
+pub use wx_cp_intelligent_robot_chat_request::WxCpIntelligentRobotChatRequest;
+pub use wx_cp_intelligent_robot_chat_response::WxCpIntelligentRobotChatResponse;
+pub use wx_cp_intelligent_robot_create_request::WxCpIntelligentRobotCreateRequest;
+pub use wx_cp_intelligent_robot_create_response::WxCpIntelligentRobotCreateResponse;
+pub use wx_cp_intelligent_robot_message::FileInfo;
+pub use wx_cp_intelligent_robot_message::Image;
+pub use wx_cp_intelligent_robot_message::Mixed;
+pub use wx_cp_intelligent_robot_message::MixedItem;
+pub use wx_cp_intelligent_robot_message::Quote;
+pub use wx_cp_intelligent_robot_message::Stream;
+pub use wx_cp_intelligent_robot_message::Text;
+pub use wx_cp_intelligent_robot_message::Video;
+pub use wx_cp_intelligent_robot_message::Voice;
+pub use wx_cp_intelligent_robot_message::WxCpIntelligentRobotMessage;
+pub use wx_cp_intelligent_robot_message::WxCpIntelligentRobotMessageFrom;
+pub use wx_cp_intelligent_robot_send_message_request::WxCpIntelligentRobotSendMessageRequest;
+pub use wx_cp_intelligent_robot_send_message_response::WxCpIntelligentRobotSendMessageResponse;
+pub use wx_cp_intelligent_robot_update_request::WxCpIntelligentRobotUpdateRequest;

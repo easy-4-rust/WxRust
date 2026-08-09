@@ -1,0 +1,117 @@
+//! 对应 Java `com.github.binarywang.wxpay.bean.request.WxPayRefundRequest.java`。
+//!
+//! 由 `scripts/gen_pay_bean_structs.py` 从 Java 数据类生成（@SerializedName/@XStreamAlias 覆盖保留）。
+
+#[allow(unused_imports)]
+use super::*;
+
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(rename = "xml")]
+pub struct WxPayRefundRequest {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "appid")]
+    pub appid: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "mch_id")]
+    pub mch_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sub_appid")]
+    pub sub_app_id: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "sub_mch_id"
+    )]
+    pub sub_mch_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "nonce_str")]
+    pub nonce_str: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sign")]
+    pub sign: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sign_type")]
+    pub sign_type: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "workwx_sign"
+    )]
+    pub work_wx_sign: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "device_info"
+    )]
+    pub device_info: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "transaction_id"
+    )]
+    pub transaction_id: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "out_trade_no"
+    )]
+    pub out_trade_no: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "out_refund_no"
+    )]
+    pub out_refund_no: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "total_fee")]
+    pub total_fee: Option<i32>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "refund_fee"
+    )]
+    pub refund_fee: Option<i32>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "refund_fee_type"
+    )]
+    pub refund_fee_type: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "op_user_id"
+    )]
+    pub op_user_id: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "refund_account"
+    )]
+    pub refund_account: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "refund_desc"
+    )]
+    pub refund_desc: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "notify_url"
+    )]
+    pub notify_url: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "detail")]
+    pub detail: Option<String>,
+}
+
+impl WxPayRefundRequest {
+    /// 从 XML 解析（对应 Java `fromXML`，XStream 语义：未知元素忽略、缺失字段默认）。
+    pub fn from_xml(xml: &str) -> Result<Self, String> {
+        quick_xml::de::from_str(xml).map_err(|e| format!("WxPayRefundRequest 解析失败: {e}"))
+    }
+
+    /// 序列化为 XML（根元素 `<xml>`，对应 Java `toXML`）。
+    ///
+    /// 注意：quick-xml 以转义文本代替 Java 的 CDATA、空元素输出 `<x/>`
+    /// （`expand_empty_elements` 归一为 `<x></x>`）——解析语义等价，
+    /// 逐字节格式化差异记录于 Wave 2。
+    pub fn to_xml(&self) -> Result<String, String> {
+        let out = quick_xml::se::to_string(self)
+            .map_err(|e| format!("WxPayRefundRequest 序列化失败: {e}"))?;
+        Ok(crate::bean::xml::expand_empty_elements(&out))
+    }
+}

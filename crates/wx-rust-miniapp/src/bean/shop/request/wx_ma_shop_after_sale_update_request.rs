@@ -1,0 +1,22 @@
+//! 对应 Java `cn.binarywang.wx.miniapp.bean.shop.request.WxMaShopAfterSaleUpdateRequest.java`。
+//!
+//! 由 `scripts/gen_miniapp_bean_structs.py` 从 Java 数据类生成（@SerializedName 覆盖保留）。
+
+#[allow(unused_imports)]
+use super::*;
+#[allow(unused_imports)]
+use crate::bean::shop::*;
+
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct WxMaShopAfterSaleUpdateRequest {
+    #[serde(rename = "out_order_id", default)]
+    pub out_order_id: String,
+    #[serde(rename = "openid", default)]
+    pub openid: String,
+    #[serde(rename = "out_aftersale_id", default)]
+    pub out_aftersale_id: String,
+    #[serde(rename = "status", default)]
+    pub status: i32,
+    #[serde(rename = "finish_all_aftersale", default)]
+    pub finish_all_aftersale: i32,
+}

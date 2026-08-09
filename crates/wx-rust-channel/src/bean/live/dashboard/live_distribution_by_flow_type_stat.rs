@@ -1,0 +1,32 @@
+//! 对应 Java `me.chanjar.weixin.channel.bean.live.dashboard.LiveDistributionByFlowTypeStat.java`。
+//!
+//! 由 `scripts/gen_channel_bean_structs.py` 从 Java 数据类生成（@JsonProperty 覆盖保留）。
+
+#[allow(unused_imports)]
+use super::*;
+#[allow(unused_imports)]
+use crate::bean::live::*;
+
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct LiveDistributionByFlowTypeStat {
+    #[serde(rename = "live_dst_channel_type", default)]
+    pub live_dst_channel_type: i32,
+    #[serde(rename = "channel_source_stats", default)]
+    pub channel_source_stats: Vec<LiveDistChannelSourceStats>,
+    #[serde(rename = "metric_value", default)]
+    pub metric_value: i64,
+    #[serde(rename = "gmv", default)]
+    pub gmv: i64,
+    #[serde(rename = "uv", default)]
+    pub uv: i64,
+    #[serde(rename = "gmv_per_uv", default)]
+    pub gmv_per_uv: i64,
+    #[serde(rename = "pv", default)]
+    pub pv: i64,
+    #[serde(rename = "pv_ratio", default)]
+    pub pv_ratio: f64,
+    #[serde(rename = "uv_ratio", default)]
+    pub uv_ratio: f64,
+    #[serde(rename = "metric_value_ratio", default)]
+    pub metric_value_ratio: f64,
+}

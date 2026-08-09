@@ -1,0 +1,37 @@
+//! 对应 Java `cn.binarywang.wx.miniapp.bean.promoter/response` 包（生成）。
+
+pub mod wx_ma_promotion_add_promoter_response;
+pub mod wx_ma_promotion_add_role_response;
+pub mod wx_ma_promotion_get_invitation_material_response;
+pub mod wx_ma_promotion_get_msg_click_data_response;
+pub mod wx_ma_promotion_get_msg_response;
+pub mod wx_ma_promotion_get_order_response;
+pub mod wx_ma_promotion_get_promoter_response;
+pub mod wx_ma_promotion_get_relation_response;
+pub mod wx_ma_promotion_get_role_response;
+pub mod wx_ma_promotion_get_share_material_response;
+pub mod wx_ma_promotion_send_msg_response;
+pub mod wx_ma_promotion_single_send_msg_response;
+pub mod wx_ma_promotion_update_promoter_response;
+pub mod wx_ma_promotion_update_role_response;
+
+pub use wx_ma_promotion_add_promoter_response::Promoter;
+pub use wx_ma_promotion_add_promoter_response::WxMaPromotionAddPromoterResponse;
+pub use wx_ma_promotion_add_role_response::WxMaPromotionAddRoleResponse;
+pub use wx_ma_promotion_get_invitation_material_response::WxMaPromotionGetInvitationMaterialResponse;
+pub use wx_ma_promotion_get_msg_click_data_response::Dimonsion;
+pub use wx_ma_promotion_get_msg_click_data_response::WxMaPromotionGetMsgClickDataResponse;
+pub use wx_ma_promotion_get_msg_response::FailInfo;
+pub use wx_ma_promotion_get_msg_response::WxMaPromotionGetMsgResponse;
+pub use wx_ma_promotion_get_order_response::Order;
+pub use wx_ma_promotion_get_order_response::WxMaPromotionGetOrderResponse;
+pub use wx_ma_promotion_get_promoter_response::WxMaPromotionGetPromoterResponse;
+pub use wx_ma_promotion_get_relation_response::Relation;
+pub use wx_ma_promotion_get_relation_response::WxMaPromotionGetRelationResponse;
+pub use wx_ma_promotion_get_role_response::Role;
+pub use wx_ma_promotion_get_role_response::WxMaPromotionGetRoleResponse;
+pub use wx_ma_promotion_get_share_material_response::WxMaPromotionGetShareMaterialResponse;
+pub use wx_ma_promotion_send_msg_response::WxMaPromotionSendMsgResponse;
+pub use wx_ma_promotion_single_send_msg_response::WxMaPromotionSingleSendMsgResponse;
+pub use wx_ma_promotion_update_promoter_response::WxMaPromotionUpdatePromoterResponse;
+pub use wx_ma_promotion_update_role_response::WxMaPromotionUpdateRoleResponse;

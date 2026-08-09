@@ -1,0 +1,42 @@
+//! 对应 Java `me.chanjar.weixin.cp.bean.oa/templatedata` 包（生成）。
+
+pub mod control;
+pub mod template_config;
+pub mod template_content;
+pub mod template_controls;
+pub mod template_date_range;
+pub mod template_location;
+pub mod template_options;
+pub mod template_property;
+pub mod template_tips;
+pub mod template_tips_content;
+pub mod template_tips_sub_text;
+pub mod template_tips_sub_text_content;
+pub mod template_tips_sub_text_content_link;
+pub mod template_tips_sub_text_content_plain_text;
+pub mod template_tips_text;
+pub mod template_title;
+pub mod template_vacation_item;
+
+pub use control::template_attendance::TemplateAttendance;
+pub use control::template_contact::TemplateContact;
+pub use control::template_date::TemplateDate;
+pub use control::template_selector::TemplateSelector;
+pub use control::template_table::TemplateTable;
+pub use control::template_vacation::TemplateVacation;
+pub use template_config::TemplateConfig;
+pub use template_content::TemplateContent;
+pub use template_controls::TemplateControls;
+pub use template_date_range::TemplateDateRange;
+pub use template_location::TemplateLocation;
+pub use template_options::TemplateOptions;
+pub use template_property::TemplateProperty;
+pub use template_tips::TemplateTips;
+pub use template_tips_content::TemplateTipsContent;
+pub use template_tips_sub_text::TemplateTipsSubText;
+pub use template_tips_sub_text_content::TemplateTipsSubTextContent;
+pub use template_tips_sub_text_content_link::TemplateTipsSubTextContentLink;
+pub use template_tips_sub_text_content_plain_text::TemplateTipsSubTextContentPlainText;
+pub use template_tips_text::TemplateTipsText;
+pub use template_title::TemplateTitle;
+pub use template_vacation_item::TemplateVacationItem;

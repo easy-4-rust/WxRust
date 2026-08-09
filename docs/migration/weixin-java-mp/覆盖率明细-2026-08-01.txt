@@ -1,0 +1,355 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling wx-rust-open v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-open)
+   Compiling wx-rust v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust)
+   Compiling wx-rust-aispeech v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-aispeech)
+   Compiling wx-rust-common v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-common)
+   Compiling wx-rust-cp v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-cp)
+   Compiling wx-rust-channel v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-channel)
+   Compiling wx-rust-miniapp v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-miniapp)
+   Compiling wx-rust-pay v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-pay)
+   Compiling wx-rust-qidian v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-qidian)
+   Compiling wx-rust-mp v0.1.0 (/Users/wandl/workspaces/workspace-github-easy-4-rust/WxRust/crates/wx-rust-mp)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.02s
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust-f2382d43a9566420)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_aispeech-96112d6a1c55c299)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_channel-0ab3f13a242fe0a7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_common-77f5caa458be0a6c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/core_utils.rs (target/llvm-cov-target/debug/deps/core_utils-4d6cf4977b572401)
+
+running 11 tests
+test sha1_gen_rejects_empty_args ... ok
+test pkcs7_encode_pads_to_32 ... ok
+test pkcs7_encode_exact_block_no_pad ... ok
+test pkcs7_decode_removes_padding ... ok
+test wx_error_from_json_parses_code_and_msg ... ok
+test wx_error_zero_code_no_translation ... ok
+test sha1_gen_sorts_and_hashes ... ok
+test wx_error_translates_to_chinese_by_type ... ok
+test sha1_gen_with_amp_joins_with_ampersand ... ok
+test crypt_util_wrong_signature_fails ... ok
+test crypt_util_encrypt_decrypt_roundtrip ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rust_obligation_value_add.rs (target/llvm-cov-target/debug/deps/rust_obligation_value_add-dc96f4f3530bfdf1)
+
+running 29 tests
+test core_types_are_send_sync ... ok
+test redis_feature_types_exist ... ok
+test request_http_trait_contract ... ok
+test http_response_proxy_extract_filename_empty_error ... ok
+test error_exception_runtime_variant ... ok
+test http_client_type_names ... ok
+test pkcs7_decode_invalid_padding ... ok
+test http_response_proxy_extract_filename_utf8 ... ok
+test error_exception_display_messages ... ok
+test crypt_util_invalid_aes_key_rejected ... ok
+test http_response_proxy_extract_filename_plain ... ok
+test error_exception_wx_variant_code ... ok
+test crypt_util_decrypt_empty_cipher ... ok
+test serde_access_token_missing_fields_defaults ... ok
+test serde_access_token_wire_format ... ok
+test serde_wx_error_unknown_fields_tolerated ... ok
+test sha1_many_args_sorted ... ok
+test simple_get_handle_response_error_code ... ok
+test simple_get_handle_response_ok ... ok
+test ticket_type_values ... ok
+test token_entry_expiry_boundary ... ok
+test wx_error_huge_code_no_panic ... ok
+test wx_error_malformed_json_returns_default ... ok
+test wx_type_names ... ok
+test uri_util_encode_uri_component ... ok
+test xml_utils_xxe_doctype_rejected ... ok
+test token_concurrent_update_no_loss ... ok
+test token_concurrent_refresh_single_flight ... ok
+test duplicate_checker_concurrent_safe ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/source_parity_bean_error.rs (target/llvm-cov-target/debug/deps/source_parity_bean_error-f90a86b1dce76bb7)
+
+running 17 tests
+test ma_error_msg_virtual_payment_missing_codes ... ok
+test ma_error_msg_find_existing_code ... ok
+test ma_error_msg_virtual_payment_codes ... ok
+test common_upload_param_from_file ... ok
+test ma_error_msg_find_non_existing_code ... ok
+test common_upload_param_with_form_fields ... ok
+test access_token_from_json ... ok
+test menu_rule_tag_id_alternate ... ok
+test wx_error_display_contains_code_and_msg ... ok
+test net_check_result_from_json ... ok
+test wx_error_display_with_json_contains_raw ... ok
+test wx_error_from_json_basic ... ok
+test menu_from_json_three_buttons ... ok
+test menu_button_sub_button_serialization ... ok
+test wx_error_from_json_with_type_sets_error_msg_en ... ok
+test wx_error_from_json_zero_code_has_null_msg ... ok
+test wx_error_from_json_zero_code_with_type_no_translation ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/source_parity_crypto_util.rs (target/llvm-cov-target/debug/deps/source_parity_crypto_util-9321985767f8c2b5)
+
+running 20 tests
+test data_utils_handle_data_with_secret ... ok
+test data_utils_no_secret_unchanged ... ok
+test duplicate_checker_singleton_same_instance ... ok
+test session_attributes_roundtrip ... ok
+test session_get_same_instance ... ok
+test duplicate_checker_ttl_behavior ... ok
+test crypt_util_aes_encrypt_golden ... ok
+test crypt_util_validate_signature_error ... ok
+test crypt_util_direct_decrypt ... ok
+test crypt_util_xml_extract_encrypt ... ok
+test crypt_util_normal_roundtrip ... ok
+test session_invalidate ... ok
+test session_invalidate_and_active_count ... ok
+test sha1_gen_illegal_arguments ... ok
+test sha1_gen_known_vector ... ok
+test sha1_gen_with_ample_known_vector ... ok
+test xml_utils_malformed_returns_err ... ok
+test xml_utils_xml2map_cdata ... ok
+test xml_utils_xml2map ... ok
+test duplicate_checker_expiry ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+     Running tests/source_parity_fs_utils.rs (target/llvm-cov-target/debug/deps/source_parity_fs_utils-6dce5ffb549de73a)
+
+running 6 tests
+test image_to_base64_empty_stream ... ok
+test image_to_base64_known_vector ... ok
+test image_to_base64_read_error_returns_err ... ok
+test create_tmp_file_default_tmp_dir ... ok
+test create_tmp_file_with_explicit_dir ... ok
+test create_tmp_file_unique_names ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_cp-a5e432ec13404a9e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_miniapp-a5e6eba88cf2a106)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_mp-ee9eb9a10d160a7e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rust_obligation_mp.rs (target/llvm-cov-target/debug/deps/rust_obligation_mp-e4c98d87eb999e98)
+
+running 13 tests
+test out_message_omit_empty ... ok
+test xml_message_malformed_rejected ... ok
+test xml_message_encrypt_decrypt_roundtrip ... ok
+test build_qr_connect_url_format ... ok
+test check_signature_ok ... ok
+test token_force_refresh ... ok
+test menu_service_url_and_body ... ok
+test multi_config_switchover ... ok
+test create_jsapi_signature_shape ... ok
+test jsapi_ticket_cached ... ok
+test execute_token_expired_auto_refresh ... ok
+test token_single_flight_concurrent ... ok
+test execute_retry_on_busy ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s
+
+     Running tests/source_parity_beans.rs (target/llvm-cov-target/debug/deps/source_parity_beans-da8fd39adab28042)
+
+running 9 tests
+test template_message_add_data_truncation ... ok
+test kefu_message_image_to_json ... ok
+test kefu_message_music_to_json ... ok
+test kefu_message_from_json ... ok
+test subscribe_message_to_json ... ok
+test kefu_message_text_to_json ... ok
+test menu_to_json_roundtrip ... ok
+test menu_from_json ... ok
+test template_message_to_json_golden ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/source_parity_router.rs (target/llvm-cov-target/debug/deps/source_parity_router-a0253a5b08bf2ffa)
+
+running 6 tests
+test router_next_continues_matching ... ok
+test router_duplicate_id_without_msg_id ... ok
+test router_duplicate_message_skipped ... ok
+test router_sync_rules_matching ... ok
+test router_session_clean_sync ... ok
+test router_async_rules_matching ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.03s
+
+     Running tests/source_parity_xml_message.rs (target/llvm-cov-target/debug/deps/source_parity_xml_message-39cb0ed1234f8ef8)
+
+running 16 tests
+test out_text_message_build_chain ... ok
+test out_transfer_kefu_message_to_xml ... ok
+test out_video_message_to_xml ... ok
+test out_music_message_to_xml ... ok
+test out_text_message_to_xml_golden ... ok
+test out_transfer_biz_ai_ivr_message_to_xml ... ok
+test out_image_message_to_xml ... ok
+test out_message_null_fields_omitted ... ok
+test out_voice_message_to_xml ... ok
+test jsapi_signature_golden_vector ... ok
+test out_news_message_to_xml ... ok
+test xml_message_subscribe_change_event ... ok
+test xml_message_from_xml_msgid_variant ... ok
+test xml_message_subscribe_sent_event ... ok
+test xml_message_subscribe_popup_event ... ok
+test xml_message_from_xml_full_fields ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_open-5f2cc3c5e8f8a6c9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_pay-c480304dd3dfc8e6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/wx_rust_qidian-e4112a7b3616822e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+Filename                                                                       Regions    Missed Regions     Cover   Functions  Missed Functions  Executed       Lines      Missed Lines     Cover    Branches   Missed Branches     Cover
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+wx-rust-common/src/api/wx_message_in_memory_duplicate_checker.rs                    56                 7    87.50%           7                 2    71.43%          38                 7    81.58%           0                 0         -
+wx-rust-common/src/api/wx_message_in_memory_duplicate_checker_singleton.rs           7                 0   100.00%           2                 0   100.00%           6                 0   100.00%           0                 0         -
+wx-rust-common/src/api/wx_message_in_redis_duplicate_checker.rs                     35                35     0.00%           5                 5     0.00%          28                28     0.00%           0                 0         -
+wx-rust-common/src/bean/common_upload_data.rs                                       21                15    28.57%           3                 2    33.33%          14                 6    57.14%           0                 0         -
+wx-rust-common/src/bean/common_upload_param.rs                                      10                 0   100.00%           2                 0   100.00%          18                 0   100.00%           0                 0         -
+wx-rust-common/src/bean/menu/wx_menu.rs                                              9                 9     0.00%           2                 2     0.00%           6                 6     0.00%           0                 0         -
+wx-rust-common/src/bean/to_json.rs                                                   5                 5     0.00%           1                 1     0.00%           3                 3     0.00%           0                 0         -
+wx-rust-common/src/bean/wx_access_token.rs                                          11                 0   100.00%           3                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-common/src/bean/wx_access_token_entity.rs                                    5                 5     0.00%           1                 1     0.00%           7                 7     0.00%           0                 0         -
+wx-rust-common/src/bean/wx_card_api_signature.rs                                    15                15     0.00%           1                 1     0.00%          23                23     0.00%           0                 0         -
+wx-rust-common/src/bean/wx_jsapi_signature.rs                                       10                10     0.00%           1                 1     0.00%          15                15     0.00%           0                 0         -
+wx-rust-common/src/config/mod.rs                                                   119                57    52.10%          26                17    34.62%          93                48    48.39%           0                 0         -
+wx-rust-common/src/enums/ticket_type.rs                                              6                 0   100.00%           1                 0   100.00%           6                 0   100.00%           0                 0         -
+wx-rust-common/src/enums/wx_type.rs                                                 15                 6    60.00%           2                 1    50.00%          12                 3    75.00%           0                 0         -
+wx-rust-common/src/error/mod.rs                                                     40                18    55.00%           7                 3    57.14%          31                14    54.84%           0                 0         -
+wx-rust-common/src/error/wx_channel_error_msg_enum.rs                               31                31     0.00%           1                 1     0.00%          35                35     0.00%           0                 0         -
+wx-rust-common/src/error/wx_cp_error_msg_enum.rs                                   285               285     0.00%           1                 1     0.00%         317               317     0.00%           0                 0         -
+wx-rust-common/src/error/wx_error.rs                                                62                 4    93.55%           4                 0   100.00%          46                 2    95.65%           0                 0         -
+wx-rust-common/src/error/wx_error_exception.rs                                       9                 6    33.33%           3                 2    33.33%          11                 8    27.27%           0                 0         -
+wx-rust-common/src/error/wx_ma_error_msg_enum.rs                                   212               185    12.74%           1                 0   100.00%         224               197    12.05%           0                 0         -
+wx-rust-common/src/error/wx_mp_error_msg_enum.rs                                   165               159     3.64%           1                 0   100.00%         177               167     5.65%           0                 0         -
+wx-rust-common/src/error/wx_open_error_msg_enum.rs                                1836              1836     0.00%           1                 1     0.00%        1898              1898     0.00%           0                 0         -
+wx-rust-common/src/error/wx_runtime_exception.rs                                     3                 0   100.00%           1                 0   100.00%           5                 0   100.00%           0                 0         -
+wx-rust-common/src/redis/wx_redis_ops.rs                                            57                57     0.00%           5                 5     0.00%          33                33     0.00%           0                 0         -
+wx-rust-common/src/session/standard_session.rs                                      96                21    78.12%          11                 2    81.82%          70                15    78.57%           0                 0         -
+wx-rust-common/src/session/standard_session_manager.rs                              95                28    70.53%          10                 2    80.00%          64                16    75.00%           0                 0         -
+wx-rust-common/src/session/wx_session_manager.rs                                     2                 0   100.00%           1                 0   100.00%           1                 0   100.00%           0                 0         -
+wx-rust-common/src/util/bean_utils.rs                                               12                12     0.00%           1                 1     0.00%           9                 9     0.00%           0                 0         -
+wx-rust-common/src/util/crypto/byte_group.rs                                        16                 0   100.00%           4                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-common/src/util/crypto/pkcs7_encoder.rs                                     35                 0   100.00%           2                 0   100.00%          18                 0   100.00%           0                 0         -
+wx-rust-common/src/util/crypto/sha1.rs                                              41                 1    97.56%           4                 0   100.00%          20                 1    95.00%           0                 0         -
+wx-rust-common/src/util/crypto/wx_crypt_util.rs                                    403                48    88.09%          27                 9    66.67%         244                32    86.89%           0                 0         -
+wx-rust-common/src/util/data_utils.rs                                               43                 4    90.70%           2                 0   100.00%          22                 2    90.91%           0                 0         -
+wx-rust-common/src/util/fs/file_utils.rs                                            49                 3    93.88%           3                 0   100.00%          33                 0   100.00%           0                 0         -
+wx-rust-common/src/util/http/http_client_type.rs                                     7                 0   100.00%           1                 0   100.00%           7                 0   100.00%           0                 0         -
+wx-rust-common/src/util/http/http_response_proxy.rs                                 61                 9    85.25%           5                 2    60.00%          44                11    75.00%           0                 0         -
+wx-rust-common/src/util/http/input_stream_data.rs                                    4                 4     0.00%           1                 1     0.00%           6                 6     0.00%           0                 0         -
+wx-rust-common/src/util/http/media_download_request_executor.rs                      5                 5     0.00%           2                 2     0.00%           5                 5     0.00%           0                 0         -
+wx-rust-common/src/util/http/media_upload_request_executor.rs                       51                51     0.00%           5                 5     0.00%          30                30     0.00%           0                 0         -
+wx-rust-common/src/util/http/simple_get_request_executor.rs                         19                 2    89.47%           4                 1    75.00%          20                 2    90.00%           0                 0         -
+wx-rust-common/src/util/http/simple_post_request_executor.rs                         7                 2    71.43%           3                 1    66.67%           7                 2    71.43%           0                 0         -
+wx-rust-common/src/util/http/uri_util.rs                                            29                 0   100.00%           1                 0   100.00%          16                 0   100.00%           0                 0         -
+wx-rust-common/src/util/locks/redis_distributed_lock.rs                             91                91     0.00%           9                 9     0.00%          83                83     0.00%           0                 0         -
+wx-rust-common/src/util/log_exception_handler.rs                                     3                 3     0.00%           1                 1     0.00%           3                 3     0.00%           0                 0         -
+wx-rust-common/src/util/random_utils.rs                                             11                 0   100.00%           2                 0   100.00%           9                 0   100.00%           0                 0         -
+wx-rust-common/src/util/sign_utils.rs                                               15                15     0.00%           1                 1     0.00%           6                 6     0.00%           0                 0         -
+wx-rust-common/src/util/xml_utils.rs                                                73                24    67.12%           3                 2    33.33%          37                 9    75.68%           0                 0         -
+wx-rust-mp/src/api/impl/base_wx_mp_service_impl.rs                                  95                 9    90.53%           4                 0   100.00%          86                17    80.23%           0                 0         -
+wx-rust-mp/src/api/impl/wx_mp_kefu_service_impl.rs                                   6                 3    50.00%           3                 2    33.33%           6                 3    50.00%           0                 0         -
+wx-rust-mp/src/api/impl/wx_mp_menu_service_impl.rs                                  17                12    29.41%          10                 8    20.00%          16                11    31.25%           0                 0         -
+wx-rust-mp/src/api/impl/wx_mp_qrcode_service_impl.rs                                 6                 3    50.00%           3                 2    33.33%           6                 3    50.00%           0                 0         -
+wx-rust-mp/src/api/impl/wx_mp_service_impl.rs                                      148                54    63.51%          15                 8    46.67%          88                35    60.23%           0                 0         -
+wx-rust-mp/src/api/impl/wx_mp_template_msg_service_impl.rs                           6                 3    50.00%           3                 2    33.33%           6                 3    50.00%           0                 0         -
+wx-rust-mp/src/api/impl/wx_mp_user_service_impl.rs                                   6                 3    50.00%           3                 2    33.33%           6                 3    50.00%           0                 0         -
+wx-rust-mp/src/api/wx_mp_message_router.rs                                         272                43    84.19%          31                 7    77.42%         182                29    84.07%           0                 0         -
+wx-rust-mp/src/api/wx_mp_message_router_rule.rs                                    159                26    83.65%          19                 4    78.95%         108                17    84.26%           0                 0         -
+wx-rust-mp/src/api/wx_mp_service.rs                                                166                80    51.81%          52                36    30.77%         116                63    45.69%           0                 0         -
+wx-rust-mp/src/bean/kefu/wx_mp_kefu_message.rs                                     185               105    43.24%           4                 2    50.00%          82                39    52.44%           0                 0         -
+wx-rust-mp/src/bean/menu/wx_mp_menu.rs                                              11                 1    90.91%           3                 1    66.67%           7                 1    85.71%           0                 0         -
+wx-rust-mp/src/bean/message/hard_ware.rs                                             8                 8     0.00%           2                 2     0.00%           6                 6     0.00%           0                 0         -
+wx-rust-mp/src/bean/message/scan_code_info.rs                                        8                 8     0.00%           2                 2     0.00%           6                 6     0.00%           0                 0         -
+wx-rust-mp/src/bean/message/send_location_info.rs                                   20                20     0.00%           5                 5     0.00%          15                15     0.00%           0                 0         -
+wx-rust-mp/src/bean/message/send_pics_info.rs                                        6                 6     0.00%           2                 2     0.00%           6                 6     0.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_subscribe_msg_event.rs                            36                36     0.00%           9                 9     0.00%          27                27     0.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_message.rs                                   773               110    85.77%          38                10    73.68%         367                72    80.38%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_device_message.rs                         33                33     0.00%           2                 2     0.00%          20                20     0.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_image_message.rs                           7                 0   100.00%           2                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_message.rs                               282                59    79.08%          20                 9    55.00%         143                38    73.43%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_music_message.rs                           7                 0   100.00%           2                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_news_message.rs                           12                 0   100.00%           3                 0   100.00%          15                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_text_message.rs                            7                 0   100.00%           2                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_transfer_biz_ai_ivr_message.rs             7                 0   100.00%           2                 0   100.00%          11                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_transfer_kefu_message.rs                   7                 0   100.00%           2                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_video_message.rs                           7                 0   100.00%           2                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/message/wx_mp_xml_out_voice_message.rs                           7                 0   100.00%           2                 0   100.00%          12                 0   100.00%           0                 0         -
+wx-rust-mp/src/bean/result/wx_mp_current_auto_reply_info.rs                          6                 6     0.00%           2                 2     0.00%           4                 4     0.00%           0                 0         -
+wx-rust-mp/src/bean/result/wx_mp_qr_code_ticket.rs                                   6                 6     0.00%           2                 2     0.00%           4                 4     0.00%           0                 0         -
+wx-rust-mp/src/bean/result/wx_mp_semantic_query_result.rs                            6                 6     0.00%           2                 2     0.00%           4                 4     0.00%           0                 0         -
+wx-rust-mp/src/bean/result/wx_mp_short_key_result.rs                                 6                 6     0.00%           2                 2     0.00%           4                 4     0.00%           0                 0         -
+wx-rust-mp/src/bean/result/wx_mp_user.rs                                             6                 6     0.00%           2                 2     0.00%           4                 4     0.00%           0                 0         -
+wx-rust-mp/src/bean/subscribe/wx_mp_subscribe_message.rs                             6                 1    83.33%           2                 1    50.00%           4                 1    75.00%           0                 0         -
+wx-rust-mp/src/bean/template/wx_mp_template_message.rs                             168                13    92.26%          16                 3    81.25%         109                 7    93.58%           0                 0         -
+wx-rust-mp/src/bean/wx_mp_semantic_query.rs                                         53                53     0.00%           2                 2     0.00%          23                23     0.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/base_builder.rs                                       25                 3    88.00%           5                 1    80.00%          20                 3    85.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/image_builder.rs                                      26                26     0.00%           5                 5     0.00%          25                25     0.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/music_builder.rs                                      49                49     0.00%           9                 9     0.00%          47                47     0.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/news_builder.rs                                       27                27     0.00%           5                 5     0.00%          25                25     0.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/text_builder.rs                                       26                 0   100.00%           5                 0   100.00%          25                 0   100.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/transfer_biz_ai_ivr_builder.rs                        19                19     0.00%           4                 4     0.00%          18                18     0.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/transfer_customer_service_builder.rs                  26                26     0.00%           5                 5     0.00%          25                25     0.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/video_builder.rs                                      37                37     0.00%           7                 7     0.00%          37                37     0.00%           0                 0         -
+wx-rust-mp/src/builder/outxml/voice_builder.rs                                      26                26     0.00%           5                 5     0.00%          25                25     0.00%           0                 0         -
+wx-rust-mp/src/config/impl/wx_mp_default_config_impl.rs                            222                37    83.33%          37                 8    78.38%         156                29    81.41%           0                 0         -
+wx-rust-mp/src/config/wx_mp_config_storage.rs                                        6                 6     0.00%           2                 2     0.00%           6                 6     0.00%           0                 0         -
+wx-rust-mp/src/config/wx_mp_host_config.rs                                           7                 0   100.00%           1                 0   100.00%           7                 0   100.00%           0                 0         -
+wx-rust-mp/src/enums/wx_mp_api_url.rs                                              186               144    22.58%          21                16    23.81%          90                64    28.89%           0                 0         -
+wx-rust-mp/src/util/crypto/wx_mp_crypt_util.rs                                      43                14    67.44%           5                 2    60.00%          34                16    52.94%           0                 0         -
+wx-rust-mp/src/util/wx_mp_config_storage_holder.rs                                  20                 7    65.00%           6                 2    66.67%          12                 4    66.67%           0                 0         -
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                             7498              4208    43.88%         584               287    50.86%        5929              3838    35.27%           0                 0         -

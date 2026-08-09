@@ -1,0 +1,40 @@
+//! 对应 Java `me.chanjar.weixin.channel.bean.home` 包（生成）。
+
+pub mod background;
+pub mod banner;
+pub mod tree;
+pub mod window;
+
+pub use background::background_apply_response::BackgroundApplyResponse;
+pub use background::background_apply_result::BackgroundApplyResult;
+pub use background::background_get_response::BackgroundGetResponse;
+pub use banner::banner_apply_detail::BannerApplyDetail;
+pub use banner::banner_apply_info::BannerApplyInfo;
+pub use banner::banner_apply_param::BannerApplyParam;
+pub use banner::banner_apply_response::BannerApplyResponse;
+pub use banner::banner_get_response::BannerGetResponse;
+pub use banner::banner_info::BannerInfo;
+pub use banner::banner_item::BannerItem;
+pub use banner::banner_item_detail::BannerItemDetail;
+pub use banner::banner_item_finder::BannerItemFinder;
+pub use banner::banner_item_official_account::BannerItemOfficialAccount;
+pub use banner::banner_item_product::BannerItemProduct;
+pub use tree::cat_tree_node::CatTreeNode;
+pub use tree::level_tree_info::LevelTreeInfo;
+pub use tree::one_level_tree_node::OneLevelTreeNode;
+pub use tree::tree_audit_result::TreeAuditResult;
+pub use tree::tree_audit_result_detail::TreeAuditResultDetail;
+pub use tree::tree_product_edit_info::TreeProductEditInfo;
+pub use tree::tree_product_edit_param::TreeProductEditParam;
+pub use tree::tree_product_list_info::TreeProductListInfo;
+pub use tree::tree_product_list_param::TreeProductListParam;
+pub use tree::tree_product_list_response::TreeProductListResponse;
+pub use tree::tree_product_list_result::TreeProductListResult;
+pub use tree::tree_show_get_response::TreeShowGetResponse;
+pub use tree::tree_show_info::TreeShowInfo;
+pub use tree::tree_show_param::TreeShowParam;
+pub use tree::tree_show_set_response::TreeShowSetResponse;
+pub use window::window_product_index_param::WindowProductIndexParam;
+pub use window::window_product_list_param::WindowProductListParam;
+pub use window::window_product_setting::WindowProductSetting;
+pub use window::window_product_setting_response::WindowProductSettingResponse;

@@ -1,0 +1,32 @@
+//! 对应 Java `com.github.binarywang.wxpay.bean.profitsharing/request` 包（生成）。
+
+pub mod profit_sharing_bill_v3_request;
+pub mod profit_sharing_merchant_ratio_query_request;
+pub mod profit_sharing_order_amount_query_request;
+pub mod profit_sharing_query_request;
+pub mod profit_sharing_query_v3_request;
+pub mod profit_sharing_receiver_request;
+pub mod profit_sharing_receiver_v3_request;
+pub mod profit_sharing_request;
+pub mod profit_sharing_return_query_request;
+pub mod profit_sharing_return_request;
+pub mod profit_sharing_return_v3_request;
+pub mod profit_sharing_unfreeze_request;
+pub mod profit_sharing_unfreeze_v3_request;
+pub mod profit_sharing_v3_request;
+
+pub use profit_sharing_bill_v3_request::ProfitSharingBillV3Request;
+pub use profit_sharing_merchant_ratio_query_request::ProfitSharingMerchantRatioQueryRequest;
+pub use profit_sharing_order_amount_query_request::ProfitSharingOrderAmountQueryRequest;
+pub use profit_sharing_query_request::ProfitSharingQueryRequest;
+pub use profit_sharing_query_v3_request::ProfitSharingQueryV3Request;
+pub use profit_sharing_receiver_request::ProfitSharingReceiverRequest;
+pub use profit_sharing_receiver_v3_request::ProfitSharingReceiverV3Request;
+pub use profit_sharing_request::ProfitSharingRequest;
+pub use profit_sharing_return_query_request::ProfitSharingReturnQueryRequest;
+pub use profit_sharing_return_request::ProfitSharingReturnRequest;
+pub use profit_sharing_return_v3_request::ProfitSharingReturnV3Request;
+pub use profit_sharing_unfreeze_request::ProfitSharingUnfreezeRequest;
+pub use profit_sharing_unfreeze_v3_request::ProfitSharingUnfreezeV3Request;
+pub use profit_sharing_v3_request::ProfitSharingV3Request;
+pub use profit_sharing_v3_request::Receiver;

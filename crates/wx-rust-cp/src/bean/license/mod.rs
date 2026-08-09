@@ -1,0 +1,41 @@
+//! 对应 Java `me.chanjar.weixin.cp.bean.license` 包（生成）。
+
+pub mod account;
+pub mod order;
+pub mod wx_cp_tp_license_account;
+pub mod wx_cp_tp_license_account_count;
+pub mod wx_cp_tp_license_account_duration;
+pub mod wx_cp_tp_license_active_account;
+pub mod wx_cp_tp_license_active_code_info;
+pub mod wx_cp_tp_license_base_account;
+pub mod wx_cp_tp_license_corp_account;
+pub mod wx_cp_tp_license_invalid_account;
+pub mod wx_cp_tp_license_order;
+pub mod wx_cp_tp_license_simple_order;
+pub mod wx_cp_tp_license_transfer;
+
+pub use account::wx_cp_tp_license_active_info_by_user_resp::WxCpTpLicenseActiveInfoByUserResp;
+pub use account::wx_cp_tp_license_batch_active_result_resp::WxCpTpLicenseBatchActiveResultResp;
+pub use account::wx_cp_tp_license_batch_code_info_resp::WxCpTpLicenseBatchCodeInfoResp;
+pub use account::wx_cp_tp_license_batch_transfer_resp::WxCpTpLicenseBatchTransferResp;
+pub use account::wx_cp_tp_license_code_info_resp::WxCpTpLicenseCodeInfoResp;
+pub use account::wx_cp_tp_license_corp_account_list_resp::WxCpTpLicenseCorpAccountListResp;
+pub use order::wx_cp_tp_license_create_order_resp::WxCpTpLicenseCreateOrderResp;
+pub use order::wx_cp_tp_license_new_order_request::WxCpTpLicenseNewOrderRequest;
+pub use order::wx_cp_tp_license_order_account_list_resp::WxCpTpLicenseOrderAccountListResp;
+pub use order::wx_cp_tp_license_order_info_resp::WxCpTpLicenseOrderInfoResp;
+pub use order::wx_cp_tp_license_order_list_resp::WxCpTpLicenseOrderListResp;
+pub use order::wx_cp_tp_license_renew_order_job_request::WxCpTpLicenseRenewOrderJobRequest;
+pub use order::wx_cp_tp_license_renew_order_job_resp::WxCpTpLicenseRenewOrderJobResp;
+pub use order::wx_cp_tp_license_renew_order_request::WxCpTpLicenseRenewOrderRequest;
+pub use wx_cp_tp_license_account::WxCpTpLicenseAccount;
+pub use wx_cp_tp_license_account_count::WxCpTpLicenseAccountCount;
+pub use wx_cp_tp_license_account_duration::WxCpTpLicenseAccountDuration;
+pub use wx_cp_tp_license_active_account::WxCpTpLicenseActiveAccount;
+pub use wx_cp_tp_license_active_code_info::WxCpTpLicenseActiveCodeInfo;
+pub use wx_cp_tp_license_base_account::WxCpTpLicenseBaseAccount;
+pub use wx_cp_tp_license_corp_account::WxCpTpLicenseCorpAccount;
+pub use wx_cp_tp_license_invalid_account::WxCpTpLicenseInvalidAccount;
+pub use wx_cp_tp_license_order::WxCpTpLicenseOrder;
+pub use wx_cp_tp_license_simple_order::WxCpTpLicenseSimpleOrder;
+pub use wx_cp_tp_license_transfer::WxCpTpLicenseTransfer;

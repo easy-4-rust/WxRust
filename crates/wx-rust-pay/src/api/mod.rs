@@ -1,0 +1,68 @@
+//! 微信支付 API。
+//!
+//! 对应 Java `com.github.binarywang.wxpay.service` 包：门面 `WxPayService` +
+//! 29 个子服务接口（每服务一个文件，对应 Java `service/*Service.java`）。
+
+pub mod r#impl;
+pub mod wx_pay_service;
+
+pub mod apply4_subject_confirm_service;
+pub mod applyment4_sub_service;
+pub mod bank_service;
+pub mod brand_merchant_transfer_service;
+pub mod business_circle_service;
+pub mod business_operation_transfer_service;
+pub mod complaint_service;
+pub mod custom_declaration_service;
+pub mod ecommerce_service;
+pub mod ent_pay_service;
+pub mod marketing_busi_favor_service;
+pub mod marketing_favor_service;
+pub mod marketing_media_service;
+pub mod merchant_limitation_service;
+pub mod merchant_media_service;
+pub mod merchant_transfer_service;
+pub mod mi_pay_service;
+pub mod partner_pay_score_service;
+pub mod partner_pay_score_sign_plan_service;
+pub mod partner_transfer_service;
+pub mod pay_score_service;
+pub mod payroll_service;
+pub mod profit_sharing_service;
+pub mod real_name_service;
+pub mod redpack_service;
+pub mod subscription_billing_service;
+pub mod transfer_service;
+pub mod wx_deposit_service;
+pub mod wx_entrust_pap_service;
+
+pub use apply4_subject_confirm_service::Apply4SubjectConfirmService;
+pub use applyment4_sub_service::Applyment4SubService;
+pub use bank_service::BankService;
+pub use brand_merchant_transfer_service::BrandMerchantTransferService;
+pub use business_circle_service::BusinessCircleService;
+pub use business_operation_transfer_service::BusinessOperationTransferService;
+pub use complaint_service::ComplaintService;
+pub use custom_declaration_service::CustomDeclarationService;
+pub use ecommerce_service::EcommerceService;
+pub use ent_pay_service::EntPayService;
+pub use marketing_busi_favor_service::MarketingBusiFavorService;
+pub use marketing_favor_service::MarketingFavorService;
+pub use marketing_media_service::MarketingMediaService;
+pub use merchant_limitation_service::MerchantLimitationService;
+pub use merchant_media_service::MerchantMediaService;
+pub use merchant_transfer_service::MerchantTransferService;
+pub use mi_pay_service::MiPayService;
+pub use partner_pay_score_service::PartnerPayScoreService;
+pub use partner_pay_score_sign_plan_service::PartnerPayScoreSignPlanService;
+pub use partner_transfer_service::PartnerTransferService;
+pub use pay_score_service::PayScoreService;
+pub use payroll_service::PayrollService;
+pub use profit_sharing_service::ProfitSharingService;
+pub use real_name_service::RealNameService;
+pub use redpack_service::RedpackService;
+pub use subscription_billing_service::SubscriptionBillingService;
+pub use transfer_service::TransferService;
+pub use wx_deposit_service::WxDepositService;
+pub use wx_entrust_pap_service::WxEntrustPapService;
+pub use wx_pay_service::WxPayService;

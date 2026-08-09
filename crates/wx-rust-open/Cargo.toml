@@ -1,0 +1,37 @@
+[package]
+name = "wx-rust-open"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+description = "WxRust 开放平台（第三方平台）模块（对应 weixin-java-open）"
+
+[lints]
+workspace = true
+
+[dependencies]
+wx-rust-common = { path = "../wx-rust-common" }
+# Wave 4：代 mp/ma 服务桥接（对应 Java weixin-java-open 依赖
+# weixin-java-mp/weixin-java-miniapp；mp/miniapp 均不依赖 open，无循环）
+wx-rust-mp = { path = "../wx-rust-mp" }
+wx-rust-miniapp = { path = "../wx-rust-miniapp" }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+quick-xml = { workspace = true, features = ["serialize"] }
+regex = "1.11.1"
+thiserror = { workspace = true }
+percent-encoding = { workspace = true }
+chrono = { workspace = true }
+url = { workspace = true }
+base64 = { workspace = true }
+hex = { workspace = true }
+sha1 = { workspace = true }
+sha2 = { workspace = true }
+hmac = { workspace = true }

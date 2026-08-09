@@ -1,0 +1,36 @@
+//! 对应 Java `cn.binarywang.wx.miniapp.bean.xpay.WxMaXPayQueryPublishGoodsResponse.java`。
+//!
+//! 由 `scripts/gen_miniapp_bean_structs.py` 从 Java 数据类生成（@SerializedName 覆盖保留）。
+
+#[allow(unused_imports)]
+use super::*;
+
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct WxMaXPayQueryPublishGoodsResponse {
+    #[serde(rename = "errcode", default)]
+    pub errcode: i32,
+    #[serde(rename = "errmsg", default)]
+    pub errmsg: String,
+    #[serde(rename = "status", default)]
+    pub status: i32,
+    #[serde(rename = "publish_item", default)]
+    pub publish_item: Vec<PublishItem>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct PublishItem {
+    #[serde(rename = "id", default)]
+    pub id: String,
+    #[serde(rename = "publish_status", default)]
+    pub publish_status: i32,
+    #[serde(rename = "errmsg", default)]
+    pub errmsg: String,
+}
+
+impl WxMaXPayQueryPublishGoodsResponse {
+    /// 序列化为 JSON（对应 Java `toJson`）。
+    pub fn to_json(&self) -> Result<String, String> {
+        serde_json::to_string(self)
+            .map_err(|e| format!("WxMaXPayQueryPublishGoodsResponse 序列化失败: {e}"))
+    }
+}

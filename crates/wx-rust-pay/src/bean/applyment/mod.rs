@@ -1,0 +1,43 @@
+//! 对应 Java `com.github.binarywang.wxpay.bean.applyment` 包（生成）。
+
+pub mod applyment_state_query_result;
+pub mod enums;
+pub mod modify_settlement_request;
+pub mod settlement_application_result;
+pub mod settlement_info_result;
+pub mod settlement_modify_state_query_result;
+pub mod wx_pay_applyment4_sub_create_request;
+pub mod wx_pay_applyment_create_result;
+
+pub use applyment_state_query_result::ApplymentStateQueryResult;
+pub use applyment_state_query_result::AuditDetail;
+pub use modify_settlement_request::ModifySettlementRequest;
+pub use settlement_application_result::SettlementApplicationResult;
+pub use settlement_info_result::SettlementInfoResult;
+pub use settlement_modify_state_query_result::SettlementModifyStateQueryResult;
+pub use wx_pay_applyment_create_result::WxPayApplymentCreateResult;
+pub use wx_pay_applyment4_sub_create_request::AdditionInfo;
+pub use wx_pay_applyment4_sub_create_request::AppInfo;
+pub use wx_pay_applyment4_sub_create_request::BankAccountInfo;
+pub use wx_pay_applyment4_sub_create_request::BizStoreInfo;
+pub use wx_pay_applyment4_sub_create_request::BusinessInfo;
+pub use wx_pay_applyment4_sub_create_request::BusinessLicenseInfo;
+pub use wx_pay_applyment4_sub_create_request::CertificateInfo;
+pub use wx_pay_applyment4_sub_create_request::ContactInfo;
+pub use wx_pay_applyment4_sub_create_request::FinanceInstitutionInfo;
+pub use wx_pay_applyment4_sub_create_request::IdCardInfo;
+pub use wx_pay_applyment4_sub_create_request::IdDocInfo;
+pub use wx_pay_applyment4_sub_create_request::IdentityInfo;
+pub use wx_pay_applyment4_sub_create_request::MicroBizInfo;
+pub use wx_pay_applyment4_sub_create_request::MicroMobileInfo;
+pub use wx_pay_applyment4_sub_create_request::MicroOnlineInfo;
+pub use wx_pay_applyment4_sub_create_request::MicroStoreInfo;
+pub use wx_pay_applyment4_sub_create_request::MiniProgramInfo;
+pub use wx_pay_applyment4_sub_create_request::MpInfo;
+pub use wx_pay_applyment4_sub_create_request::SalesInfo;
+pub use wx_pay_applyment4_sub_create_request::SettlementInfo;
+pub use wx_pay_applyment4_sub_create_request::SubjectInfo;
+pub use wx_pay_applyment4_sub_create_request::UboInfo;
+pub use wx_pay_applyment4_sub_create_request::WebInfo;
+pub use wx_pay_applyment4_sub_create_request::WeworkInfo;
+pub use wx_pay_applyment4_sub_create_request::WxPayApplyment4SubCreateRequest;

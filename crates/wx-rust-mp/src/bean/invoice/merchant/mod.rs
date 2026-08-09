@@ -1,0 +1,41 @@
+//! 对应 Java `me.chanjar.weixin.mp.bean.invoice.merchant` 包（生成）。
+
+pub mod clear_out_invoice_request;
+pub mod invoice_auth_data_request;
+pub mod invoice_auth_data_result;
+pub mod invoice_auth_page_request;
+pub mod invoice_auth_page_result;
+pub mod invoice_auth_page_setting;
+pub mod invoice_reject_request;
+pub mod invoice_result;
+pub mod make_out_invoice_request;
+pub mod merchant_contact_info;
+pub mod merchant_contact_info_wrapper;
+pub mod merchant_invoice_platform_info;
+pub mod merchant_invoice_platform_info_wrapper;
+
+pub use clear_out_invoice_request::ClearOutInvoiceInfo;
+pub use clear_out_invoice_request::ClearOutInvoiceRequest;
+pub use invoice_auth_data_request::InvoiceAuthDataRequest;
+pub use invoice_auth_data_result::BizField as AuthDataBizField;
+pub use invoice_auth_data_result::InvoiceAuthDataResult;
+pub use invoice_auth_data_result::KeyValuePair;
+pub use invoice_auth_data_result::UserAuthInfo;
+pub use invoice_auth_data_result::UserField as AuthDataUserField;
+pub use invoice_auth_page_request::InvoiceAuthPageRequest;
+pub use invoice_auth_page_result::InvoiceAuthPageResult;
+pub use invoice_auth_page_setting::AuthField;
+pub use invoice_auth_page_setting::BizField;
+pub use invoice_auth_page_setting::CustomField;
+pub use invoice_auth_page_setting::InvoiceAuthPageSetting;
+pub use invoice_auth_page_setting::UserField;
+pub use invoice_reject_request::InvoiceRejectRequest;
+pub use invoice_result::InvoiceDetail;
+pub use invoice_result::InvoiceResult;
+pub use make_out_invoice_request::InvoiceDetailItem;
+pub use make_out_invoice_request::InvoiceInfo;
+pub use make_out_invoice_request::MakeOutInvoiceRequest;
+pub use merchant_contact_info::MerchantContactInfo;
+pub use merchant_contact_info_wrapper::MerchantContactInfoWrapper;
+pub use merchant_invoice_platform_info::MerchantInvoicePlatformInfo;
+pub use merchant_invoice_platform_info_wrapper::MerchantInvoicePlatformInfoWrapper;

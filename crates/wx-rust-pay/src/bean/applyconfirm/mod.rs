@@ -1,0 +1,22 @@
+//! 对应 Java `com.github.binarywang.wxpay.bean.applyconfirm` 包（生成）。
+
+pub mod apply_subject_confirm_create_request;
+pub mod apply_subject_confirm_create_result;
+pub mod apply_subject_confirm_merchant_state_query_result;
+pub mod apply_subject_confirm_state_query_result;
+pub mod enums;
+
+pub use apply_subject_confirm_create_request::ApplySubConfirmAdditionInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmAssistProveInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmBusinessLicenseInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmCertificateInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmContactInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmFinanceInstitutionInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmIdentificationInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmSpecialOperationList;
+pub use apply_subject_confirm_create_request::ApplySubConfirmSubjectInfo;
+pub use apply_subject_confirm_create_request::ApplySubConfirmUboInfo;
+pub use apply_subject_confirm_create_request::ApplySubjectConfirmCreateRequest;
+pub use apply_subject_confirm_create_result::ApplySubjectConfirmCreateResult;
+pub use apply_subject_confirm_merchant_state_query_result::ApplySubjectConfirmMerchantStateQueryResult;
+pub use apply_subject_confirm_state_query_result::ApplySubjectConfirmStateQueryResult;

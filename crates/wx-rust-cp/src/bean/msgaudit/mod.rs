@@ -1,0 +1,47 @@
+//! 对应 Java `me.chanjar.weixin.cp.bean.msgaudit` 包（生成）。
+
+pub mod wx_cp_agree_info;
+pub mod wx_cp_chat_datas;
+pub mod wx_cp_chat_model;
+pub mod wx_cp_check_agree_request;
+pub mod wx_cp_file_item;
+pub mod wx_cp_group_chat;
+
+pub use wx_cp_agree_info::AgreeInfo;
+pub use wx_cp_agree_info::WxCpAgreeInfo;
+pub use wx_cp_chat_datas::WxCpChatData;
+pub use wx_cp_chat_datas::WxCpChatDatas;
+pub use wx_cp_chat_model::Agree;
+pub use wx_cp_chat_model::Calendar;
+pub use wx_cp_chat_model::Card;
+pub use wx_cp_chat_model::ChatRecord;
+pub use wx_cp_chat_model::ChatRecordItem;
+pub use wx_cp_chat_model::Collect;
+pub use wx_cp_chat_model::DemoFileData;
+pub use wx_cp_chat_model::Details;
+pub use wx_cp_chat_model::Doc;
+pub use wx_cp_chat_model::Emotion;
+pub use wx_cp_chat_model::File;
+pub use wx_cp_chat_model::Image;
+pub use wx_cp_chat_model::Info;
+pub use wx_cp_chat_model::Item;
+pub use wx_cp_chat_model::Link;
+pub use wx_cp_chat_model::Location;
+pub use wx_cp_chat_model::Meeting;
+pub use wx_cp_chat_model::MeetingVoiceCall;
+pub use wx_cp_chat_model::Mixed;
+pub use wx_cp_chat_model::NewsItem;
+pub use wx_cp_chat_model::Redpacket;
+pub use wx_cp_chat_model::Revoke;
+pub use wx_cp_chat_model::ShareScreenData;
+pub use wx_cp_chat_model::SphFeed;
+pub use wx_cp_chat_model::Text;
+pub use wx_cp_chat_model::Video;
+pub use wx_cp_chat_model::Voice;
+pub use wx_cp_chat_model::VoipText;
+pub use wx_cp_chat_model::Weapp;
+pub use wx_cp_chat_model::WxCpChatModel;
+pub use wx_cp_check_agree_request::WxCpCheckAgreeRequest;
+pub use wx_cp_file_item::WxCpFileItem;
+pub use wx_cp_group_chat::Member;
+pub use wx_cp_group_chat::WxCpGroupChat;

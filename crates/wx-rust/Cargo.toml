@@ -1,0 +1,16 @@
+[package]
+name = "wx-rust"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+description = "WxRust 业务 crate（对应 weixin-java 模块，批次实现中）"
+
+[lints]
+workspace = true
+
+[dependencies]

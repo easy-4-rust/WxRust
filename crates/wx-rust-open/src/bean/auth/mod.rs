@@ -1,0 +1,44 @@
+//! 对应 Java `me.chanjar.weixin.open.bean.auth` 包（生成）。
+
+pub mod ma_auth_query_identity_tree_result;
+pub mod ma_auth_query_identity_tree_result_identity_leaf;
+pub mod ma_auth_query_identity_tree_result_identity_node;
+pub mod ma_auth_query_result;
+pub mod ma_auth_query_result_dispatch_info;
+pub mod ma_auth_resubmit_param;
+pub mod ma_auth_resubmit_param_auth_data;
+pub mod ma_auth_submit_param;
+pub mod ma_auth_submit_param_auth_data;
+pub mod ma_auth_submit_param_contact_info;
+pub mod ma_auth_submit_param_invoice_electronic;
+pub mod ma_auth_submit_param_invoice_info;
+pub mod ma_auth_submit_param_invoice_vat;
+pub mod ma_auth_submit_result;
+pub mod ma_auth_upload_result;
+pub mod wx_open_authorization_info;
+pub mod wx_open_authorizer_info;
+pub mod wx_open_mini_program_info;
+
+pub use ma_auth_query_identity_tree_result::MaAuthQueryIdentityTreeResult;
+pub use ma_auth_query_identity_tree_result_identity_leaf::MaAuthQueryIdentityTreeResultIdentityLeaf;
+pub use ma_auth_query_identity_tree_result_identity_node::MaAuthQueryIdentityTreeResultIdentityNode;
+pub use ma_auth_query_result::MaAuthQueryResult;
+pub use ma_auth_query_result_dispatch_info::MaAuthQueryResultDispatchInfo;
+pub use ma_auth_resubmit_param::MaAuthResubmitParam;
+pub use ma_auth_resubmit_param_auth_data::MaAuthResubmitParamAuthData;
+pub use ma_auth_submit_param::MaAuthSubmitParam;
+pub use ma_auth_submit_param_auth_data::MaAuthSubmitParamAuthData;
+pub use ma_auth_submit_param_contact_info::MaAuthSubmitParamContactInfo;
+pub use ma_auth_submit_param_invoice_electronic::MaAuthSubmitParamInvoiceElectronic;
+pub use ma_auth_submit_param_invoice_info::MaAuthSubmitParamInvoiceInfo;
+pub use ma_auth_submit_param_invoice_vat::MaAuthSubmitParamInvoiceVat;
+pub use ma_auth_submit_result::MaAuthSubmitResult;
+pub use ma_auth_upload_result::MaAuthUploadResult;
+pub use wx_open_authorization_info::WxOpenAuthorizationInfo;
+pub use wx_open_authorizer_info::BasicConfig;
+pub use wx_open_authorizer_info::Category;
+pub use wx_open_authorizer_info::MiniProgramInfo;
+pub use wx_open_authorizer_info::Network;
+pub use wx_open_authorizer_info::WxOpenAuthorizerInfo;
+pub use wx_open_mini_program_info::StringPair;
+pub use wx_open_mini_program_info::WxOpenMiniProgramInfo;

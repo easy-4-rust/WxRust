@@ -1,0 +1,46 @@
+//! 对应 Java `me.chanjar.weixin.channel.bean.fund` 包（生成）。
+
+pub mod account_info;
+pub mod account_info_param;
+pub mod account_info_response;
+pub mod balance_info_response;
+pub mod bank;
+pub mod flow_list_response;
+pub mod flow_related_info;
+pub mod funds_flow;
+pub mod funds_flow_response;
+pub mod funds_list_param;
+pub mod qrcode;
+pub mod withdraw_detail_response;
+pub mod withdraw_list_param;
+pub mod withdraw_list_response;
+pub mod withdraw_submit_param;
+pub mod withdraw_submit_response;
+
+pub use account_info::AccountInfo;
+pub use account_info_param::AccountInfoParam;
+pub use account_info_response::AccountInfoResponse;
+pub use balance_info_response::BalanceInfoResponse;
+pub use bank::bank_city_info::BankCityInfo;
+pub use bank::bank_city_response::BankCityResponse;
+pub use bank::bank_info::BankInfo;
+pub use bank::bank_info_response::BankInfoResponse;
+pub use bank::bank_list_response::BankListResponse;
+pub use bank::bank_province_info::BankProvinceInfo;
+pub use bank::bank_province_response::BankProvinceResponse;
+pub use bank::bank_search_param::BankSearchParam;
+pub use bank::branch_info::BranchInfo;
+pub use bank::branch_info_response::BranchInfoResponse;
+pub use bank::branch_search_param::BranchSearchParam;
+pub use flow_list_response::FlowListResponse;
+pub use flow_related_info::FlowRelatedInfo;
+pub use funds_flow::FundsFlow;
+pub use funds_flow_response::FundsFlowResponse;
+pub use funds_list_param::FundsListParam;
+pub use qrcode::qr_check_response::QrCheckResponse;
+pub use qrcode::qr_code_response::QrCodeResponse;
+pub use withdraw_detail_response::WithdrawDetailResponse;
+pub use withdraw_list_param::WithdrawListParam;
+pub use withdraw_list_response::WithdrawListResponse;
+pub use withdraw_submit_param::WithdrawSubmitParam;
+pub use withdraw_submit_response::WithdrawSubmitResponse;

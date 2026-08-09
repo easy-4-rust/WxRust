@@ -1,0 +1,30 @@
+//! 对应 Java `cn.binarywang.wx.miniapp.bean.cloud` 包（生成）。
+
+pub mod request;
+pub mod wx_cloud_batch_delete_file_result;
+pub mod wx_cloud_batch_download_file_result;
+pub mod wx_cloud_cloud_database_migrate_query_info_result;
+pub mod wx_cloud_database_collection_get_result;
+pub mod wx_cloud_database_create_index_request;
+pub mod wx_cloud_database_query_result;
+pub mod wx_cloud_database_update_result;
+pub mod wx_cloud_get_qcloud_token_result;
+pub mod wx_cloud_send_sms_v2_result;
+pub mod wx_cloud_upload_file_result;
+
+pub use request::wx_cloud_send_sms_v2_request::WxCloudSendSmsV2Request;
+pub use wx_cloud_batch_delete_file_result::FileDownloadInfo;
+pub use wx_cloud_batch_delete_file_result::WxCloudBatchDeleteFileResult;
+pub use wx_cloud_batch_download_file_result::WxCloudBatchDownloadFileResult;
+pub use wx_cloud_cloud_database_migrate_query_info_result::WxCloudCloudDatabaseMigrateQueryInfoResult;
+pub use wx_cloud_database_collection_get_result::CollectionInfo;
+pub use wx_cloud_database_collection_get_result::Pager;
+pub use wx_cloud_database_collection_get_result::WxCloudDatabaseCollectionGetResult;
+pub use wx_cloud_database_create_index_request::IndexKey;
+pub use wx_cloud_database_create_index_request::WxCloudDatabaseCreateIndexRequest;
+pub use wx_cloud_database_query_result::WxCloudDatabaseQueryResult;
+pub use wx_cloud_database_update_result::WxCloudDatabaseUpdateResult;
+pub use wx_cloud_get_qcloud_token_result::WxCloudGetQcloudTokenResult;
+pub use wx_cloud_send_sms_v2_result::SendStatus;
+pub use wx_cloud_send_sms_v2_result::WxCloudSendSmsV2Result;
+pub use wx_cloud_upload_file_result::WxCloudUploadFileResult;

@@ -1,0 +1,40 @@
+//! 对应 Java `com.github.binarywang.wxpay.bean.profitsharing` 包（生成）。
+
+pub mod notify;
+pub mod receiver;
+pub mod receiver_list;
+pub mod request;
+pub mod result;
+
+pub use notify::profit_sharing_notify_v3_response::ProfitSharingNotifyV3Response;
+pub use notify::profit_sharing_notify_v3_response::Resource;
+pub use notify::profit_sharing_notify_v3_result::ProfitSharingNotifyV3Result;
+pub use receiver::Receiver;
+pub use receiver_list::ReceiverList;
+pub use request::profit_sharing_bill_v3_request::ProfitSharingBillV3Request;
+pub use request::profit_sharing_merchant_ratio_query_request::ProfitSharingMerchantRatioQueryRequest;
+pub use request::profit_sharing_order_amount_query_request::ProfitSharingOrderAmountQueryRequest;
+pub use request::profit_sharing_query_request::ProfitSharingQueryRequest;
+pub use request::profit_sharing_query_v3_request::ProfitSharingQueryV3Request;
+pub use request::profit_sharing_receiver_request::ProfitSharingReceiverRequest;
+pub use request::profit_sharing_receiver_v3_request::ProfitSharingReceiverV3Request;
+pub use request::profit_sharing_request::ProfitSharingRequest;
+pub use request::profit_sharing_return_query_request::ProfitSharingReturnQueryRequest;
+pub use request::profit_sharing_return_request::ProfitSharingReturnRequest;
+pub use request::profit_sharing_return_v3_request::ProfitSharingReturnV3Request;
+pub use request::profit_sharing_unfreeze_request::ProfitSharingUnfreezeRequest;
+pub use request::profit_sharing_unfreeze_v3_request::ProfitSharingUnfreezeV3Request;
+pub use request::profit_sharing_v3_request::ProfitSharingV3Request;
+pub use result::profit_sharing_bill_v3_result::ProfitSharingBillV3Result;
+pub use result::profit_sharing_merchant_ratio_query_result::ProfitSharingMerchantRatioQueryResult;
+pub use result::profit_sharing_merchant_ratio_query_v3_result::ProfitSharingMerchantRatioQueryV3Result;
+pub use result::profit_sharing_order_amount_query_result::ProfitSharingOrderAmountQueryResult;
+pub use result::profit_sharing_order_amount_query_v3_result::ProfitSharingOrderAmountQueryV3Result;
+pub use result::profit_sharing_query_result::ProfitSharingQueryResult;
+pub use result::profit_sharing_receiver_result::ProfitSharingReceiverResult;
+pub use result::profit_sharing_receiver_v3_result::ProfitSharingReceiverV3Result;
+pub use result::profit_sharing_result::ProfitSharingResult;
+pub use result::profit_sharing_return_result::ProfitSharingReturnResult;
+pub use result::profit_sharing_return_v3_result::ProfitSharingReturnV3Result;
+pub use result::profit_sharing_unfreeze_v3_result::ProfitSharingUnfreezeV3Result;
+pub use result::profit_sharing_v3_result::ProfitSharingV3Result;

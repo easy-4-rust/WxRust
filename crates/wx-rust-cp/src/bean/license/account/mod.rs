@@ -1,0 +1,15 @@
+//! 对应 Java `me.chanjar.weixin.cp.bean.license/account` 包（生成）。
+
+pub mod wx_cp_tp_license_active_info_by_user_resp;
+pub mod wx_cp_tp_license_batch_active_result_resp;
+pub mod wx_cp_tp_license_batch_code_info_resp;
+pub mod wx_cp_tp_license_batch_transfer_resp;
+pub mod wx_cp_tp_license_code_info_resp;
+pub mod wx_cp_tp_license_corp_account_list_resp;
+
+pub use wx_cp_tp_license_active_info_by_user_resp::WxCpTpLicenseActiveInfoByUserResp;
+pub use wx_cp_tp_license_batch_active_result_resp::WxCpTpLicenseBatchActiveResultResp;
+pub use wx_cp_tp_license_batch_code_info_resp::WxCpTpLicenseBatchCodeInfoResp;
+pub use wx_cp_tp_license_batch_transfer_resp::WxCpTpLicenseBatchTransferResp;
+pub use wx_cp_tp_license_code_info_resp::WxCpTpLicenseCodeInfoResp;
+pub use wx_cp_tp_license_corp_account_list_resp::WxCpTpLicenseCorpAccountListResp;

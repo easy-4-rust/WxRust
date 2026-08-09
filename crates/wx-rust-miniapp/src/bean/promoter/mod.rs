@@ -1,0 +1,39 @@
+//! 对应 Java `cn.binarywang.wx.miniapp.bean.promoter` 包（生成）。
+
+pub mod request;
+pub mod response;
+
+pub use request::wx_ma_promoter_update_role_request::WxMaPromoterUpdateRoleRequest;
+pub use request::wx_ma_promotion_add_promoter_request::Promoter;
+pub use request::wx_ma_promotion_add_promoter_request::WxMaPromotionAddPromoterRequest;
+pub use request::wx_ma_promotion_add_role_request::WxMaPromotionAddRoleRequest;
+pub use request::wx_ma_promotion_get_invitation_material_request::WxMaPromotionGetInvitationMaterialRequest;
+pub use request::wx_ma_promotion_get_msg_click_data_request::WxMaPromotionGetMsgClickDataRequest;
+pub use request::wx_ma_promotion_get_msg_request::WxMaPromotionGetMsgRequest;
+pub use request::wx_ma_promotion_get_order_request::WxMaPromotionGetOrderRequest;
+pub use request::wx_ma_promotion_get_promoter_request::WxMaPromotionGetPromoterRequest;
+pub use request::wx_ma_promotion_get_relation_request::WxMaPromotionGetRelationRequest;
+pub use request::wx_ma_promotion_get_role_request::WxMaPromotionGetRoleRequest;
+pub use request::wx_ma_promotion_get_share_material_request::WxMaPromotionGetShareMaterialRequest;
+pub use request::wx_ma_promotion_send_msg_request::WxMaPromotionSendMsgRequest;
+pub use request::wx_ma_promotion_single_send_msg_request::WxMaPromotionSingleSendMsgRequest;
+pub use request::wx_ma_promotion_update_promoter_request::WxMaPromotionUpdatePromoterRequest;
+pub use response::wx_ma_promotion_add_promoter_response::WxMaPromotionAddPromoterResponse;
+pub use response::wx_ma_promotion_add_role_response::WxMaPromotionAddRoleResponse;
+pub use response::wx_ma_promotion_get_invitation_material_response::WxMaPromotionGetInvitationMaterialResponse;
+pub use response::wx_ma_promotion_get_msg_click_data_response::Dimonsion;
+pub use response::wx_ma_promotion_get_msg_click_data_response::WxMaPromotionGetMsgClickDataResponse;
+pub use response::wx_ma_promotion_get_msg_response::FailInfo;
+pub use response::wx_ma_promotion_get_msg_response::WxMaPromotionGetMsgResponse;
+pub use response::wx_ma_promotion_get_order_response::Order;
+pub use response::wx_ma_promotion_get_order_response::WxMaPromotionGetOrderResponse;
+pub use response::wx_ma_promotion_get_promoter_response::WxMaPromotionGetPromoterResponse;
+pub use response::wx_ma_promotion_get_relation_response::Relation;
+pub use response::wx_ma_promotion_get_relation_response::WxMaPromotionGetRelationResponse;
+pub use response::wx_ma_promotion_get_role_response::Role;
+pub use response::wx_ma_promotion_get_role_response::WxMaPromotionGetRoleResponse;
+pub use response::wx_ma_promotion_get_share_material_response::WxMaPromotionGetShareMaterialResponse;
+pub use response::wx_ma_promotion_send_msg_response::WxMaPromotionSendMsgResponse;
+pub use response::wx_ma_promotion_single_send_msg_response::WxMaPromotionSingleSendMsgResponse;
+pub use response::wx_ma_promotion_update_promoter_response::WxMaPromotionUpdatePromoterResponse;
+pub use response::wx_ma_promotion_update_role_response::WxMaPromotionUpdateRoleResponse;

@@ -1,0 +1,30 @@
+[package]
+name = "wx-rust-aispeech"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+description = "WxRust 智能对话模块（对应 weixin-java-aispeech：对话机器人 + 知识库助理）"
+
+[lints]
+workspace = true
+
+[dependencies]
+wx-rust-common = { path = "../wx-rust-common" }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+base64 = { workspace = true }
+hex = { workspace = true }
+md5 = "0.8.0"
+hmac = { workspace = true }
+sha2 = { workspace = true }
+aes = { workspace = true }
+cbc = { workspace = true }
+uuid = { version = "1.19.0", features = ["v4"] }

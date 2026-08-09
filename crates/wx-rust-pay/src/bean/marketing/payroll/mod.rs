@@ -1,0 +1,43 @@
+//! 对应 Java `com.github.binarywang.wxpay.bean.marketing/payroll` 包（生成）。
+
+pub mod auth_record_request;
+pub mod auth_record_result;
+pub mod authentications_result;
+pub mod merchant_income_records_request;
+pub mod merchant_income_records_result;
+pub mod partner_income_records_request;
+pub mod partner_income_records_result;
+pub mod payroll_transfer_batches_request;
+pub mod payroll_transfer_batches_result;
+pub mod pre_order_request;
+pub mod pre_order_result;
+pub mod pre_order_with_auth_request;
+pub mod pre_order_with_auth_result;
+pub mod relations_request;
+pub mod relations_result;
+pub mod sub_fund_flow_bill_result;
+pub mod tokens_request;
+pub mod tokens_result;
+
+pub use auth_record_request::AuthRecordRequest;
+pub use auth_record_result::AuthRecordResult;
+pub use auth_record_result::RecordData;
+pub use authentications_result::AuthenticationsResult;
+pub use merchant_income_records_request::MerchantIncomeRecordsRequest;
+pub use merchant_income_records_result::IncomeRecordData;
+pub use merchant_income_records_result::LinksData;
+pub use merchant_income_records_result::MerchantIncomeRecordsResult;
+pub use partner_income_records_request::PartnerIncomeRecordsRequest;
+pub use partner_income_records_result::PartnerIncomeRecordsResult;
+pub use payroll_transfer_batches_request::PayrollTransferBatchesRequest;
+pub use payroll_transfer_batches_request::TransferDetail;
+pub use payroll_transfer_batches_result::PayrollTransferBatchesResult;
+pub use pre_order_request::PreOrderRequest;
+pub use pre_order_result::PreOrderResult;
+pub use pre_order_with_auth_request::PreOrderWithAuthRequest;
+pub use pre_order_with_auth_result::PreOrderWithAuthResult;
+pub use relations_request::RelationsRequest;
+pub use relations_result::RelationsResult;
+pub use sub_fund_flow_bill_result::SubFundFlowBillResult;
+pub use tokens_request::TokensRequest;
+pub use tokens_result::TokensResult;

@@ -1,0 +1,26 @@
+//! 对应 Java `me.chanjar.weixin.cp.bean.oa/meetingroom` 包（生成）。
+
+pub mod wx_cp_oa_meeting_room;
+pub mod wx_cp_oa_meeting_room_book_by_meeting_request;
+pub mod wx_cp_oa_meeting_room_book_by_schedule_request;
+pub mod wx_cp_oa_meeting_room_book_request;
+pub mod wx_cp_oa_meeting_room_book_result;
+pub mod wx_cp_oa_meeting_room_booking_info_by_booking_id_request;
+pub mod wx_cp_oa_meeting_room_booking_info_by_booking_id_result;
+pub mod wx_cp_oa_meeting_room_booking_info_request;
+pub mod wx_cp_oa_meeting_room_booking_info_result;
+pub mod wx_cp_oa_meeting_room_cancel_book_request;
+
+pub use wx_cp_oa_meeting_room::Coordinate;
+pub use wx_cp_oa_meeting_room::WxCpOaMeetingRoom;
+pub use wx_cp_oa_meeting_room_book_by_meeting_request::WxCpOaMeetingRoomBookByMeetingRequest;
+pub use wx_cp_oa_meeting_room_book_by_schedule_request::WxCpOaMeetingRoomBookByScheduleRequest;
+pub use wx_cp_oa_meeting_room_book_request::WxCpOaMeetingRoomBookRequest;
+pub use wx_cp_oa_meeting_room_book_result::WxCpOaMeetingRoomBookResult;
+pub use wx_cp_oa_meeting_room_booking_info_by_booking_id_request::WxCpOaMeetingRoomBookingInfoByBookingIdRequest;
+pub use wx_cp_oa_meeting_room_booking_info_by_booking_id_result::Schedule;
+pub use wx_cp_oa_meeting_room_booking_info_by_booking_id_result::WxCpOaMeetingRoomBookingInfoByBookingIdResult;
+pub use wx_cp_oa_meeting_room_booking_info_request::WxCpOaMeetingRoomBookingInfoRequest;
+pub use wx_cp_oa_meeting_room_booking_info_result::Booking;
+pub use wx_cp_oa_meeting_room_booking_info_result::WxCpOaMeetingRoomBookingInfoResult;
+pub use wx_cp_oa_meeting_room_cancel_book_request::WxCpOaMeetingRoomCancelBookRequest;

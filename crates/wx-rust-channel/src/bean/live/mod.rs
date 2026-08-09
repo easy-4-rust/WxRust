@@ -1,0 +1,41 @@
+//! 对应 Java `me.chanjar.weixin.channel.bean.live` 包（生成）。
+
+pub mod dashboard;
+
+pub use dashboard::conversion_metric::ConversionMetric;
+pub use dashboard::data_node::DataNode;
+pub use dashboard::data_node_list::DataNodeList;
+pub use dashboard::data_node_second_list::DataNodeSecondList;
+pub use dashboard::data_node_third_list::DataNodeThirdList;
+pub use dashboard::dimension::Dimension;
+pub use dashboard::ended::Ended;
+pub use dashboard::ended_index_item::EndedIndexItem;
+pub use dashboard::fields::Fields;
+pub use dashboard::item_conversion_metric::ItemConversionMetric;
+pub use dashboard::live_comparison_index::LiveComparisonIndex;
+pub use dashboard::live_dashboard_data::LiveDashboardData;
+pub use dashboard::live_dashboard_data2::LiveDashboardData2;
+pub use dashboard::live_dashboard_data2_portrait::LiveDashboardData2Portrait;
+pub use dashboard::live_dashboard_data2_source::LiveDashboardData2Source;
+pub use dashboard::live_dashboard_data2_summary::LiveDashboardData2Summary;
+pub use dashboard::live_data_param::LiveDataParam;
+pub use dashboard::live_data_response::LiveDataResponse;
+pub use dashboard::live_dist_channel_source_stats::LiveDistChannelSourceStats;
+pub use dashboard::live_distribution_by_flow_type_stat::LiveDistributionByFlowTypeStat;
+pub use dashboard::live_distribution_channel::LiveDistributionChannel;
+pub use dashboard::live_distribution_scene_stat::LiveDistributionSceneStat;
+pub use dashboard::live_ec_conversion_metric::LiveEcConversionMetric;
+pub use dashboard::live_ec_data_summary::LiveEcDataSummary;
+pub use dashboard::live_ec_profile::LiveEcProfile;
+pub use dashboard::live_item::LiveItem;
+pub use dashboard::live_list_param::LiveListParam;
+pub use dashboard::live_list_response::LiveListResponse;
+pub use dashboard::on_air::OnAir;
+pub use dashboard::on_air_index_item::OnAirIndexItem;
+pub use dashboard::point::Point;
+pub use dashboard::quarterly_growth_rate::QuarterlyGrowthRate;
+pub use dashboard::series::Series;
+pub use dashboard::single_live_ec_spu_data_page_v2::SingleLiveEcSpuDataPageV2;
+pub use dashboard::spu_base_data::SpuBaseData;
+pub use dashboard::spu_data::SpuData;
+pub use dashboard::sub_live_dist_channel_source_stats::SubLiveDistChannelSourceStats;

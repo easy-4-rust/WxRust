@@ -1,0 +1,16 @@
+//! 对应 Java `me.chanjar.weixin.mp.bean.shake` 包（生成）。
+
+pub mod wx_mp_device_identifier;
+pub mod wx_mp_shake_around_device_bind_page_query;
+pub mod wx_mp_shake_around_page_add_query;
+pub mod wx_mp_shake_around_page_add_result;
+pub mod wx_mp_shake_around_relation_search_query;
+pub mod wx_mp_shake_around_relation_search_result;
+
+pub use wx_mp_device_identifier::WxMpDeviceIdentifier;
+pub use wx_mp_shake_around_device_bind_page_query::WxMpShakeAroundDeviceBindPageQuery;
+pub use wx_mp_shake_around_page_add_query::WxMpShakeAroundPageAddQuery;
+pub use wx_mp_shake_around_page_add_result::WxMpShakeAroundPageAddResult;
+pub use wx_mp_shake_around_relation_search_query::WxMpShakeAroundRelationSearchQuery;
+pub use wx_mp_shake_around_relation_search_result::WxMpShakeAcoundRelationSearch;
+pub use wx_mp_shake_around_relation_search_result::WxMpShakeAroundRelationSearchResult;

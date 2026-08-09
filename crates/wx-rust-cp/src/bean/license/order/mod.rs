@@ -1,0 +1,19 @@
+//! 对应 Java `me.chanjar.weixin.cp.bean.license/order` 包（生成）。
+
+pub mod wx_cp_tp_license_create_order_resp;
+pub mod wx_cp_tp_license_new_order_request;
+pub mod wx_cp_tp_license_order_account_list_resp;
+pub mod wx_cp_tp_license_order_info_resp;
+pub mod wx_cp_tp_license_order_list_resp;
+pub mod wx_cp_tp_license_renew_order_job_request;
+pub mod wx_cp_tp_license_renew_order_job_resp;
+pub mod wx_cp_tp_license_renew_order_request;
+
+pub use wx_cp_tp_license_create_order_resp::WxCpTpLicenseCreateOrderResp;
+pub use wx_cp_tp_license_new_order_request::WxCpTpLicenseNewOrderRequest;
+pub use wx_cp_tp_license_order_account_list_resp::WxCpTpLicenseOrderAccountListResp;
+pub use wx_cp_tp_license_order_info_resp::WxCpTpLicenseOrderInfoResp;
+pub use wx_cp_tp_license_order_list_resp::WxCpTpLicenseOrderListResp;
+pub use wx_cp_tp_license_renew_order_job_request::WxCpTpLicenseRenewOrderJobRequest;
+pub use wx_cp_tp_license_renew_order_job_resp::WxCpTpLicenseRenewOrderJobResp;
+pub use wx_cp_tp_license_renew_order_request::WxCpTpLicenseRenewOrderRequest;

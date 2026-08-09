@@ -1,0 +1,32 @@
+//! 对应 Java `cn.binarywang.wx.miniapp.bean.promoter/request` 包（生成）。
+
+pub mod wx_ma_promoter_update_role_request;
+pub mod wx_ma_promotion_add_promoter_request;
+pub mod wx_ma_promotion_add_role_request;
+pub mod wx_ma_promotion_get_invitation_material_request;
+pub mod wx_ma_promotion_get_msg_click_data_request;
+pub mod wx_ma_promotion_get_msg_request;
+pub mod wx_ma_promotion_get_order_request;
+pub mod wx_ma_promotion_get_promoter_request;
+pub mod wx_ma_promotion_get_relation_request;
+pub mod wx_ma_promotion_get_role_request;
+pub mod wx_ma_promotion_get_share_material_request;
+pub mod wx_ma_promotion_send_msg_request;
+pub mod wx_ma_promotion_single_send_msg_request;
+pub mod wx_ma_promotion_update_promoter_request;
+
+pub use wx_ma_promoter_update_role_request::WxMaPromoterUpdateRoleRequest;
+pub use wx_ma_promotion_add_promoter_request::Promoter;
+pub use wx_ma_promotion_add_promoter_request::WxMaPromotionAddPromoterRequest;
+pub use wx_ma_promotion_add_role_request::WxMaPromotionAddRoleRequest;
+pub use wx_ma_promotion_get_invitation_material_request::WxMaPromotionGetInvitationMaterialRequest;
+pub use wx_ma_promotion_get_msg_click_data_request::WxMaPromotionGetMsgClickDataRequest;
+pub use wx_ma_promotion_get_msg_request::WxMaPromotionGetMsgRequest;
+pub use wx_ma_promotion_get_order_request::WxMaPromotionGetOrderRequest;
+pub use wx_ma_promotion_get_promoter_request::WxMaPromotionGetPromoterRequest;
+pub use wx_ma_promotion_get_relation_request::WxMaPromotionGetRelationRequest;
+pub use wx_ma_promotion_get_role_request::WxMaPromotionGetRoleRequest;
+pub use wx_ma_promotion_get_share_material_request::WxMaPromotionGetShareMaterialRequest;
+pub use wx_ma_promotion_send_msg_request::WxMaPromotionSendMsgRequest;
+pub use wx_ma_promotion_single_send_msg_request::WxMaPromotionSingleSendMsgRequest;
+pub use wx_ma_promotion_update_promoter_request::WxMaPromotionUpdatePromoterRequest;

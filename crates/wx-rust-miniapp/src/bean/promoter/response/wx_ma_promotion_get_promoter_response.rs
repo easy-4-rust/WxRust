@@ -1,0 +1,44 @@
+//! 对应 Java `cn.binarywang.wx.miniapp.bean.promoter.response.WxMaPromotionGetPromoterResponse.java`。
+//!
+//! 由 `scripts/gen_miniapp_bean_structs.py` 从 Java 数据类生成（@SerializedName 覆盖保留）。
+
+#[allow(unused_imports)]
+use super::*;
+#[allow(unused_imports)]
+use crate::bean::promoter::*;
+
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct WxMaPromotionGetPromoterResponse {
+    #[serde(rename = "errcode", default)]
+    pub errcode: i32,
+    #[serde(rename = "errmsg", default)]
+    pub errmsg: String,
+    #[serde(rename = "total_cnt", default)]
+    pub total_cnt: String,
+    #[serde(rename = "promoter_list", default)]
+    pub promoter_list: Vec<Promoter>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct Promoter {
+    #[serde(rename = "openid", default)]
+    pub openid: String,
+    #[serde(rename = "role_id", default)]
+    pub role_id: i64,
+    #[serde(rename = "retail_id", default)]
+    pub retail_id: String,
+    #[serde(rename = "extra_info", default)]
+    pub extra_info: String,
+    #[serde(rename = "name", default)]
+    pub name: String,
+    #[serde(rename = "phone", default)]
+    pub phone: String,
+    #[serde(rename = "auth_status", default)]
+    pub auth_status: i64,
+    #[serde(rename = "decl_status", default)]
+    pub decl_status: String,
+    #[serde(rename = "update_time", default)]
+    pub update_time: i64,
+    #[serde(rename = "id", default)]
+    pub id: String,
+}

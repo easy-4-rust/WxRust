@@ -1,0 +1,65 @@
+//! 视频号小店 API。
+//!
+//! 对应 Java `me.chanjar.weixin.channel.api` 包。
+
+pub mod r#impl;
+pub mod wx_channel_service;
+pub use wx_channel_service::WxChannelService;
+
+pub mod wx_channel_message_service;
+pub use wx_channel_message_service::WxChannelMessageService;
+// 消息服务实现：已由 Wave 3 收尾并入 `impl/mod.rs` 统一注册
+// （模块路径 `crate::api::r#impl::wx_channel_message_service_impl`），
+// 此处仅重导出保持公共 API 不变。
+pub use r#impl::wx_channel_message_service_impl::WxChannelMessageServiceImpl;
+
+pub mod wx_channel_basic_service;
+pub use wx_channel_basic_service::WxChannelBasicService;
+pub mod wx_channel_category_service;
+pub use wx_channel_category_service::WxChannelCategoryService;
+pub mod wx_channel_brand_service;
+pub use wx_channel_brand_service::WxChannelBrandService;
+pub mod wx_channel_product_service;
+pub use wx_channel_product_service::WxChannelProductService;
+pub mod wx_channel_warehouse_service;
+pub use wx_channel_warehouse_service::WxChannelWarehouseService;
+pub mod wx_channel_order_service;
+pub use wx_channel_order_service::WxChannelOrderService;
+pub mod wx_channel_after_sale_service;
+pub use wx_channel_after_sale_service::WxChannelAfterSaleService;
+pub mod wx_channel_freight_template_service;
+pub use wx_channel_freight_template_service::WxChannelFreightTemplateService;
+pub mod wx_channel_address_service;
+pub use wx_channel_address_service::WxChannelAddressService;
+pub mod wx_channel_coupon_service;
+pub use wx_channel_coupon_service::WxChannelCouponService;
+pub mod wx_channel_sharer_service;
+pub use wx_channel_sharer_service::WxChannelSharerService;
+pub mod wx_channel_fund_service;
+pub use wx_channel_fund_service::WxChannelFundService;
+pub mod wx_store_home_page_service;
+pub use wx_store_home_page_service::WxStoreHomePageService;
+pub mod wx_store_cooperation_service;
+pub use wx_store_cooperation_service::WxStoreCooperationService;
+pub mod wx_channel_compass_shop_service;
+pub use wx_channel_compass_shop_service::WxChannelCompassShopService;
+pub mod wx_league_window_service;
+pub use wx_league_window_service::WxLeagueWindowService;
+pub mod wx_league_supplier_service;
+pub use wx_league_supplier_service::WxLeagueSupplierService;
+pub mod wx_league_promoter_service;
+pub use wx_league_promoter_service::WxLeaguePromoterService;
+pub mod wx_league_product_service;
+pub use wx_league_product_service::WxLeagueProductService;
+pub mod wx_lead_component_service;
+pub use wx_lead_component_service::WxLeadComponentService;
+pub mod wx_finder_live_service;
+pub use wx_finder_live_service::WxFinderLiveService;
+pub mod wx_assistant_service;
+pub use wx_assistant_service::WxAssistantService;
+pub mod wx_channel_vip_service;
+pub use wx_channel_vip_service::WxChannelVipService;
+pub mod wx_channel_compass_finder_service;
+pub use wx_channel_compass_finder_service::WxChannelCompassFinderService;
+pub mod wx_channel_live_dashboard_service;
+pub use wx_channel_live_dashboard_service::WxChannelLiveDashboardService;

@@ -1,0 +1,41 @@
+//! 对应 Java `me.chanjar.weixin.mp.bean.card.membercard` 包（生成）。
+
+pub mod activate_plugin_param;
+pub mod activate_plugin_param_result;
+pub mod member_card;
+pub mod member_card_activate_user_form_request;
+pub mod member_card_activate_user_form_result;
+pub mod member_card_create_request;
+pub mod member_card_update;
+pub mod member_card_update_request;
+pub mod member_card_user_form;
+pub mod member_card_user_form_rich_field;
+pub mod member_card_user_info;
+pub mod name_values;
+pub mod notify_optional;
+pub mod wx_mp_member_card_activate_temp_info_result;
+pub mod wx_mp_member_card_activated_message;
+pub mod wx_mp_member_card_create_message;
+pub mod wx_mp_member_card_update_message;
+pub mod wx_mp_member_card_update_result;
+pub mod wx_mp_member_card_user_info_result;
+
+pub use activate_plugin_param::ActivatePluginParam;
+pub use activate_plugin_param_result::ActivatePluginParamResult;
+pub use member_card::MemberCard;
+pub use member_card_activate_user_form_request::MemberCardActivateUserFormRequest;
+pub use member_card_activate_user_form_result::MemberCardActivateUserFormResult;
+pub use member_card_create_request::MemberCardCreateRequest;
+pub use member_card_update::MemberCardUpdate;
+pub use member_card_update_request::MemberCardUpdateRequest;
+pub use member_card_user_form::MemberCardUserForm;
+pub use member_card_user_form_rich_field::MemberCardUserFormRichField;
+pub use member_card_user_info::MemberCardUserInfo;
+pub use name_values::NameValues;
+pub use notify_optional::NotifyOptional;
+pub use wx_mp_member_card_activate_temp_info_result::WxMpMemberCardActivateTempInfoResult;
+pub use wx_mp_member_card_activated_message::WxMpMemberCardActivatedMessage;
+pub use wx_mp_member_card_create_message::WxMpMemberCardCreateMessage;
+pub use wx_mp_member_card_update_message::WxMpMemberCardUpdateMessage;
+pub use wx_mp_member_card_update_result::WxMpMemberCardUpdateResult;
+pub use wx_mp_member_card_user_info_result::WxMpMemberCardUserInfoResult;

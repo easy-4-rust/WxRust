@@ -1,0 +1,30 @@
+//! 对应 Java `com.github.binarywang.wxpay.bean.profitsharing/result` 包（生成）。
+
+pub mod profit_sharing_bill_v3_result;
+pub mod profit_sharing_merchant_ratio_query_result;
+pub mod profit_sharing_merchant_ratio_query_v3_result;
+pub mod profit_sharing_order_amount_query_result;
+pub mod profit_sharing_order_amount_query_v3_result;
+pub mod profit_sharing_query_result;
+pub mod profit_sharing_receiver_result;
+pub mod profit_sharing_receiver_v3_result;
+pub mod profit_sharing_result;
+pub mod profit_sharing_return_result;
+pub mod profit_sharing_return_v3_result;
+pub mod profit_sharing_unfreeze_v3_result;
+pub mod profit_sharing_v3_result;
+
+pub use profit_sharing_bill_v3_result::ProfitSharingBillV3Result;
+pub use profit_sharing_merchant_ratio_query_result::ProfitSharingMerchantRatioQueryResult;
+pub use profit_sharing_merchant_ratio_query_v3_result::ProfitSharingMerchantRatioQueryV3Result;
+pub use profit_sharing_order_amount_query_result::ProfitSharingOrderAmountQueryResult;
+pub use profit_sharing_order_amount_query_v3_result::ProfitSharingOrderAmountQueryV3Result;
+pub use profit_sharing_query_result::ProfitSharingQueryResult;
+pub use profit_sharing_query_result::Receiver;
+pub use profit_sharing_receiver_result::ProfitSharingReceiverResult;
+pub use profit_sharing_receiver_v3_result::ProfitSharingReceiverV3Result;
+pub use profit_sharing_result::ProfitSharingResult;
+pub use profit_sharing_return_result::ProfitSharingReturnResult;
+pub use profit_sharing_return_v3_result::ProfitSharingReturnV3Result;
+pub use profit_sharing_unfreeze_v3_result::ProfitSharingUnfreezeV3Result;
+pub use profit_sharing_v3_result::ProfitSharingV3Result;
