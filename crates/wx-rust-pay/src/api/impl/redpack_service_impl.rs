@@ -53,7 +53,7 @@ impl RedpackService for RedpackServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPaySendMiniProgramRedpackResult::from_xml,
         )
@@ -82,7 +82,7 @@ impl RedpackService for RedpackServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPaySendRedpackResult::from_xml,
         )
@@ -114,7 +114,7 @@ impl RedpackService for RedpackServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayRedpackQueryResult::from_xml,
         )

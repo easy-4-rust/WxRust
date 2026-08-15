@@ -3,12 +3,12 @@
 //! 镜像 Java WxMpUserServiceImplTest / WxMpQrcodeServiceImplTest /
 //! WxMpMenuServiceImplTest / WxMpKefuServiceImplTest
 
-use wx_rust_mp::bean::result::*;
 use wx_rust_mp::bean::kefu::*;
-use wx_rust_mp::bean::menu::*;
-use wx_rust_mp::bean::template::*;
-use wx_rust_mp::bean::tag::*;
 use wx_rust_mp::bean::material::*;
+use wx_rust_mp::bean::menu::*;
+use wx_rust_mp::bean::result::*;
+use wx_rust_mp::bean::tag::*;
+use wx_rust_mp::bean::template::*;
 
 // ═══ WxMpUser ═══
 
@@ -44,7 +44,8 @@ fn test_change_openid_serde() {
 
 #[test]
 fn test_qrcode_ticket_from_json() {
-    let json = r#"{"ticket":"TICKET-001","expire_seconds":600,"url":"https://weixin.qq.com/q/abc"}"#;
+    let json =
+        r#"{"ticket":"TICKET-001","expire_seconds":600,"url":"https://weixin.qq.com/q/abc"}"#;
     let ticket = WxMpQrCodeTicket::from_json(json).unwrap();
     assert_eq!(ticket.ticket, "TICKET-001");
     assert_eq!(ticket.expire_seconds, 600);
@@ -53,7 +54,8 @@ fn test_qrcode_ticket_from_json() {
 
 #[test]
 fn test_qrcode_ticket_permanent() {
-    let json = r#"{"ticket":"PERM-TICKET","expire_seconds":-1,"url":"https://weixin.qq.com/q/perm"}"#;
+    let json =
+        r#"{"ticket":"PERM-TICKET","expire_seconds":-1,"url":"https://weixin.qq.com/q/perm"}"#;
     let ticket = WxMpQrCodeTicket::from_json(json).unwrap();
     assert_eq!(ticket.expire_seconds, -1);
 }

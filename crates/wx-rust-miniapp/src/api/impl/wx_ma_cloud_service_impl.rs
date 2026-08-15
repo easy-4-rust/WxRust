@@ -755,11 +755,9 @@ impl WxMaCloudService for WxMaCloudServiceImpl {
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
         let mut file_list = Vec::new();
-        let mut i = 0usize;
-        for file_id in file_ids {
+        for (i, file_id) in file_ids.iter().enumerate() {
             let max_age = max_ages.get(i).copied().unwrap_or(0);
             file_list.push(serde_json::json!({ "fileid": file_id, "max_age": max_age }));
-            i += 1;
         }
         let params = serde_json::json!({ "env": env, "file_list": file_list });
         let config = svc.wx_ma_config();

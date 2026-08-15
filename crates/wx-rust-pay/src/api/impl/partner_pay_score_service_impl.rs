@@ -549,7 +549,7 @@ impl PartnerPayScoreServiceImpl {
         let config = svc.wx_pay_config();
         let api_v3_key = config.api_v3_key().unwrap_or_default();
         crate::util::crypto::wx_pay_v3_crypto_utils::aes_gcm_decrypt(
-            &api_v3_key,
+            api_v3_key,
             resource.associated_data.as_deref().unwrap_or_default(),
             resource.nonce.as_deref().unwrap_or_default(),
             resource.cipher_text.as_deref().unwrap_or_default(),

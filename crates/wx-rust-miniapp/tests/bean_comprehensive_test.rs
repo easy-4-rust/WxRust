@@ -1,8 +1,8 @@
 //! wx-rust-miniapp Bean 综合测试（SOURCE_PARITY + VALUE_ADD）。
 
-use wx_rust_miniapp::bean::*;
 use wx_rust_miniapp::bean::analysis::*;
 use wx_rust_miniapp::bean::scheme::*;
+use wx_rust_miniapp::bean::*;
 
 // ═══ Core Beans ═══
 
@@ -91,7 +91,7 @@ fn test_wx_ma_stable_access_token_request_serde() {
     let json = r#"{"grant_type":"client_credential","appid":"wx1234","secret":"secret123","force_refresh":false}"#;
     let req: WxMaStableAccessTokenRequest = serde_json::from_str(json).unwrap();
     assert_eq!(req.appid, "wx1234");
-    assert_eq!(req.force_refresh, false);
+    assert!(!req.force_refresh);
 }
 
 // ═══ Analysis Beans ═══
@@ -108,7 +108,8 @@ fn test_wx_ma_visit_trend_serde() {
 
 #[test]
 fn test_wx_ma_retain_info_from_json() {
-    let json = r#"{"ref_date":"2024-01-01","visit_uv_new":{"0":100,"1":80},"visit_uv":{"0":500,"1":400}}"#;
+    let json =
+        r#"{"ref_date":"2024-01-01","visit_uv_new":{"0":100,"1":80},"visit_uv":{"0":500,"1":400}}"#;
     let info = WxMaRetainInfo::from_json(json).unwrap();
     assert_eq!(info.ref_date, "2024-01-01");
     assert!(info.visit_uv_new.contains_key(&0));
@@ -185,7 +186,10 @@ fn test_base_response_default() {
 
 #[test]
 fn test_qrcode_roundtrip() {
-    let qrcode = WxMaQrcode { path: "pages/test".to_string(), width: 300 };
+    let qrcode = WxMaQrcode {
+        path: "pages/test".to_string(),
+        width: 300,
+    };
     let serialized = serde_json::to_string(&qrcode).unwrap();
     let deserialized: WxMaQrcode = serde_json::from_str(&serialized).unwrap();
     assert_eq!(qrcode, deserialized);
@@ -193,7 +197,11 @@ fn test_qrcode_roundtrip() {
 
 #[test]
 fn test_code_line_color_roundtrip() {
-    let color = WxMaCodeLineColor { r: "100".to_string(), g: "200".to_string(), b: "50".to_string() };
+    let color = WxMaCodeLineColor {
+        r: "100".to_string(),
+        g: "200".to_string(),
+        b: "50".to_string(),
+    };
     let serialized = serde_json::to_string(&color).unwrap();
     let deserialized: WxMaCodeLineColor = serde_json::from_str(&serialized).unwrap();
     assert_eq!(color, deserialized);

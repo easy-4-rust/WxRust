@@ -9,7 +9,6 @@ use wx_rust_common::error::WxErrorException;
 use crate::bean::marketing::{
     WxMpAdLeadFilter, WxMpAdLeadResult, WxMpUserAction, WxMpUserActionSet,
 };
-use crate::enums::wx_mp_api_url::marketing;
 
 /// 公众号MarketingService。
 #[async_trait]

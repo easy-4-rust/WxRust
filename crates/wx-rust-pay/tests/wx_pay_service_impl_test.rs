@@ -17,7 +17,7 @@
 
 use std::collections::HashMap;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::Ordering;
 
 use base64::Engine;
 use rsa::RsaPublicKey;
@@ -180,10 +180,8 @@ BMfvJQQQ8QQsT1mnFF3iTOfoHbyj2wICCAA=";
 /// handler 返回 (状态码, Content-Type, body, 附加响应头)。
 struct MockServer {
     addr: std::net::SocketAddr,
-    requests: Arc<AtomicUsize>,
     last_path: Arc<std::sync::Mutex<String>>,
     last_body: Arc<std::sync::Mutex<String>>,
-    last_headers: Arc<std::sync::Mutex<Vec<(String, String)>>>,
     stop: Arc<std::sync::atomic::AtomicBool>,
 }
 
@@ -199,17 +197,13 @@ impl MockServer {
             .await
             .expect("绑定端口");
         let addr = listener.local_addr().expect("获取地址");
-        let requests = Arc::new(AtomicUsize::new(0));
         let last_path = Arc::new(std::sync::Mutex::new(String::new()));
         let last_body = Arc::new(std::sync::Mutex::new(String::new()));
-        let last_headers = Arc::new(std::sync::Mutex::new(Vec::new()));
         let stop = Arc::new(std::sync::atomic::AtomicBool::new(false));
         let handler = Arc::new(handler);
 
-        let requests_clone = requests.clone();
         let last_path_clone = last_path.clone();
         let last_body_clone = last_body.clone();
-        let last_headers_clone = last_headers.clone();
         let stop_clone = stop.clone();
         tokio::spawn(async move {
             loop {
@@ -219,11 +213,9 @@ impl MockServer {
                 let Ok((mut socket, _)) = listener.accept().await else {
                     continue;
                 };
-                requests_clone.fetch_add(1, Ordering::SeqCst);
                 let handler = handler.clone();
                 let last_path_clone = last_path_clone.clone();
                 let last_body_clone = last_body_clone.clone();
-                let last_headers_clone = last_headers_clone.clone();
                 tokio::spawn(async move {
                     use tokio::io::{AsyncReadExt, AsyncWriteExt};
                     let mut buf = [0u8; 16384];
@@ -249,10 +241,6 @@ impl MockServer {
                     }
                     let body = lines.collect::<Vec<&str>>().join("\n");
                     *last_body_clone.lock().unwrap() = body;
-                    *last_headers_clone.lock().unwrap() = headers
-                        .iter()
-                        .map(|(k, v)| (k.clone(), v.clone()))
-                        .collect();
                     let (status, content_type, body, extra_headers) = handler(&path, &headers);
                     let mut response = format!(
                         "HTTP/1.1 {status} {}\r\nContent-Type: {content_type}\r\nContent-Length: {}\r\nConnection: close\r\n",
@@ -271,10 +259,8 @@ impl MockServer {
 
         Self {
             addr,
-            requests,
             last_path,
             last_body,
-            last_headers,
             stop,
         }
     }
@@ -283,25 +269,12 @@ impl MockServer {
         format!("http://{}{}", self.addr, path)
     }
 
-    fn request_count(&self) -> usize {
-        self.requests.load(Ordering::SeqCst)
-    }
-
     fn last_path(&self) -> String {
         self.last_path.lock().unwrap().clone()
     }
 
     fn last_body(&self) -> String {
         self.last_body.lock().unwrap().clone()
-    }
-
-    fn last_header(&self, name: &str) -> Option<String> {
-        self.last_headers
-            .lock()
-            .unwrap()
-            .iter()
-            .find(|(k, _)| k.eq_ignore_ascii_case(name))
-            .map(|(_, v)| v.clone())
     }
 }
 
@@ -648,7 +621,7 @@ async fn v2_refund_notify_ecb_decrypt_java_golden() {
         let cipher = Aes256::new_from_slice(key_md5.as_bytes()).expect("AES密钥");
         let mut plain = golden_plaintext.as_bytes().to_vec();
         let pad_len = 16 - (plain.len() % 16);
-        plain.extend(std::iter::repeat(pad_len as u8).take(pad_len));
+        plain.extend(std::iter::repeat_n(pad_len as u8, pad_len));
         let mut out = Vec::new();
         for chunk in plain.chunks_exact(16) {
             let mut block = Block::<Aes256>::try_from(chunk).expect("块");
@@ -719,7 +692,6 @@ async fn v3_create_order_jsapi_authorization_and_pay_info() {
     request.amount = Some(OrderV3Amount {
         total: Some(1),
         currency: Some("CNY".to_string()),
-        ..Default::default()
     });
     request.payer = Some(OrderV3Payer {
         openid: Some("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o".to_string()),
@@ -1168,7 +1140,7 @@ async fn v3_combine_transactions_native() {
 /// v3 退款查询（按 out_refund_no，服务商 sub_mchid query 分支）。
 #[tokio::test]
 async fn v3_refund_query_and_partner_query() {
-    let server = MockServer::start(|path, _| {
+    let server = MockServer::start(|_path, _| {
         signed_json_response(
             r#"{"refund_id":"50000000382019052709732678859","out_refund_no":"1217752501201407033233368018","out_trade_no":"1217752501201407033233368018","status":"SUCCESS","amount":{"total":888,"refund":888,"payer_total":888,"payer_refund":888}}"#,
         )

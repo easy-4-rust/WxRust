@@ -10,8 +10,8 @@ use crate::bean::kefu::WxMpKefuMessage;
 use crate::bean::kefu::request::WxMpKfAccountRequest;
 use crate::bean::kefu::request::WxMpKfSessionRequest;
 use crate::bean::kefu::result::{
-    WxMpKfInfo, WxMpKfList, WxMpKfMsgList, WxMpKfOnlineList, WxMpKfSessionGetResult,
-    WxMpKfSessionList, WxMpKfSessionWaitCaseList,
+    WxMpKfList, WxMpKfMsgList, WxMpKfOnlineList, WxMpKfSessionGetResult, WxMpKfSessionList,
+    WxMpKfSessionWaitCaseList,
 };
 
 /// 客服服务。

@@ -3,11 +3,11 @@
 //! 镜像 Java WxChannelBasicServiceImplTest / WxChannelOrderServiceImplTest /
 //! WxChannelProductServiceImplTest / WxChannelAfterSaleServiceImplTest
 
-use wx_rust_channel::bean::order::*;
 use wx_rust_channel::bean::address::*;
 use wx_rust_channel::bean::after::*;
-use wx_rust_channel::bean::product::*;
 use wx_rust_channel::bean::base::*;
+use wx_rust_channel::bean::order::*;
+use wx_rust_channel::bean::product::*;
 
 // ═══ Order ═══
 

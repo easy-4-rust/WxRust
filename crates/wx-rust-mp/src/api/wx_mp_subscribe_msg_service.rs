@@ -7,7 +7,6 @@ use async_trait::async_trait;
 use wx_rust_common::error::WxErrorException;
 
 use crate::bean::subscribe::WxMpSubscribeMessage;
-use crate::enums::wx_mp_api_url::subscribe_msg;
 use wx_rust_common::bean::subscribemsg::{
     CategoryData, PubTemplateKeyword, PubTemplateTitleListResult, TemplateInfo,
 };

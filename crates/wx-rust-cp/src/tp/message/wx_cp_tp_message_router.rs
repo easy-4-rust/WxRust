@@ -11,7 +11,7 @@
 //!    `WxCpTpMessageRouterRule#next()`（`TpRuleBuilder::next`）；
 //! 3. 规则的结束必须用 `end()` 或 `next()`，否则不会生效；
 //! 4. 异步规则提交到 `tokio::task::spawn` 执行（对应 Java 线程池，
-//!   默认 100 线程），并追加等待任务统一收尾。
+//!    默认 100 线程），并追加等待任务统一收尾。
 //!
 //! 路由入口：`route(wxCpMessage)` / `route_with_context` /
 //! `route_with_suite_id`（对应 Java `route(suiteId, WxCpTpXmlMessage, Map)`

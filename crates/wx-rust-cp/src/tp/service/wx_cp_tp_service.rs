@@ -690,6 +690,8 @@ pub trait WxCpTpService: Send + Sync {
     // ---- 消息加解密（对应 Java fromEncryptedXml/getVerifyDecrypt） ----
 
     /// 解密服务商推送的加密消息（对应 Java `fromEncryptedXml`）。
+    // Java 原方法即实例方法，命名保真优先于 Rust 命名约定
+    #[allow(clippy::wrong_self_convention)]
     fn from_encrypted_xml(
         &self,
         encrypted_xml: &str,

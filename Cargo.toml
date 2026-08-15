@@ -47,4 +47,12 @@ futures-util = "0.3.32"
 unsafe_code = "forbid"
 
 [workspace.lints.clippy]
-all = "warn"
+# 组设低优先级，具体 lint（allow）才能覆盖组（warn）
+all = { level = "warn", priority = -1 }
+# WxJava 方法签名保真迁移：企业微信/支付 API 存在 8~10 参数的原始签名
+too_many_arguments = "allow"
+# 以下为 Java 1:1 迁移的结构性惯用法，非手写风格问题：
+# - bean/card/card.rs 等模块名镜像 Java 包结构（module inception）
+module_inception = "allow"
+# - 生成代码的请求构造惯用法：let mut req = T::default(); req.field = ...
+field_reassign_with_default = "allow"

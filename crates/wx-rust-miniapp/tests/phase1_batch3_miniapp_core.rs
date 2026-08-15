@@ -2,9 +2,9 @@
 //!
 //! 镜像 Java WxMaServiceImplTest / WxMaCryptUtilsTest / WxMaUserServiceImplTest
 
-use wx_rust_miniapp::bean::*;
 use wx_rust_miniapp::bean::analysis::*;
 use wx_rust_miniapp::bean::scheme::*;
+use wx_rust_miniapp::bean::*;
 
 // ═══ WxMaJscode2SessionResult ═══
 
@@ -22,7 +22,7 @@ fn test_jscode2session_serde() {
 fn test_user_info_serde() {
     let json = r#"{"openId":"ox123","nickName":"test","gender":"1","city":"深圳","province":"广东","country":"中国","avatarUrl":"http://img.example.com","unionId":"union1"}"#;
     let info: WxMaUserInfo = serde_json::from_str(json).unwrap();
-    
+
     assert_eq!(info.nick_name, "test");
     // Note: WxMaUserInfo does not have open_id field
 }

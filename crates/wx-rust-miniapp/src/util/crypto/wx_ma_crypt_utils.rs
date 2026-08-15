@@ -248,7 +248,7 @@ fn key_expansion(key: &[u8]) -> Result<Vec<u8>, String> {
             for b in temp.iter_mut() {
                 *b = SBOX[*b as usize];
             }
-            temp[0] ^= RCON[(i / nk - 1) as usize];
+            temp[0] ^= RCON[i / nk - 1];
         } else if nk > 6 && i % nk == 4 {
             // 仅 AES-256：每 8 个字中的第 4 个做 SubWord
             for b in temp.iter_mut() {
@@ -439,7 +439,7 @@ fn aes_cbc_encrypt(key: &[u8], iv: &[u8], data: &[u8]) -> Result<Vec<u8>, String
 fn pkcs7_pad(data: &[u8]) -> Vec<u8> {
     let pad = 16 - (data.len() % 16);
     let mut out = data.to_vec();
-    out.extend(std::iter::repeat(pad as u8).take(pad));
+    out.extend(std::iter::repeat_n(pad as u8, pad));
     out
 }
 
@@ -464,7 +464,7 @@ const BASE64_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 
 /// Base64 编码（带 padding）。
 fn base64_encode(data: &[u8]) -> String {
-    let mut out = String::with_capacity((data.len() + 2) / 3 * 4);
+    let mut out = String::with_capacity(data.len().div_ceil(3) * 4);
     for chunk in data.chunks(3) {
         let b = [
             chunk[0],

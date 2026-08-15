@@ -63,7 +63,7 @@ impl WxCpCorpGroupService for WxCpCorpGroupServiceImpl {
         obj.insert(
             "agentid".to_string(),
             agent_id
-                .map(|v| serde_json::Value::from(v))
+                .map(serde_json::Value::from)
                 .unwrap_or(serde_json::Value::Null),
         );
         obj.insert(
@@ -75,13 +75,13 @@ impl WxCpCorpGroupService for WxCpCorpGroupServiceImpl {
         obj.insert(
             "business_type".to_string(),
             business_type
-                .map(|v| serde_json::Value::from(v))
+                .map(serde_json::Value::from)
                 .unwrap_or(serde_json::Value::Null),
         );
         obj.insert(
             "limit".to_string(),
             limit
-                .map(|v| serde_json::Value::from(v))
+                .map(serde_json::Value::from)
                 .unwrap_or(serde_json::Value::Null),
         );
         obj.insert(

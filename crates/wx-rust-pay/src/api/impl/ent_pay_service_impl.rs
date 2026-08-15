@@ -48,7 +48,7 @@ impl EntPayService for EntPayServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             EntPayResult::from_xml,
         )
@@ -81,7 +81,7 @@ impl EntPayService for EntPayServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             EntPayQueryResult::from_xml,
         )
@@ -102,7 +102,7 @@ impl EntPayService for EntPayServiceImpl {
         let result = impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             GetPublicKeyResult::from_xml,
         )?;
@@ -152,7 +152,7 @@ impl EntPayService for EntPayServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             EntPayBankResult::from_xml,
         )
@@ -182,7 +182,7 @@ impl EntPayService for EntPayServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             EntPayBankQueryResult::from_xml,
         )
@@ -243,7 +243,7 @@ impl EntPayService for EntPayServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             EntPayRedpackResult::from_xml,
         )
@@ -267,7 +267,7 @@ impl EntPayService for EntPayServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             EntPayRedpackQueryResult::from_xml,
         )
@@ -332,7 +332,7 @@ impl EntPayService for EntPayServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             EntPayResult::from_xml,
         )

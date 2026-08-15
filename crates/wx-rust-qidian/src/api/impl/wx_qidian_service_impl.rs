@@ -2,11 +2,12 @@
 //!
 //! 对应 Java `me.chanjar.weixin.qidian.api.impl.WxQidianServiceImpl`（继承
 //! `WxQidianServiceHttpComponentsImpl` → `BaseWxQidianServiceImpl`）：
-//! 组合门面 trait 的默认实现 + 多企点配置管理（对应 Java `configStorageMap`
-//! + `WxQidianConfigStorageHolder`）。子服务以 `Weak<dyn WxQidianService>`
-//! 注入（对应 Java `new WxQidianDialServiceImpl(this)` 的循环引用，Rust
-//! 用弱引用打破）。重试参数（对应 Java `retrySleepMillis`/`maxRetryTimes`
-//! 字段）以 `Mutex` 承载内部可变性。
+//! 组合门面 trait 的默认实现 + 多企点配置管理（对应 Java
+//! `configStorageMap` 与 `WxQidianConfigStorageHolder`）。子服务以
+//! `Weak<dyn WxQidianService>` 注入（对应 Java
+//! `new WxQidianDialServiceImpl(this)` 的循环引用，Rust 用弱引用打破）。
+//! 重试参数（对应 Java `retrySleepMillis`/`maxRetryTimes` 字段）以
+//! `Mutex` 承载内部可变性。
 
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, OnceLock};

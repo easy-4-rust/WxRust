@@ -11,9 +11,7 @@ use crate::bean::card::{
     WxMpCardLandingPageCreateRequest, WxMpCardLandingPageCreateResult, WxMpCardQrcodeCreateResult,
     WxMpCardResult,
 };
-use crate::enums::wx_mp_api_url::card as card_url;
 use wx_rust_common::bean::WxCardApiSignature;
-use wx_rust_common::util::crypto::{Sha1, WxCryptUtil};
 
 /// 公众号CardService。
 #[async_trait]

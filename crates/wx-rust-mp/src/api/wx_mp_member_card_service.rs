@@ -13,7 +13,6 @@ use crate::bean::card::membercard::{
     WxMpMemberCardCreateMessage, WxMpMemberCardUpdateMessage, WxMpMemberCardUpdateResult,
     WxMpMemberCardUserInfoResult,
 };
-use crate::enums::wx_mp_api_url::member_card;
 
 /// 公众号MemberCardService。
 #[async_trait]

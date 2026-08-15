@@ -12,7 +12,7 @@ use serde::{Deserializer, Serializer};
 ///
 /// 整数串 → 整数（`"5"` → `5`）；小数串 → 浮点（`"121.281379"` → `121.281379`）；
 /// 无法解析为数字时回退为字符串原样输出。
-pub fn ser_decimal<S>(value: &String, serializer: S) -> Result<S::Ok, S::Error>
+pub fn ser_decimal<S>(value: &str, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {

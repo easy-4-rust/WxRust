@@ -58,6 +58,7 @@ impl WxLeadComponentServiceImpl {
     /// `convertLeadInfoResponse`）：
     /// - `user_data` 为数组，每项是 JSON 字符串 → 解析为对象；
     /// - 对象内 `leads_data` 为 JSON 字符串 → 解析为数组；
+    ///
     /// 还原后整体反序列化为 [`LeadInfoResponse`]。
     fn convert_lead_info_response(res_json: &str) -> Result<LeadInfoResponse, WxErrorException> {
         let mut root: serde_json::Value =

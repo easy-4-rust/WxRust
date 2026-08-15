@@ -11,7 +11,6 @@ use crate::bean::material::{
     WxMpMaterialNews, WxMpMaterialNewsBatchGetResult, WxMpMaterialUploadResult,
     WxMpMaterialVideoInfoResult,
 };
-use crate::enums::wx_mp_api_url::material as material_url;
 use wx_rust_common::bean::result::WxMediaUploadResult;
 
 /// 公众号MaterialService。

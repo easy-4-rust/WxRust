@@ -603,7 +603,8 @@ async fn auto_update_full_flow_with_mock_server() {
     );
 
     // 请求头断言：GET /v3/certificates + Accept + Wechatpay-Serial（严格模式）
-    let requests = captured.lock().expect("captured 锁");
+    // 快照后立即释放锁，避免 MutexGuard 跨 await
+    let requests = captured.lock().expect("captured 锁").clone();
     assert_eq!(requests.len(), 1);
     assert_eq!(requests[0].method, "GET");
     assert_eq!(requests[0].path, CERT_DOWNLOAD_PATH);
@@ -618,7 +619,6 @@ async fn auto_update_full_flow_with_mock_server() {
             .unwrap_or_default()
             .starts_with(&format!("{AUTHORIZATION_SCHEMA} "))
     );
-    drop(requests);
 
     // 更新后的证书可对平台签名验签（对应 Java 下载后 verifier 生效）
     let message = "1700000000\nr0uYIzEaIUX9\n{\"id\":\"EV-2\"}\n";

@@ -244,10 +244,7 @@ impl WxCpTpDefaultConfig {
 
     /// 按授权企业取缓存单元（不存在时创建，返回 Arc 克隆以脱离锁守卫
     /// 生命周期），对应 Java 的 Map.get/put 组合语义。
-    fn cell<'a>(
-        map: &'a Mutex<HashMap<String, Arc<TokenCell>>>,
-        auth_corp_id: &str,
-    ) -> Arc<TokenCell> {
+    fn cell(map: &Mutex<HashMap<String, Arc<TokenCell>>>, auth_corp_id: &str) -> Arc<TokenCell> {
         // 先取后插（不存在则创建空单元）
         map.lock()
             .unwrap()
@@ -361,7 +358,7 @@ impl WxCpTpConfigStorage for WxCpTpDefaultConfig {
             .unwrap_or(-now());
         WxAccessToken {
             access_token: cell.get().unwrap_or_default(),
-            expires_in: ((remain + 200) as i64 / 1) as i32,
+            expires_in: (remain + 200) as i32,
         }
     }
 

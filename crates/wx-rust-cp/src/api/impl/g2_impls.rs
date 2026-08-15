@@ -45,14 +45,12 @@ pub use wx_cp_oa_service_impl::WxCpOaServiceImpl;
 // ---------------------------------------------------------------------------
 
 /// 共享测试支持（MockServer + 服务构建，供各 impl 内嵌测试模块复用）。
+/// 镜像 Java `ApiTestModule` + `TestConfigStorage` 的职责：Guice 注入
+/// 配置 → Rust 直接构造服务与 MockServer（模式照抄 qidian/miniapp
+/// tests/ 目录）。
 #[cfg(test)]
+#[allow(dead_code)]
 pub mod test_support {
-    //! 镜像 Java `ApiTestModule` + `TestConfigStorage` 的职责：Guice 注入
-    //! 配置 → Rust 直接构造服务与 MockServer（模式照抄 qidian/miniapp
-    //! tests/ 目录）。
-
-    #![allow(dead_code)]
-
     use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
     use std::sync::{Arc, Mutex, Weak};
 

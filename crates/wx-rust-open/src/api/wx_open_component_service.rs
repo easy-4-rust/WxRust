@@ -425,7 +425,6 @@ pub trait WxOpenComponentService: Send + Sync {
             .and_then(|c| c.component_app_id())
             .unwrap_or_default();
         let encoded_redirect = utf8_percent_encode(redirect_uri, NON_ALPHANUMERIC).to_string();
-        let state = if state.is_empty() { state } else { state };
         format!(
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid={}&redirect_uri={}&response_type=code&scope={}&state={}&component_appid={}#wechat_redirect",
             app_id,

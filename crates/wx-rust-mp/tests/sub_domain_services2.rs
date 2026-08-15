@@ -6,7 +6,7 @@
 //! 经 MockServer 验证；线格式对齐 Java @SerializedName 与 Gson adapter。
 
 use std::sync::Arc;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::Ordering;
 
 use wx_rust_mp::api::WxMpService;
 use wx_rust_mp::config::WxMpConfigStorage;
@@ -15,7 +15,6 @@ use wx_rust_mp::config::r#impl::WxMpDefaultConfig;
 /// 极简 mock HTTP 服务器（记录最近请求体）。
 struct MockServer {
     addr: std::net::SocketAddr,
-    requests: Arc<AtomicUsize>,
     last_body: Arc<std::sync::Mutex<String>>,
     stop: Arc<std::sync::atomic::AtomicBool>,
 }
@@ -29,12 +28,10 @@ impl MockServer {
             .await
             .expect("绑定端口");
         let addr = listener.local_addr().expect("获取地址");
-        let requests = Arc::new(AtomicUsize::new(0));
         let last_body = Arc::new(std::sync::Mutex::new(String::new()));
         let stop = Arc::new(std::sync::atomic::AtomicBool::new(false));
         let handler = Arc::new(handler);
 
-        let requests_clone = requests.clone();
         let last_body_clone = last_body.clone();
         let stop_clone = stop.clone();
         tokio::spawn(async move {
@@ -45,7 +42,6 @@ impl MockServer {
                 let Ok((mut socket, _)) = listener.accept().await else {
                     continue;
                 };
-                requests_clone.fetch_add(1, Ordering::SeqCst);
                 let handler = handler.clone();
                 let last_body_clone = last_body_clone.clone();
                 tokio::spawn(async move {
@@ -74,7 +70,6 @@ impl MockServer {
 
         Self {
             addr,
-            requests,
             last_body,
             stop,
         }
@@ -239,7 +234,7 @@ async fn card_create_and_query() {
         .query_card_code("CARD_1", "CODE_1", true)
         .await
         .expect("查询卡券成功");
-    assert_eq!(result.can_consume, true);
+    assert!(result.can_consume);
 
     let code = card_service
         .decrypt_card_code("ENCRYPT")
@@ -281,7 +276,7 @@ async fn member_card_create_and_activate() {
         wx_rust_mp::api::r#impl::WxMpServiceImpl::new_arc(config_with_host(&server.url("")));
     let member_service = service.member_card_service().expect("会员卡服务存在");
 
-    let mut message = wx_rust_mp::bean::card::membercard::WxMpMemberCardCreateMessage::default();
+    let message = wx_rust_mp::bean::card::membercard::WxMpMemberCardCreateMessage::default();
     let card_id = member_service
         .create_member_card(&message)
         .await

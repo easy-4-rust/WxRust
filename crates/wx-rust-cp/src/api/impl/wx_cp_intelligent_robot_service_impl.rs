@@ -201,8 +201,6 @@ mod tests {
                 json(r#"{"errcode":0,"errmsg":"ok","robot_id":"ROBOT_1"}"#)
             } else if path.contains("/cgi-bin/intelligent_robot/get") {
                 json(r#"{"errcode":0,"errmsg":"ok","robot_id":"ROBOT_1","name":"客服机器人"}"#)
-            } else if path.contains("/cgi-bin/intelligent_robot/reset_session") {
-                json(r#"{"errcode":0,"errmsg":"ok"}"#)
             } else {
                 json(r#"{"errcode":0,"errmsg":"ok"}"#)
             }

@@ -6,7 +6,6 @@ use async_trait::async_trait;
 
 use wx_rust_common::error::WxErrorException;
 
-use crate::enums::wx_mp_api_url::img_proc;
 use wx_rust_common::bean::imgproc::{
     WxImgProcAiCropResult, WxImgProcQrCodeResult, WxImgProcSuperResolutionResult,
 };

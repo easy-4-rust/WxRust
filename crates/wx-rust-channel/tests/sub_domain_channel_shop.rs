@@ -377,9 +377,9 @@ async fn order_get_and_list() {
 #[tokio::test]
 async fn order_price_delivery_and_delivery_company() {
     let server = MockServer::start(|path| {
-        if path.contains("/channels/ec/order/price/update") {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
-        } else if path.contains("/channels/ec/order/delivery/send") {
+        if path.contains("/channels/ec/order/price/update")
+            || path.contains("/channels/ec/order/delivery/send")
+        {
             r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
         } else if path.contains("/channels/ec/order/deliverycompany/get") {
             r#"{"errcode":0,"errmsg":"ok","delivery_company_list":[{"delivery_id":"d1","delivery_name":"顺丰"}]}"#.to_string()
@@ -449,9 +449,9 @@ async fn after_sale_list_accept_reject_and_reason() {
             r#"{"errcode":0,"errmsg":"ok","after_sale_order_id_list":["as1"],"next_key":""}"#.to_string()
         } else if path.contains("/channels/ec/aftersale/getaftersaleorder") {
             r#"{"errcode":0,"errmsg":"ok","after_sale_order":{"after_sale_order_id":"as1","status":"1"}}"#.to_string()
-        } else if path.contains("/channels/ec/aftersale/acceptapply") {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
-        } else if path.contains("/channels/ec/aftersale/rejectapply") {
+        } else if path.contains("/channels/ec/aftersale/acceptapply")
+            || path.contains("/channels/ec/aftersale/rejectapply")
+        {
             r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
         } else if path.contains("/channels/ec/aftersale/reason/get") {
             r#"{"errcode":0,"errmsg":"ok","reason_list":[{"reason_type":1,"reason_text":"质量问题"}]}"#.to_string()
@@ -518,18 +518,7 @@ async fn after_sale_list_accept_reject_and_reason() {
 
 #[tokio::test]
 async fn after_sale_evidence_exchange_and_merchant_update() {
-    let server = MockServer::start(|path| {
-        if path.contains("/channels/ec/aftersale/upload_certificates") {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
-        } else if path.contains("/channels/ec/aftersale/acceptexchangereship") {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
-        } else if path.contains("/channels/ec/aftersale/merchantupdateaftersale") {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
-        } else {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
-        }
-    })
-    .await;
+    let server = MockServer::start(|_path| r#"{"errcode":0,"errmsg":"ok"}"#.to_string()).await;
     let service = new_service(config_with_host(&server.url("")));
     let after_sale_service = WxChannelAfterSaleServiceImpl::new(weak_service(&service));
 
@@ -659,8 +648,6 @@ async fn brand_apply_flow() {
             r#"{"errcode":0,"errmsg":"ok","brands":[{"brand_id":"b1","ch_name":"测试品牌"}],"next_key":""}"#.to_string()
         } else if path.contains("/shop/ec/brand/add") {
             r#"{"errcode":0,"errmsg":"ok","audit_id":"audit1"}"#.to_string()
-        } else if path.contains("/shop/ec/brand/audit/cancel") {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
         } else {
             r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
         }
@@ -899,8 +886,6 @@ async fn address_crud() {
         } else if path.contains("/channels/ec/merchant/address/get") {
             r#"{"errcode":0,"errmsg":"ok","address_detail":{"address_id":"addr1","name":"张三"}}"#
                 .to_string()
-        } else if path.contains("/channels/ec/merchant/address/delete") {
-            r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
         } else {
             r#"{"errcode":0,"errmsg":"ok"}"#.to_string()
         }

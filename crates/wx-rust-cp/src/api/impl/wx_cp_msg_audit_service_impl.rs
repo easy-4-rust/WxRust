@@ -426,7 +426,7 @@ mod tests {
     async fn test_msg_audit_decrypt_roundtrip() {
         use base64::Engine as _;
         use rand_core::RngCore;
-        use rsa::pkcs1::{EncodeRsaPrivateKey, EncodeRsaPublicKey, LineEnding};
+        use rsa::pkcs1::{EncodeRsaPrivateKey, LineEnding};
         use rsa::{Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
 
         // 生成 RSA-2048 密钥对（对应企业自行保存的会话存档私钥）
@@ -497,7 +497,7 @@ mod tests {
         assert_eq!(model.msg_id, "msg_audit_1");
 
         // 未配置私钥 → 报错（对应 Java「请配置会话存档私钥【msgAuditPriKey】」）
-        let mut config2 = WxCpDefaultConfig::new("corpid", "secret");
+        let config2 = WxCpDefaultConfig::new("corpid", "secret");
         let service2 = crate::api::r#impl::WxCpServiceImpl::new_arc(std::sync::Arc::new(config2));
         let svc_impl2 = WxCpMsgAuditServiceImpl::new(weak_service(&service2));
         assert!(

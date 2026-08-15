@@ -125,7 +125,7 @@ impl WxCpExternalContactServiceImpl {
         obj.insert(
             key.to_string(),
             value
-                .map(|v| serde_json::Value::from(v))
+                .map(serde_json::Value::from)
                 .unwrap_or(serde_json::Value::Null),
         );
     }
@@ -139,7 +139,7 @@ impl WxCpExternalContactServiceImpl {
         obj.insert(
             key.to_string(),
             value
-                .map(|v| serde_json::Value::from(v))
+                .map(serde_json::Value::from)
                 .unwrap_or(serde_json::Value::Null),
         );
     }
@@ -2005,14 +2005,8 @@ mod tests {
     /// userid/external_userid/remark。
     #[tokio::test]
     async fn test_update_remark() {
-        let server = MockServer::start(dispatch(|path| {
-            if path.contains("/cgi-bin/externalcontact/remark") {
-                json(r#"{"errcode":0,"errmsg":"ok"}"#)
-            } else {
-                json(r#"{"errcode":0,"errmsg":"ok"}"#)
-            }
-        }))
-        .await;
+        let server =
+            MockServer::start(dispatch(|_path| json(r#"{"errcode":0,"errmsg":"ok"}"#))).await;
         let service = service_with_host(&server.url(""));
         let svc_impl = WxCpExternalContactServiceImpl::new(weak_service(&service));
 

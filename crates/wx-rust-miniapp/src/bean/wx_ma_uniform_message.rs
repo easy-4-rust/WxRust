@@ -6,6 +6,7 @@
 //!   （appid/template_id/url/miniprogram/data）；
 //! - 否则输出 `{"touser": ..., "weapp_template_msg": {...}}`
 //!   （template_id/page/form_id/data/emphasis_keyword）。
+//!
 //! serde 派生仅为平铺字段的解析便利；对外序列化以 `to_json`（adapter 线格式）为准。
 
 use serde::{Deserialize, Serialize};

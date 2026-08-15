@@ -36,16 +36,13 @@ impl DeliveryType {
 
     /// 按 key 查找（对应 Java `getDeliveryType(Integer)`；找不到返回 `None`）。
     pub fn get_delivery_type(key: i32) -> Option<Self> {
-        for v in [
+        [
             DeliveryType::SelfDelivery,
             DeliveryType::OnlineDelivery,
             DeliveryType::VirtualDelivery,
             DeliveryType::OnlineDeliveryScatter,
-        ] {
-            if v.key() == key {
-                return Some(v);
-            }
-        }
-        None
+        ]
+        .into_iter()
+        .find(|&v| v.key() == key)
     }
 }

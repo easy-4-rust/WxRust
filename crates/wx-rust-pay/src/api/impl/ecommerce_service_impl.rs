@@ -483,7 +483,7 @@ impl EcommerceService for EcommerceServiceImpl {
         let parsed = crate::util::wx_pay_notify_utils::parse_notify_v3_result(
             notify_data,
             Some(header),
-            &api_v3_key,
+            api_v3_key,
             move |_serial, message, signature| {
                 crate::util::crypto::wx_pay_v3_crypto_utils::verify_sha256_rsa(
                     &public_key,
@@ -509,7 +509,7 @@ impl EcommerceService for EcommerceServiceImpl {
         let parsed = crate::util::wx_pay_notify_utils::parse_notify_v3_result(
             notify_data,
             Some(header),
-            &api_v3_key,
+            api_v3_key,
             move |_serial, message, signature| {
                 crate::util::crypto::wx_pay_v3_crypto_utils::verify_sha256_rsa(
                     &public_key,

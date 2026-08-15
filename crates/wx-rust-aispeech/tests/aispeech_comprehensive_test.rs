@@ -5,8 +5,8 @@ use std::sync::Arc;
 use wx_rust_aispeech::api::WxAispeechService;
 use wx_rust_aispeech::bean::dialog::*;
 use wx_rust_aispeech::bean::knowledge::*;
-use wx_rust_aispeech::config::r#impl::WxAispeechDefaultConfig;
 use wx_rust_aispeech::config::WxAispeechConfigStorage;
+use wx_rust_aispeech::config::r#impl::WxAispeechDefaultConfig;
 
 // ═══════════════════════════════════════════════════════════════
 // SOURCE_PARITY：配置测试
@@ -16,22 +16,28 @@ use wx_rust_aispeech::config::WxAispeechConfigStorage;
 fn test_default_config_builder_and_getters() {
     let mut cfg = WxAispeechDefaultConfig::new();
     cfg.set_appid("wx-appid-123")
-       .set_token("verify-token")
-       .set_aes_key("base64-aes-key")
-       .set_secret_key("hmac-secret")
-       .set_dialog_api_base_url("https://custom-dialog.example.com")
-       .set_knowledge_api_base_url("https://custom-knowledge.example.com")
-       .set_http_proxy_host("proxy.example.com")
-       .set_http_proxy_port(8080)
-       .set_http_proxy_username("user")
-       .set_http_proxy_password("pass");
+        .set_token("verify-token")
+        .set_aes_key("base64-aes-key")
+        .set_secret_key("hmac-secret")
+        .set_dialog_api_base_url("https://custom-dialog.example.com")
+        .set_knowledge_api_base_url("https://custom-knowledge.example.com")
+        .set_http_proxy_host("proxy.example.com")
+        .set_http_proxy_port(8080)
+        .set_http_proxy_username("user")
+        .set_http_proxy_password("pass");
 
     assert_eq!(cfg.appid(), Some("wx-appid-123"));
     assert_eq!(cfg.token(), Some("verify-token"));
     assert_eq!(cfg.aes_key(), Some("base64-aes-key"));
     assert_eq!(cfg.secret_key(), Some("hmac-secret"));
-    assert_eq!(cfg.dialog_api_base_url(), "https://custom-dialog.example.com");
-    assert_eq!(cfg.knowledge_api_base_url(), "https://custom-knowledge.example.com");
+    assert_eq!(
+        cfg.dialog_api_base_url(),
+        "https://custom-dialog.example.com"
+    );
+    assert_eq!(
+        cfg.knowledge_api_base_url(),
+        "https://custom-knowledge.example.com"
+    );
     assert_eq!(cfg.http_proxy_host(), Some("proxy.example.com"));
     assert_eq!(cfg.http_proxy_port(), 8080);
     assert_eq!(cfg.http_proxy_username(), Some("user"));
@@ -49,7 +55,10 @@ fn test_default_config_initial_values() {
     assert_eq!(cfg.http_proxy_host(), None);
     assert_eq!(cfg.http_proxy_port(), 0);
     assert_eq!(cfg.dialog_api_base_url(), "https://openaiapi.weixin.qq.com");
-    assert_eq!(cfg.knowledge_api_base_url(), "https://weknora.weixin.qq.com");
+    assert_eq!(
+        cfg.knowledge_api_base_url(),
+        "https://weknora.weixin.qq.com"
+    );
 }
 
 #[test]
@@ -90,7 +99,8 @@ fn test_config_behind_arc_dyn() {
 #[test]
 fn test_aispeech_api_response_from_json_success() {
     let json = r#"{"code":0,"msg":"ok","request_id":"req-001","data":{"answer":"hi"}}"#;
-    let resp: AispeechApiResponse<serde_json::Value> = AispeechApiResponse::from_json(json).unwrap();
+    let resp: AispeechApiResponse<serde_json::Value> =
+        AispeechApiResponse::from_json(json).unwrap();
     assert_eq!(resp.code, Some(0));
     assert_eq!(resp.msg, Some("ok".to_string()));
     assert_eq!(resp.request_id, Some("req-001".to_string()));
@@ -100,14 +110,16 @@ fn test_aispeech_api_response_from_json_success() {
 #[test]
 fn test_aispeech_api_response_error_code() {
     let json = r#"{"code":40001,"msg":"invalid token","request_id":"req-002"}"#;
-    let resp: AispeechApiResponse<serde_json::Value> = AispeechApiResponse::from_json(json).unwrap();
+    let resp: AispeechApiResponse<serde_json::Value> =
+        AispeechApiResponse::from_json(json).unwrap();
     assert_eq!(resp.code, Some(40001));
     assert!(resp.data.is_none());
 }
 
 #[test]
 fn test_aispeech_api_response_invalid_json() {
-    let result: Result<AispeechApiResponse<serde_json::Value>, _> = AispeechApiResponse::from_json("not-json");
+    let result: Result<AispeechApiResponse<serde_json::Value>, _> =
+        AispeechApiResponse::from_json("not-json");
     assert!(result.is_err());
 }
 
@@ -145,7 +157,10 @@ fn test_async_task_result_with_skills() {
     let skills = task.success_skill_info_list.unwrap();
     assert_eq!(skills.len(), 1);
     assert_eq!(skills[0].name, Some("skill1".to_string()));
-    assert_eq!(skills[0].intents.as_ref().unwrap()[0].name, Some("intent1".to_string()));
+    assert_eq!(
+        skills[0].intents.as_ref().unwrap()[0].name,
+        Some("intent1".to_string())
+    );
 }
 
 #[test]
@@ -159,10 +174,14 @@ fn test_bot_intent_serde() {
 
 #[test]
 fn test_dialog_query_request_serde() {
-    let json = r#"{"query":"你好","env":"online","first_priority_skills":["s1"],"user_name":"testuser"}"#;
+    let json =
+        r#"{"query":"你好","env":"online","first_priority_skills":["s1"],"user_name":"testuser"}"#;
     let req: DialogQueryRequest = serde_json::from_str(json).unwrap();
     assert_eq!(req.query, Some("你好".to_string()));
-    assert_eq!(req.first_priority_skills.as_ref().unwrap(), &vec!["s1".to_string()]);
+    assert_eq!(
+        req.first_priority_skills.as_ref().unwrap(),
+        &vec!["s1".to_string()]
+    );
     let serialized = serde_json::to_string(&req).unwrap();
     assert!(serialized.contains("first_priority_skills"));
     assert!(serialized.contains("user_name"));
@@ -174,7 +193,10 @@ fn test_dialog_result_serde() {
     let result: DialogResult = serde_json::from_str(json).unwrap();
     assert_eq!(result.answer, Some("你好".to_string()));
     assert_eq!(result.options.as_ref().unwrap()[0].confidence, Some(0.95));
-    assert_eq!(result.slots.as_ref().unwrap()[0].name, Some("order_id".to_string()));
+    assert_eq!(
+        result.slots.as_ref().unwrap()[0].name,
+        Some("order_id".to_string())
+    );
 }
 
 #[test]
@@ -185,7 +207,10 @@ fn test_dialog_result_raw_answer_skip_serializing() {
         ..Default::default()
     };
     let serialized = serde_json::to_string(&result).unwrap();
-    assert!(serialized.contains("raw_answer"), "raw_answer with Some value should be serialized");;
+    assert!(
+        serialized.contains("raw_answer"),
+        "raw_answer with Some value should be serialized"
+    );
 }
 
 #[test]
@@ -338,5 +363,8 @@ fn test_dialog_result_raw_answer_none_skipped() {
         ..Default::default()
     };
     let serialized = serde_json::to_string(&result).unwrap();
-    assert!(!serialized.contains("raw_answer"), "raw_answer=None should be skipped");
+    assert!(
+        !serialized.contains("raw_answer"),
+        "raw_answer=None should be skipped"
+    );
 }

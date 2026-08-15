@@ -11,7 +11,9 @@ pub struct WxCpTpConvertTmpExternalUserIdResult {
     pub errcode: i64,
     #[serde(rename = "errmsg", default)]
     pub errmsg: String,
-    #[serde(rename = "invalid_tmp_external_userid_list", default)]
+    // 上游 WxJava 此字段误标 `@SerializedName("invalid_tmp_external_userid_list")`
+    // （与下一字段重复）；微信接口线格式中该列表位于 `results` 键下，按实际线格式修正。
+    #[serde(default)]
     pub results: Vec<Results>,
     #[serde(rename = "invalid_tmp_external_userid_list", default)]
     pub invalid_tmp_external_user_id_list: Vec<String>,

@@ -4,7 +4,6 @@
 
 #[allow(unused_imports)]
 use super::*;
-use crate::bean::kefu::*;
 
 #[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct WxMpKfSessionGetResult {

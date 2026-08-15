@@ -262,7 +262,7 @@ impl WxEntrustPapService for WxEntrustPapServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayEntrustResult::from_xml,
         )
@@ -283,7 +283,7 @@ impl WxEntrustPapService for WxEntrustPapServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxWithholdResult::from_xml,
         )
@@ -304,7 +304,7 @@ impl WxEntrustPapService for WxEntrustPapServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayCommonResult::from_xml,
         )
@@ -343,7 +343,7 @@ impl WxEntrustPapService for WxEntrustPapServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxSignQueryResult::from_xml,
         )
@@ -364,7 +364,7 @@ impl WxEntrustPapService for WxEntrustPapServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxTerminationContractResult::from_xml,
         )
@@ -385,7 +385,7 @@ impl WxEntrustPapService for WxEntrustPapServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxWithholdOrderQueryResult::from_xml,
         )

@@ -1,10 +1,10 @@
 //! Phase 1 Batch 1.4: wx-rust-pay 核心测试
 
-use wx_rust_pay::bean::order::*;
-use wx_rust_pay::bean::notify::*;
-use wx_rust_pay::bean::WxPayApiData;
-use wx_rust_pay::util::sign_utils::SignUtils;
 use std::collections::HashMap;
+use wx_rust_pay::bean::WxPayApiData;
+use wx_rust_pay::bean::notify::*;
+use wx_rust_pay::bean::order::*;
+use wx_rust_pay::util::sign_utils::SignUtils;
 
 // ═══ Order Results ═══
 
@@ -12,7 +12,10 @@ use std::collections::HashMap;
 fn test_native_order_result_serde() {
     let json = r#"{"codeUrl":"weixin://wxpay/bizpayurl?pr=xxx"}"#;
     let result: WxPayNativeOrderResult = serde_json::from_str(json).unwrap();
-    assert_eq!(result.code_url, Some("weixin://wxpay/bizpayurl?pr=xxx".to_string()));
+    assert_eq!(
+        result.code_url,
+        Some("weixin://wxpay/bizpayurl?pr=xxx".to_string())
+    );
 }
 
 #[test]
@@ -45,7 +48,10 @@ fn test_refund_notify_v3_result_serde() {
     let json = r#"{"rawData":{"id":"ev-001"},"result":{"mchid":"mch123","out_trade_no":"ORDER-001","out_refund_no":"REFUND-001"}}"#;
     let result: WxPayRefundNotifyV3Result = serde_json::from_str(json).unwrap();
     assert!(result.result.is_some());
-    assert_eq!(result.result.unwrap().out_trade_no, Some("ORDER-001".to_string()));
+    assert_eq!(
+        result.result.unwrap().out_trade_no,
+        Some("ORDER-001".to_string())
+    );
 }
 
 #[test]
@@ -112,7 +118,10 @@ fn test_api_data_serde() {
         Some("<xml>SUCCESS</xml>".to_string()),
         None,
     );
-    assert_eq!(data.url, Some("https://api.mch.weixin.qq.com/pay/unifiedorder".to_string()));
+    assert_eq!(
+        data.url,
+        Some("https://api.mch.weixin.qq.com/pay/unifiedorder".to_string())
+    );
 }
 
 // ═══ VALUE_ADD ═══

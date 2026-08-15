@@ -9,9 +9,7 @@ use wx_rust_common::error::WxErrorException;
 
 use crate::api::{WxMpGuideMaterialService, WxMpService};
 use crate::bean::guide::{
-    WxMpAddGuideBuyerInfo, WxMpGuideBuyerInfoList, WxMpGuideBuyerResp, WxMpGuideCardMaterialInfo,
-    WxMpGuideImgMaterialInfoList, WxMpGuideMassed, WxMpGuideMassedInfo, WxMpGuideMaterialInfo,
-    WxMpGuideTagInfo, WxMpGuideWordMaterialInfoList,
+    WxMpGuideCardMaterialInfo, WxMpGuideImgMaterialInfoList, WxMpGuideWordMaterialInfoList,
 };
 use crate::enums::wx_mp_api_url::guide;
 

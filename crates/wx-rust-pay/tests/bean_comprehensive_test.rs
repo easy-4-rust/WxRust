@@ -1,8 +1,8 @@
 //! wx-rust-pay Bean 综合测试（SOURCE_PARITY + VALUE_ADD）。
 
-use wx_rust_pay::bean::order::*;
-use wx_rust_pay::bean::notify::*;
 use wx_rust_pay::bean::WxPayApiData;
+use wx_rust_pay::bean::notify::*;
+use wx_rust_pay::bean::order::*;
 
 // ═══ Order Results ═══
 
@@ -10,7 +10,10 @@ use wx_rust_pay::bean::WxPayApiData;
 fn test_native_order_result_serde() {
     let json = r#"{"codeUrl":"weixin://wxpay/bizpayurl?pr=xxx"}"#;
     let result: WxPayNativeOrderResult = serde_json::from_str(json).unwrap();
-    assert_eq!(result.code_url, Some("weixin://wxpay/bizpayurl?pr=xxx".to_string()));
+    assert_eq!(
+        result.code_url,
+        Some("weixin://wxpay/bizpayurl?pr=xxx".to_string())
+    );
 }
 
 #[test]
@@ -53,7 +56,9 @@ fn test_app_order_result_serde() {
 #[test]
 fn test_mweb_order_result_from_xml() {
     let result = WxPayMwebOrderResult {
-        mweb_url: Some("https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=wx2024".to_string()),
+        mweb_url: Some(
+            "https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=wx2024".to_string(),
+        ),
     };
     let xml = result.to_xml().unwrap();
     let deserialized = WxPayMwebOrderResult::from_xml(&xml).unwrap();
@@ -127,7 +132,10 @@ fn test_wx_pay_api_data_serde() {
         Some("<xml>SUCCESS</xml>".to_string()),
         None,
     );
-    assert_eq!(data.url, Some("https://api.mch.weixin.qq.com/pay/unifiedorder".to_string()));
+    assert_eq!(
+        data.url,
+        Some("https://api.mch.weixin.qq.com/pay/unifiedorder".to_string())
+    );
     assert_eq!(data.request_data, Some("<xml>...</xml>".to_string()));
     assert_eq!(data.error_msg, None);
 }

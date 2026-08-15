@@ -607,7 +607,7 @@ async fn jsapi_create_jsapi_signature_golden() {
     assert!((now - sig.timestamp).abs() <= 10, "时间戳应为当前秒");
 
     // 黄金向量重算（与 impl 同一算法：排序后 join("&") 再 SHA1 小写）
-    let mut parts = vec![
+    let mut parts = [
         format!("jsapi_ticket={}", "TICKET_SIG"),
         format!("noncestr={}", sig.nonce_str),
         format!("timestamp={}", sig.timestamp),
@@ -707,12 +707,8 @@ async fn scheme_generate_and_missing_openlink_error() {
 
     // 响应缺 openlink：Java `getAsString` 返回 null，Rust 抛
     // `openlink 字段缺失`
-    let server2 = MockServer::start(dispatch(|path| {
-        if path.contains("/wxa/generatescheme") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        } else {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        }
+    let server2 = MockServer::start(dispatch(|_path| {
+        json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
     }))
     .await;
     let service2 = WxMaServiceImpl::new_arc(config_with_host(&server2.url("")));
@@ -786,14 +782,8 @@ async fn link_generate_url_link_and_short_link() {
 async fn link_missing_url_link_field_raises() {
     // 镜像 Java `WxMaLinkServiceImpl.generateUrlLink`：响应缺 `url_link`
     // 抛 `无url_link`（Java `new WxErrorException("无url_link")`）。
-    let server = MockServer::start(dispatch(|path| {
-        if path.contains("/wxa/generate_urllink") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        } else if path.contains("/wxa/genwxashortlink") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        } else {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        }
+    let server = MockServer::start(dispatch(|_path| {
+        json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
     }))
     .await;
     let service = WxMaServiceImpl::new_arc(config_with_host(&server.url("")));
@@ -895,12 +885,8 @@ async fn plugin_apply_and_get_list() {
 #[tokio::test]
 async fn plugin_unbind_and_update() {
     // 镜像 Java `testUnbindPlugin` + `testUpdatePlugin`。
-    let server = MockServer::start(dispatch(|path| {
-        if path.contains("/wxa/plugin") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        } else {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        }
+    let server = MockServer::start(dispatch(|_path| {
+        json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
     }))
     .await;
     let service = WxMaServiceImpl::new_arc(config_with_host(&server.url("")));
@@ -970,8 +956,6 @@ async fn open_api_clear_quota_and_get_api_quota() {
             json_body(
                 r#"{"errcode":0,"errmsg":"ok","quota":{"daily_limit":10000,"used":10,"remain":9990},"rateLimit":{"call_count":0,"refresh_second":0},"componentRateLimit":{"call_count":0,"refresh_second":0}}"#,
             )
-        } else if path.contains("/cgi-bin/clear_quota") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
         } else {
             json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
         }
@@ -1007,10 +991,6 @@ async fn open_api_rid_info_and_clear_quota_by_app_secret() {
             json_body(
                 r#"{"errcode":0,"errmsg":"ok","request":{"invoke_time":1700000000,"cost_in_ms":10,"request_url":"https://api.weixin.qq.com/cgi-bin/openapi/quota/get","request_body":"","response_body":"","client_ip":"1.2.3.4"}}"#,
             )
-        } else if path.contains("/cgi-bin/clear_quota/v2") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        } else if path.contains("/cgi-bin/clear_quota") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
         } else {
             json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
         }
@@ -1054,12 +1034,8 @@ async fn internet_get_user_encrypt_key_signature_and_query() {
     // POST /wxa/business/getuserencryptkey，请求体为空串。
     let openid = "ogu-84hVFTbTt-myGisQESoDJ6BM";
     let session_key = "9ny8n3t0KULoi0deF7T9pw==";
-    let server = MockServer::start(dispatch(|path| {
-        if path.contains("/wxa/business/getuserencryptkey") {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        } else {
-            json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
-        }
+    let server = MockServer::start(dispatch(|_path| {
+        json_body(r#"{"errcode":0,"errmsg":"ok"}"#)
     }))
     .await;
     let service = WxMaServiceImpl::new_arc(config_with_host(&server.url("")));

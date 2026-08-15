@@ -3,9 +3,9 @@
 //! 镜像 Java WxMaAnalysisServiceImplTest / WxMaSchemeServiceImplTest /
 //! WxMaSecurityServiceImplTest / WxMaSettingServiceImplTest
 
-use wx_rust_miniapp::bean::*;
 use wx_rust_miniapp::bean::analysis::*;
 use wx_rust_miniapp::bean::scheme::*;
+use wx_rust_miniapp::bean::*;
 
 // ═══ Analysis Beans ═══
 
@@ -21,7 +21,8 @@ fn test_visit_trend_serde() {
 
 #[test]
 fn test_retain_info_from_json() {
-    let json = r#"{"ref_date":"2024-01-01","visit_uv_new":{"0":100,"1":80},"visit_uv":{"0":500,"1":400}}"#;
+    let json =
+        r#"{"ref_date":"2024-01-01","visit_uv_new":{"0":100,"1":80},"visit_uv":{"0":500,"1":400}}"#;
     let info = WxMaRetainInfo::from_json(json).unwrap();
     assert_eq!(info.ref_date, "2024-01-01");
     assert!(info.visit_uv_new.contains_key(&0));
@@ -160,7 +161,7 @@ fn test_code_line_color_serde() {
 fn test_plugin_list_result_serde() {
     let json = r#"{"plugin_list":[{"appId":"plugin-app-001","status":"1","nickName":"Plugin1","headImgUrl":"http://img.example.com"}]}"#;
     let result: WxMaPluginListResult = serde_json::from_str(json).unwrap();
-    
+
     assert_eq!(result.plugin_list.len(), 1);
 }
 

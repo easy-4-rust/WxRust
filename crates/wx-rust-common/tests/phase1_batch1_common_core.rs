@@ -65,7 +65,7 @@ fn test_xml_2_map_nested() {
     let xml = "<xml><result><code>0</code></result><msg>ok</msg></xml>";
     let map = XmlUtils::xml_2_map(xml).unwrap();
     assert_eq!(map.get("msg").unwrap(), "ok");
-    assert!(map.get("code").is_none());
+    assert!(!map.contains_key("code"));
 }
 
 #[test]
@@ -123,7 +123,6 @@ fn test_handle_data_with_secret_multiple() {
     let result = DataUtils::handle_data_with_secret(data);
     assert!(result.contains("&secret=******&"));
     assert!(!result.contains("abc"));
-    
 }
 
 // ═══ WxMenu ═══
@@ -187,7 +186,12 @@ fn test_upload_param_with_form_fields() {
     let param = CommonUploadParam::with_form_fields("media", data, fields);
     assert!(param.form_fields.is_some());
     assert_eq!(
-        param.form_fields.as_ref().unwrap().get("description").unwrap(),
+        param
+            .form_fields
+            .as_ref()
+            .unwrap()
+            .get("description")
+            .unwrap(),
         r#"{"title":"test"}"#
     );
 }

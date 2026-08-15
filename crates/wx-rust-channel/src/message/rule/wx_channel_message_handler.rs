@@ -38,22 +38,25 @@ pub trait WxChannelMessageHandler<T>: Send + Sync {
     ) -> Result<Option<String>, WxErrorException>;
 }
 
+/// 消息处理闭包签名（`WxChannelMessageHandlerFn` 持有）。
+type HandlerFn<T> = Arc<
+    dyn Fn(
+            &T,
+            &str,
+            &str,
+            &mut RouteContext,
+            &dyn WxSessionManager,
+        ) -> Result<Option<String>, WxErrorException>
+        + Send
+        + Sync,
+>;
+
 /// 闭包处理器适配器（Rust 适配，无对应 Java 类）。
 ///
 /// 对应 Java 中 `(message, content, appId, context, sessionManager) -> {...}`
 /// 的 lambda 处理器。
 pub struct WxChannelMessageHandlerFn<T> {
-    f: Arc<
-        dyn Fn(
-                &T,
-                &str,
-                &str,
-                &mut RouteContext,
-                &dyn WxSessionManager,
-            ) -> Result<Option<String>, WxErrorException>
-            + Send
-            + Sync,
-    >,
+    f: HandlerFn<T>,
 }
 
 impl<T> WxChannelMessageHandlerFn<T> {

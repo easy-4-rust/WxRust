@@ -272,8 +272,6 @@ async fn test_update_manual_move_and_tag_apis() {
             r#"{"task_id":"task-2"}"#.to_string()
         } else if path.contains("/api/v1/knowledge/tags") {
             r#"{"success":true}"#.to_string()
-        } else if path.contains("/api/v1/knowledge-bases/kb1/tags/t1") {
-            r#"{"id":"t1"}"#.to_string()
         } else if path.contains("/api/v1/knowledge-bases/kb1/tags") {
             r#"{"id":"t1"}"#.to_string()
         } else {

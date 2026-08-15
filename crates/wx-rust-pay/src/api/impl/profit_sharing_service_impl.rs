@@ -153,7 +153,7 @@ impl ProfitSharingService for ProfitSharingServiceImpl {
         let mut result: ProfitSharingQueryResult = impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             ProfitSharingQueryResult::from_xml,
         )?;
@@ -356,7 +356,7 @@ impl ProfitSharingService for ProfitSharingServiceImpl {
         let parsed = crate::util::wx_pay_notify_utils::parse_notify_v3_result(
             notify_data,
             Some(header),
-            &api_v3_key,
+            api_v3_key,
             move |_serial, message, signature| {
                 crate::util::crypto::wx_pay_v3_crypto_utils::verify_sha256_rsa(
                     &public_key,
@@ -418,7 +418,7 @@ impl ProfitSharingServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             R::from_xml,
         )

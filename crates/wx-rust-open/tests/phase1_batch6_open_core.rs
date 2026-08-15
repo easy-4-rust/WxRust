@@ -29,7 +29,8 @@ fn test_open_ma_domain_result_serde() {
 
 #[test]
 fn test_open_ma_tester_list_result_serde() {
-    let json = r#"{"errcode":"0","errmsg":"ok","members":[{"userstr":"user1"},{"userstr":"user2"}]}"#;
+    let json =
+        r#"{"errcode":"0","errmsg":"ok","members":[{"userstr":"user1"},{"userstr":"user2"}]}"#;
     let result: WxOpenMaTesterListResult = serde_json::from_str(json).unwrap();
     assert_eq!(result.errcode, "0");
     assert_eq!(result.members_list.len(), 2);

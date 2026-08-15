@@ -511,7 +511,7 @@ impl WxPayAutoUpdateCertificatesVerifier {
             cert_serial_no,
             &private_key,
             "GET",
-            &canonical_url,
+            canonical_url,
             timestamp,
             &nonce,
             "",

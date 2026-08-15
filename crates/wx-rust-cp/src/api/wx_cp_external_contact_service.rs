@@ -135,6 +135,8 @@ pub trait WxCpExternalContactService: Send + Sync {
 
     /// 将服务商 external_userid 转换成自建应用的 external_userid（对应 Java
     /// `WxCpExternalContactService.fromServiceExternalUserid(String, String)`）。
+    // Java 原方法即实例方法，命名保真优先于 Rust 命名约定
+    #[allow(clippy::wrong_self_convention)]
     async fn from_service_external_userid(
         &self,
         external_userid: &str,

@@ -3,15 +3,16 @@
 //! 镜像 Java WxCpUserServiceImplTest / WxCpDepartmentServiceImplTest /
 //! WxCpTagServiceImplTest / WxCpMessageServiceImplTest
 
-use wx_rust_cp::bean::*;
-use wx_rust_cp::bean::external::*;
 use wx_rust_cp::bean::external::contact::*;
+use wx_rust_cp::bean::external::*;
+use wx_rust_cp::bean::*;
 
 // ═══ Tag Result ═══
 
 #[test]
 fn test_tp_tag_result_serde() {
-    let json = r#"{"errcode":0,"errmsg":"ok","invalidlist":"user1,user2","invalidparty":["dept1"]}"#;
+    let json =
+        r#"{"errcode":0,"errmsg":"ok","invalidlist":"user1,user2","invalidparty":["dept1"]}"#;
     let result: WxCpTpTagAddOrRemoveUsersResult = serde_json::from_str(json).unwrap();
     assert_eq!(result.err_code, 0);
     assert_eq!(result.invalid_users, "user1,user2");

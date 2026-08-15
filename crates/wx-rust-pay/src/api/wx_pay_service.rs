@@ -818,7 +818,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayOrderQueryResult::from_xml,
         )
@@ -996,7 +996,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayOrderCloseResult::from_xml,
         )
@@ -1331,7 +1331,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayUnifiedOrderResult::from_xml,
         )
@@ -1856,7 +1856,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayRefundResult::from_xml,
         )
@@ -1880,7 +1880,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayRefundResult::from_xml,
         )
@@ -2018,7 +2018,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayRefundQueryResult::from_xml,
         )
@@ -2044,7 +2044,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayRefundQueryResult::from_xml,
         )
@@ -2417,8 +2417,7 @@ pub trait WxPayService: Send + Sync {
             Some(sign_type_const::MD5),
             config.mch_key().unwrap_or_default(),
             &[],
-        )
-        .map_err(WxErrorException::from)?;
+        )?;
         params.insert("sign".to_string(), sign);
         // Java 以 HashMap 迭代序拼 URL（无固定顺序），Rust 按字典序拼接
         let mut keys: Vec<&String> = params.keys().collect();
@@ -2462,7 +2461,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayCommonResult::from_xml,
         )?;
@@ -2673,7 +2672,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayMicropayResult::from_xml,
         )
@@ -2811,7 +2810,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayOrderReverseResult::from_xml,
         )
@@ -2906,7 +2905,7 @@ pub trait WxPayService: Send + Sync {
         let result: WxPayShorturlResult = impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayShorturlResult::from_xml,
         )?;
@@ -2942,7 +2941,7 @@ pub trait WxPayService: Send + Sync {
         let result: WxPayAuthcode2OpenidResult = impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayAuthcode2OpenidResult::from_xml,
         )?;
@@ -2976,7 +2975,7 @@ pub trait WxPayService: Send + Sync {
         let result: WxPaySandboxSignKeyResult = impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPaySandboxSignKeyResult::from_xml,
         )?;
@@ -3000,7 +2999,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayCouponSendResult::from_xml,
         )
@@ -3028,7 +3027,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayCouponStockQueryResult::from_xml,
         )
@@ -3056,7 +3055,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayCouponInfoQueryResult::from_xml,
         )
@@ -3137,7 +3136,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayFaceAuthInfoResult::from_xml,
         )
@@ -3160,7 +3159,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayFacepayResult::from_xml,
         )
@@ -3190,7 +3189,7 @@ pub trait WxPayService: Send + Sync {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxPayQueryExchangeRateResult::from_xml,
         )
@@ -3340,5 +3339,4 @@ fn sign_utils_create(
         config.mch_key().unwrap_or_default(),
         &[],
     )
-    .map_err(WxErrorException::from)
 }

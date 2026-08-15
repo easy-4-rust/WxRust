@@ -220,7 +220,7 @@ impl WxCpTpXmlMessage {
             })
             .unwrap_or_default();
         let approval_info = node_field(&root, "ApprovalInfo")
-            .map(|m| WxCpXmlApprovalInfo::from_tree(m))
+            .map(WxCpXmlApprovalInfo::from_tree)
             .unwrap_or_default();
 
         Ok(Self {

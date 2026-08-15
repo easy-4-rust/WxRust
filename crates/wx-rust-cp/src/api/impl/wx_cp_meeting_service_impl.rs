@@ -160,8 +160,6 @@ mod tests {
                 json(r#"{"errcode":0,"errmsg":"ok","meetingid":"MEETING_123"}"#)
             } else if path.contains("/cgi-bin/meeting/get_info") {
                 json(r#"{"errcode":0,"errmsg":"ok","meetingid":"MEETING_123","title":"周会","meeting_start":1600000000,"meeting_duration":3600}"#)
-            } else if path.contains("/cgi-bin/meeting/cancel") {
-                json(r#"{"errcode":0,"errmsg":"ok"}"#)
             } else {
                 json(r#"{"errcode":0,"errmsg":"ok"}"#)
             }

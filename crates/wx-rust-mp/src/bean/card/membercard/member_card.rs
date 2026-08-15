@@ -4,7 +4,6 @@
 
 #[allow(unused_imports)]
 use super::*;
-use crate::bean::card::enums::*;
 use crate::bean::card::*;
 
 #[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]

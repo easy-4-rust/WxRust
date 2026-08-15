@@ -56,7 +56,6 @@ impl MockRoute {
 /// 已收到的请求记录。
 #[derive(Debug, Clone)]
 struct RecordedRequest {
-    method: String,
     path: String,
     body: String,
 }
@@ -145,7 +144,6 @@ impl MockServer {
         let response = {
             let mut st = state.lock().unwrap();
             st.requests.push(RecordedRequest {
-                method: method.clone(),
                 path: path.clone(),
                 body: body_str,
             });

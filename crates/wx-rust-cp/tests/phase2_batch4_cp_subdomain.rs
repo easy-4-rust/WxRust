@@ -3,9 +3,9 @@
 //! 镜像 Java WxCpChatServiceImplTest / WxCpMenuServiceImplTest /
 //! WxCpTaskCardServiceImplTest / WxCpOaServiceImplTest
 
-use wx_rust_cp::bean::*;
-use wx_rust_cp::bean::external::*;
 use wx_rust_cp::bean::external::contact::*;
+use wx_rust_cp::bean::external::*;
+use wx_rust_cp::bean::*;
 
 // ═══ External Contact ═══
 

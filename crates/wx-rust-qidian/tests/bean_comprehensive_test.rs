@@ -1,9 +1,9 @@
 //! wx-rust-qidian Bean 综合测试（SOURCE_PARITY + VALUE_ADD）。
 
-use wx_rust_qidian::bean::*;
-use wx_rust_qidian::bean::dial::*;
 use wx_rust_qidian::bean::call::*;
 use wx_rust_qidian::bean::common::*;
+use wx_rust_qidian::bean::dial::*;
+use wx_rust_qidian::bean::*;
 
 // ═══ Host Config ═══
 

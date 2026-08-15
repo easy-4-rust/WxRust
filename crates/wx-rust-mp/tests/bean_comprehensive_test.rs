@@ -1,14 +1,14 @@
 //! wx-rust-mp Bean 综合测试（SOURCE_PARITY + VALUE_ADD）。
 
-use wx_rust_mp::bean::result::*;
-use wx_rust_mp::bean::tag::*;
-use wx_rust_mp::bean::material::*;
-use wx_rust_mp::bean::template::*;
-use wx_rust_mp::bean::menu::*;
 use wx_rust_mp::bean::draft::*;
 use wx_rust_mp::bean::freepublish::*;
 use wx_rust_mp::bean::kefu::result::*;
+use wx_rust_mp::bean::material::*;
+use wx_rust_mp::bean::menu::*;
+use wx_rust_mp::bean::result::*;
 use wx_rust_mp::bean::subscribe::WxMpSubscribeMessage;
+use wx_rust_mp::bean::tag::*;
+use wx_rust_mp::bean::template::*;
 
 // ═══ Result Beans ═══
 
@@ -30,7 +30,8 @@ fn test_wx_mp_user_from_json() {
 
 #[test]
 fn test_wx_mp_qr_code_ticket_serde() {
-    let json = r#"{"ticket":"TICKET-001","expire_seconds":600,"url":"https://weixin.qq.com/q/abc"}"#;
+    let json =
+        r#"{"ticket":"TICKET-001","expire_seconds":600,"url":"https://weixin.qq.com/q/abc"}"#;
     let ticket: WxMpQrCodeTicket = serde_json::from_str(json).unwrap();
     assert_eq!(ticket.ticket, "TICKET-001");
     assert_eq!(ticket.expire_seconds, 600);

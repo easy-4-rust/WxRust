@@ -326,7 +326,7 @@ impl MarketingFavorService for MarketingFavorServiceImpl {
             .as_ref()
             .ok_or_else(|| impl_utils::runtime("解析报文异常！缺少 resource"))?;
         let decrypted = crate::util::crypto::wx_pay_v3_crypto_utils::aes_gcm_decrypt(
-            &api_v3_key,
+            api_v3_key,
             resource.associated_data.as_deref().unwrap_or_default(),
             resource.nonce.as_deref().unwrap_or_default(),
             resource.cipher_text.as_deref().unwrap_or_default(),

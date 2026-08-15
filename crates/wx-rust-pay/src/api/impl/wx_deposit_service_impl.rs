@@ -48,7 +48,7 @@ impl WxDepositService for WxDepositServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxDepositUnifiedOrderResult::from_xml,
         )
@@ -69,7 +69,7 @@ impl WxDepositService for WxDepositServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxDepositOrderQueryResult::from_xml,
         )
@@ -90,7 +90,7 @@ impl WxDepositService for WxDepositServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxDepositConsumeResult::from_xml,
         )
@@ -111,7 +111,7 @@ impl WxDepositService for WxDepositServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxDepositUnfreezeResult::from_xml,
         )
@@ -132,7 +132,7 @@ impl WxDepositService for WxDepositServiceImpl {
         impl_utils::parse_v2_result(
             config.as_ref(),
             &response_content,
-            request.sign_type().as_deref(),
+            request.sign_type(),
             true,
             WxDepositRefundResult::from_xml,
         )

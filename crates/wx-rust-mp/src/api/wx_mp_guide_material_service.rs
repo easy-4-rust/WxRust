@@ -7,11 +7,8 @@ use async_trait::async_trait;
 use wx_rust_common::error::WxErrorException;
 
 use crate::bean::guide::{
-    WxMpAddGuideBuyerInfo, WxMpGuideBuyerInfoList, WxMpGuideBuyerResp, WxMpGuideCardMaterialInfo,
-    WxMpGuideImgMaterialInfoList, WxMpGuideMassed, WxMpGuideMassedInfo, WxMpGuideMaterialInfo,
-    WxMpGuideTagInfo, WxMpGuideWordMaterialInfoList,
+    WxMpGuideCardMaterialInfo, WxMpGuideImgMaterialInfoList, WxMpGuideWordMaterialInfoList,
 };
-use crate::enums::wx_mp_api_url::guide;
 
 /// 公众号GuideMaterialService。
 #[async_trait]

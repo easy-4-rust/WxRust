@@ -8,11 +8,11 @@ use wx_rust_common::bean::wx_access_token::WxAccessToken;
 use wx_rust_common::bean::wx_access_token_entity::WxAccessTokenEntity;
 use wx_rust_common::bean::wx_card_api_signature::WxCardApiSignature;
 use wx_rust_common::bean::wx_jsapi_signature::WxJsapiSignature;
-use wx_rust_common::error::wx_mp_error_msg_enum;
-use wx_rust_common::error::wx_ma_error_msg_enum;
-use wx_rust_common::error::wx_cp_error_msg_enum;
-use wx_rust_common::error::wx_open_error_msg_enum;
 use wx_rust_common::error::wx_channel_error_msg_enum;
+use wx_rust_common::error::wx_cp_error_msg_enum;
+use wx_rust_common::error::wx_ma_error_msg_enum;
+use wx_rust_common::error::wx_mp_error_msg_enum;
+use wx_rust_common::error::wx_open_error_msg_enum;
 use wx_rust_common::session::WxSessionManager;
 
 // ═══ ToJson trait ═══
@@ -20,8 +20,14 @@ use wx_rust_common::session::WxSessionManager;
 #[test]
 fn test_to_json_for_struct() {
     #[derive(serde::Serialize)]
-    struct Example { name: String, value: i32 }
-    let ex = Example { name: "test".to_string(), value: 42 };
+    struct Example {
+        name: String,
+        value: i32,
+    }
+    let ex = Example {
+        name: "test".to_string(),
+        value: 42,
+    };
     let json = ex.to_json();
     assert!(json.contains("test"));
     assert!(json.contains("42"));
@@ -60,7 +66,9 @@ fn test_access_token_entity_serde() {
 #[test]
 fn test_card_api_signature_new() {
     let sig = WxCardApiSignature::new(
-        "wx-app", "card-001", "GROUPON",
+        "wx-app",
+        "card-001",
+        "GROUPON",
         Some("loc-1".to_string()),
         Some("code-1".to_string()),
         Some("ox123".to_string()),
@@ -77,7 +85,8 @@ fn test_card_api_signature_new() {
 
 #[test]
 fn test_card_api_signature_serde() {
-    let json = r#"{"app_id":"wx1","card_id":"c1","card_type":"CASH","nonce_str":"n1","signature":"s1"}"#;
+    let json =
+        r#"{"app_id":"wx1","card_id":"c1","card_type":"CASH","nonce_str":"n1","signature":"s1"}"#;
     let sig: WxCardApiSignature = serde_json::from_str(json).unwrap();
     assert_eq!(sig.app_id, "wx1");
     assert_eq!(sig.card_id, "c1");
@@ -108,7 +117,10 @@ fn test_jsapi_signature_serde() {
 #[test]
 fn test_mp_error_msg_find() {
     assert_eq!(wx_mp_error_msg_enum::find_msg_by_code(0), Some("请求成功"));
-    assert_eq!(wx_mp_error_msg_enum::find_msg_by_code(-1), Some("系统繁忙，此时请开发者稍候再试"));
+    assert_eq!(
+        wx_mp_error_msg_enum::find_msg_by_code(-1),
+        Some("系统繁忙，此时请开发者稍候再试")
+    );
     assert!(wx_mp_error_msg_enum::find_msg_by_code(40001).is_some());
     assert_eq!(wx_mp_error_msg_enum::find_msg_by_code(999999), None);
 }

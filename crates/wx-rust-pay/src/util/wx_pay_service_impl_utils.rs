@@ -413,8 +413,7 @@ pub fn check_and_sign<T: V2Request>(
         sign_type.as_deref(),
         config.mch_key().unwrap_or_default(),
         &[],
-    )
-    .map_err(WxErrorException::from)?;
+    )?;
     request.set_sign(Some(sign));
     Ok(())
 }
@@ -436,8 +435,7 @@ pub fn check_result(
     // 对应 Java：getSign() != null 时才验签
     if let Some(sign) = map.get("sign").filter(|s| !s.is_empty()) {
         let expected =
-            SignUtils::create_sign(&map, sign_type, config.mch_key().unwrap_or_default(), &[])
-                .map_err(WxErrorException::from)?;
+            SignUtils::create_sign(&map, sign_type, config.mch_key().unwrap_or_default(), &[])?;
         if expected != *sign {
             return Err(runtime("参数格式校验错误！"));
         }

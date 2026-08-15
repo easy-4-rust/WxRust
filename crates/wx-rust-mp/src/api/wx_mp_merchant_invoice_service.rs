@@ -11,7 +11,6 @@ use crate::bean::invoice::merchant::{
     InvoiceAuthPageResult, InvoiceAuthPageSetting, InvoiceRejectRequest, InvoiceResult,
     MakeOutInvoiceRequest, MerchantContactInfo, MerchantInvoicePlatformInfo,
 };
-use crate::enums::wx_mp_api_url::merchant_invoice;
 
 /// 公众号MerchantInvoiceService。
 #[async_trait]

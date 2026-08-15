@@ -6,8 +6,6 @@ use async_trait::async_trait;
 
 use wx_rust_common::error::WxErrorException;
 
-use crate::enums::wx_mp_api_url::ai_open;
-
 /// 公众号AiOpenService。
 #[async_trait]
 pub trait WxMpAiOpenService: Send + Sync {

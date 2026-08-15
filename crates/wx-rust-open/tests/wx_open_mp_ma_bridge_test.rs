@@ -24,8 +24,6 @@ use std::sync::{Arc, Mutex};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream};
 
-use wx_rust_miniapp::api::WxMaService;
-use wx_rust_mp::api::WxMpService;
 use wx_rust_open::api::r#impl::{WxOpenServiceImpl, downcast_ma_service, downcast_mp_service};
 use wx_rust_open::api::{WxOpenComponentService, WxOpenService};
 use wx_rust_open::config::WxOpenConfigStorage;

@@ -8,7 +8,7 @@
 //! 设备、群发消息 10 个子服务的请求路径 / payload / 响应解析。
 
 use std::sync::Arc;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::Ordering;
 
 use wx_rust_mp::api::WxMpService;
 use wx_rust_mp::bean::material::WxMpNewsArticle;
@@ -21,7 +21,6 @@ use wx_rust_mp::config::r#impl::WxMpDefaultConfig;
 /// 极简 mock HTTP 服务器：按请求路径返回固定响应，记录最近一次请求体。
 struct MockServer {
     addr: std::net::SocketAddr,
-    requests: Arc<AtomicUsize>,
     last_body: Arc<std::sync::Mutex<String>>,
     stop: Arc<std::sync::atomic::AtomicBool>,
 }
@@ -36,12 +35,10 @@ impl MockServer {
             .await
             .expect("绑定端口");
         let addr = listener.local_addr().expect("获取地址");
-        let requests = Arc::new(AtomicUsize::new(0));
         let last_body = Arc::new(std::sync::Mutex::new(String::new()));
         let stop = Arc::new(std::sync::atomic::AtomicBool::new(false));
         let handler = Arc::new(handler);
 
-        let requests_clone = requests.clone();
         let last_body_clone = last_body.clone();
         let stop_clone = stop.clone();
         tokio::spawn(async move {
@@ -52,7 +49,6 @@ impl MockServer {
                 let Ok((mut socket, _)) = listener.accept().await else {
                     continue;
                 };
-                requests_clone.fetch_add(1, Ordering::SeqCst);
                 let handler = handler.clone();
                 let last_body_clone = last_body_clone.clone();
                 tokio::spawn(async move {
@@ -83,7 +79,6 @@ impl MockServer {
 
         Self {
             addr,
-            requests,
             last_body,
             stop,
         }
@@ -91,10 +86,6 @@ impl MockServer {
 
     fn url(&self, path: &str) -> String {
         format!("http://{}{}", self.addr, path)
-    }
-
-    fn request_count(&self) -> usize {
-        self.requests.load(Ordering::SeqCst)
     }
 
     fn last_body(&self) -> String {
@@ -528,9 +519,9 @@ async fn device_qr_code_and_bind() {
 #[tokio::test]
 async fn mass_open_ids_and_tag_send() {
     let server = MockServer::start(dispatch(|path| {
-        if path.contains("/cgi-bin/message/mass/sendall") {
-            r#"{"errcode":0,"errmsg":"ok","msg_id":34182,"msg_data_id":206227730}"#.to_string()
-        } else if path.contains("/cgi-bin/message/mass/send") {
+        if path.contains("/cgi-bin/message/mass/sendall")
+            || path.contains("/cgi-bin/message/mass/send")
+        {
             r#"{"errcode":0,"errmsg":"ok","msg_id":34182,"msg_data_id":206227730}"#.to_string()
         } else {
             "{}".to_string()

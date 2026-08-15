@@ -10,7 +10,6 @@ use crate::bean::guide::{
     WxMpAddGuideAutoReply, WxMpGuideAcctConfig, WxMpGuideConfig, WxMpGuideGroupInfoList,
     WxMpGuideInfo, WxMpGuideList, WxMpGuideMsgList,
 };
-use crate::enums::wx_mp_api_url::guide;
 
 /// 公众号GuideService。
 #[async_trait]

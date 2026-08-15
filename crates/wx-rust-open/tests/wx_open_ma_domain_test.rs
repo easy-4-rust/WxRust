@@ -335,7 +335,6 @@ async fn ma_auth_submit_posts_wxaauth_and_parses() {
             qualification: "qual".to_string(),
             ..Default::default()
         },
-        ..Default::default()
     };
     let result = auth.submit(&param).await.expect("submit 应成功");
     assert_eq!(result.task_id, "task_1");

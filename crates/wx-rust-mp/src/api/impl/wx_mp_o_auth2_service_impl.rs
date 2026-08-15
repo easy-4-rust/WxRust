@@ -44,7 +44,7 @@ impl WxOAuth2Service for WxMpOAuth2ServiceImpl {
         let config = svc.wx_mp_config_storage();
         let app_id = config.app_id();
         let secret = config.secret();
-        let url = oauth2_url::sns_oauth2_access_token(config.as_ref(), &app_id, &secret, code);
+        let url = oauth2_url::sns_oauth2_access_token(config.as_ref(), app_id, secret, code);
         let response = svc.get(&url, "").await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
@@ -75,7 +75,7 @@ impl WxOAuth2Service for WxMpOAuth2ServiceImpl {
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
         let config = svc.wx_mp_config_storage();
         let app_id = config.app_id();
-        let url = oauth2_url::sns_oauth2_refresh_token(config.as_ref(), &app_id, refresh_token);
+        let url = oauth2_url::sns_oauth2_refresh_token(config.as_ref(), app_id, refresh_token);
         let response = svc.get(&url, "").await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }

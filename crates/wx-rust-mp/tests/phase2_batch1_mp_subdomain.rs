@@ -6,9 +6,9 @@
 
 use wx_rust_mp::bean::draft::*;
 use wx_rust_mp::bean::freepublish::*;
+use wx_rust_mp::bean::result::*;
 use wx_rust_mp::bean::subscribe::*;
 use wx_rust_mp::bean::tag::*;
-use wx_rust_mp::bean::result::*;
 
 // ═══ Draft Beans ═══
 
@@ -97,7 +97,8 @@ fn test_subscribe_message_serde() {
 
 #[test]
 fn test_user_tag_list_from_json() {
-    let json = r#"{"tags":[{"id":1,"name":"VIP","count":50},{"id":2,"name":"Normal","count":200}]}"#;
+    let json =
+        r#"{"tags":[{"id":1,"name":"VIP","count":50},{"id":2,"name":"Normal","count":200}]}"#;
     let tags = WxUserTag::list_from_json(json).unwrap();
     assert_eq!(tags.len(), 2);
     assert_eq!(tags[0].name, "VIP");
@@ -131,15 +132,8 @@ fn test_mass_upload_result_serde() {
 }
 
 // ═══ Template Industry ═══
-
-#[test]
-
 // ═══ Get Self Menu Info Result ═══
-
-#[test]
-
 // ═══ VALUE_ADD ═══
-
 #[test]
 fn test_draft_list_empty() {
     let json = r#"{"total_count":0,"item_count":0}"#;

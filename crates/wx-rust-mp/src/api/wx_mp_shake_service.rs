@@ -11,7 +11,6 @@ use crate::bean::shake::{
     WxMpShakeAroundRelationSearchQuery, WxMpShakeAroundRelationSearchResult,
 };
 use crate::bean::{WxMpShakeInfoResult, WxMpShakeQuery};
-use crate::enums::wx_mp_api_url::shake;
 
 /// 公众号ShakeService。
 #[async_trait]

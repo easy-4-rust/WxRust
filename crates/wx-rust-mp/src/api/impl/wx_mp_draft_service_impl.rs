@@ -43,7 +43,7 @@ impl WxMpDraftServiceImpl {
             serde_json::from_str(json).map_err(|e| WxErrorException::Serde(e.to_string()))?;
         Ok(value
             .get("errcode")
-            .map(|v| v.to_string() == "0")
+            .map(|v| v.as_i64() == Some(0))
             .unwrap_or(false))
     }
 }

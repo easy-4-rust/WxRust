@@ -8,11 +8,7 @@ use std::sync::Weak;
 use wx_rust_common::error::WxErrorException;
 
 use crate::api::{WxMpGuideBuyerService, WxMpService};
-use crate::bean::guide::{
-    WxMpAddGuideBuyerInfo, WxMpGuideBuyerInfoList, WxMpGuideBuyerResp, WxMpGuideCardMaterialInfo,
-    WxMpGuideImgMaterialInfoList, WxMpGuideMassed, WxMpGuideMassedInfo, WxMpGuideMaterialInfo,
-    WxMpGuideTagInfo, WxMpGuideWordMaterialInfoList,
-};
+use crate::bean::guide::{WxMpAddGuideBuyerInfo, WxMpGuideBuyerInfoList, WxMpGuideBuyerResp};
 use crate::enums::wx_mp_api_url::guide;
 
 pub struct WxMpGuideBuyerServiceImpl {

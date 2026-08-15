@@ -15,7 +15,7 @@ use crate::bean::card::{
 };
 use crate::enums::wx_mp_api_url::card as card_url;
 use wx_rust_common::bean::WxCardApiSignature;
-use wx_rust_common::util::crypto::{Sha1, WxCryptUtil};
+use wx_rust_common::util::crypto::Sha1;
 
 /// 公众号CardService实现。
 pub struct WxMpCardServiceImpl {
@@ -36,7 +36,7 @@ impl WxMpCardService for WxMpCardServiceImpl {
             .service
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
-        let config = svc.wx_mp_config_storage();
+        let _config = svc.wx_mp_config_storage();
         svc.get_ticket(wx_rust_common::config::TicketType::WxCard, force_refresh)
             .await
     }

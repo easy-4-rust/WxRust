@@ -325,7 +325,7 @@ mod tests {
         let response =
             r#"{"errcode":0,"errmsg":"ok","living_info":{"theme":"直播主题","status":1}}"#;
         let info: WxCpLivingInfo =
-            WxCpLivingServiceImpl::parse_sub_json(&response, "living_info").expect("解析失败");
+            WxCpLivingServiceImpl::parse_sub_json(response, "living_info").expect("解析失败");
         assert_eq!(info.theme, "直播主题");
         assert_eq!(info.status, 1);
     }
