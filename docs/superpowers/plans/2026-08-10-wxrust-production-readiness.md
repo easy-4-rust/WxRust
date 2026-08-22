@@ -1,0 +1,132 @@
+# WxRust 生产就绪计划
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**From:** `docs/PRODUCTION_READINESS_PLAN.md`
+**创建日期：** 2026-08-10
+**状态：** 进行中（核对日期：2026-08-12，依据：Phase 1 P0 核心测试部分已完成，Phase 2-4 未开始）
+
+**Goal:** 以 WxJava 测试 100% 对标为目标，补齐 WxRust 测试缺口（308 个 Java 测试类 → 195 个 Rust 测试文件），达到生产就绪标准。
+
+**Architecture:** 测试分四阶段推进：Phase 1（P0 核心测试 42 文件）→ Phase 2（P1 重要测试 86 文件）→ Phase 3（P2 扩展测试 67 文件）→ Phase 4（CI/CD + 生产加固）。每个测试文件遵循 SOURCE_PARITY / RUST_OBLIGATION / VALUE_ADD 三层规范。
+
+**Tech Stack:** tokio-test / wiremock / cargo-llvm-cov / criterion / proptest / GitHub Actions。
+
+## Global Constraints
+
+- 测试编写规范：SOURCE_PARITY（镜像 Java 测试）+ RUST_OBLIGATION（所有权/异步/错误/序列化/feature）+ VALUE_ADD（边界/并发/错误路径）。
+- 中文来源注释：每个测试函数标注对应 Java 测试类和方法名。
+- 可重放：每个测试可独立运行，不依赖外部状态。
+- 覆盖率用于发现缺口，不作为完成权威。
+
+---
+
+## 1. 已确认需求与非目标
+
+### 1.1 已确认需求
+
+1. 总体差距分析：354 Java 测试类 vs 46 Rust 测试文件，缺口 308。
+2. 分模块对标清单（9 模块逐项）。
+3. 四阶段执行计划（P0/P1/P2 + CI/CD）。
+4. 测试编写规范（三层）。
+5. 验收标准（P0/P1 全通过 + workspace green + cov >= 60% + clippy zero warn + audit clean）。
+
+### 1.2 非目标
+
+- 不迁移 Java 中的 Demo/Infra 测试。
+- 不追求 100% 行覆盖率（目标 >= 60%）。
+
+---
+
+### Task 1: Phase 1 — P0 核心测试（42 个测试文件）
+
+**Files:**
+- Create/Modify: `crates/wx-rust-common/tests/`（8 个：Token/Error/Xml/Crypto 等）
+- Create/Modify: `crates/wx-rust-mp/tests/`（8 个：User/Menu/Material/Kefu/Template/Qrcode/OAuth2）
+- Create/Modify: `crates/wx-rust-miniapp/tests/`（7 个：User/Msg/Qrcode/Kefu/Analysis/Crypt）
+- Create/Modify: `crates/wx-rust-pay/tests/`（4 个：RsaCrypto/SignUtils/PayScore/ProfitSharing）
+- Create/Modify: `crates/wx-rust-cp/tests/`（10 个：User/Dept/Media/Message/Tag/Agent/OAuth2/ExternalContact/Crypt）
+- Create/Modify: `crates/wx-rust-open/tests/`（2 个：OAuth2）
+- Create/Modify: `crates/wx-rust-channel/tests/`（3 个：Order/Product/AfterSale）
+
+- [x] **Step 1: common 基础测试（8 文件）**
+
+- [x] **Step 2: mp 核心 Service 测试（8 文件）**
+
+- [x] **Step 3: miniapp 核心 Service 测试（7 文件）**
+
+- [x] **Step 4: pay 核心 Service 测试（4 文件）**
+
+- [x] **Step 5: cp 核心 Service 测试（10 文件）**
+
+- [x] **Step 6: open 核心 Service 测试（2 文件）**
+
+- [x] **Step 7: channel 核心 Service 测试（3 文件）**
+
+### Task 2: Phase 2 — P1 重要测试（86 个测试文件）
+
+- [ ] **Step 1: mp 子域 Service 测试（12 文件）**
+
+- [ ] **Step 2: miniapp 子域 Service 测试（6 文件）**
+
+- [ ] **Step 3: pay 子域 Service 测试（5 文件）**
+
+- [ ] **Step 4: cp 子域 Service 测试（10 文件）**
+
+- [ ] **Step 5: channel 子域 Service 测试（10 文件）**
+
+- [ ] **Step 6: Bean 测试补全（43 文件）**
+
+### Task 3: Phase 3 — P2 扩展测试（67 个测试文件）
+
+- [ ] **Step 1: mp 扩展（10 文件）**
+
+- [ ] **Step 2: miniapp 扩展（19 文件）**
+
+- [ ] **Step 3: pay 扩展（13 文件）**
+
+- [ ] **Step 4: cp 扩展（11 文件）**
+
+- [ ] **Step 5: channel 扩展（10 文件）**
+
+- [ ] **Step 6: open 扩展（1 文件）**
+
+- [ ] **Step 7: common 扩展（3 文件）**
+
+### Task 4: Phase 4 — CI/CD + 生产加固
+
+- [ ] **Step 1: GitHub Actions（cargo test + clippy + llvm-cov + audit）**
+
+- [ ] **Step 2: 覆盖率门禁（>= 60% line）**
+
+- [ ] **Step 3: cargo publish --dry-run**
+
+- [ ] **Step 4: docs.rs metadata**
+
+- [ ] **Step 5: Redis 集成测试（testcontainers）**
+
+- [ ] **Step 6: 性能基准（criterion）**
+
+- [ ] **Step 7: 安全审计（cargo audit + cargo deny）**
+
+---
+
+## 2. 验收矩阵
+
+| Phase | 测试文件数 | 状态 | 预计工作量 |
+|---|---|---|---|
+| Phase 1 (P0) | 42 | 进行中 | 9.5 天 |
+| Phase 2 (P1) | 86 | 未开始 | 15 天 |
+| Phase 3 (P2) | 67 | 未开始 | 18 天 |
+| Phase 4 (CI/CD) | — | 未开始 | 4.5 天 |
+| **合计** | **195** | | **47 天** |
+
+## 3. 总体差距
+
+| 维度 | WxJava | WxRust | 缺口 |
+|---|---|---|---|
+| 实际测试类 | 354 | 46 | **308** |
+| Service Impl 测试 | 162 | ~10 | **~152** |
+| Bean/DTO 测试 | 178 | ~30 | **~148** |
+| Router 测试 | 5 | 2 | **3** |
+| Crypto/Util 测试 | 9 | 6 | **3** |
