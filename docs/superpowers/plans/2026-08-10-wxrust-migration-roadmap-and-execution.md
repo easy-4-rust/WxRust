@@ -4,7 +4,7 @@
 
 **From:** `docs/MIGRATION_ROADMAP.md`、`docs/MIGRATION_EXECUTION_PLAN.md`
 **创建日期：** 2026-08-10
-**状态：** 进行中（核对日期：2026-08-12，依据：B0/B1 已完成，B2 进行中，V0-V6 未开始）
+**状态：** 进行中（核对日期：2026-08-12；2026-08-23 复核对：B0/B1/B2 已完成，V0/V1/V2/V4/V5/V6 已完成，V3 覆盖率未达标待 Phase 2/3 后复测）
 
 **Goal:** 定义 WxRust 迁移的总体路线图（B0→B1→B2→V0-V6）和多智能体并行执行计划，确保迁移过程可追踪、可验证、可回滚。
 
@@ -92,19 +92,19 @@
 **Files:**
 - 待创建：验证脚本与报告
 
-- [ ] **Step 1: V0 — 静态结构审计（audit_migration_layout.py）**
+- [x] **Step 1: V0 — 静态结构审计（audit_migration_layout.py）**（scripts/audit_migration_layout.py + 报告：97.8% 已处置，59 阻塞缺口 pay/open）
 
-- [ ] **Step 2: V1 — 工程验证（cargo build/test/clippy）**
+- [x] **Step 2: V1 — 工程验证（cargo build/test/clippy）**（四门禁全绿，920 tests → 复测约 1370 tests）
 
-- [ ] **Step 3: V2 — 行为验证（Java 测试镜像 + golden 差分）**
+- [x] **Step 3: V2 — 行为验证（Java 测试镜像 + golden 差分）**（报告：40.5% 镜像 + 5/5 golden 一致）
 
-- [ ] **Step 4: V3 — 覆盖率验证（cargo-llvm-cov >= 60%）**
+- [ ] **Step 4: V3 — 覆盖率验证（cargo-llvm-cov >= 60%）**（40.20% → Phase 2/3 后复测，见 docs/verification/V3）
 
-- [ ] **Step 5: V4 — 安全审计（cargo audit + cargo deny）**
+- [x] **Step 5: V4 — 安全审计（cargo audit + cargo deny）**（deny.toml 全绿，rsa medium 已登记例外）
 
-- [ ] **Step 6: V5 — 集成测试（Redis / 真实环境）**
+- [x] **Step 6: V5 — 集成测试（Redis / 真实环境）**（redis_integration_test.rs 14 tests）
 
-- [ ] **Step 7: V6 — 发布验证（cargo publish --dry-run）**
+- [x] **Step 7: V6 — 发布验证（cargo publish --dry-run）**（workspace 依赖修复；common/facade 通过，其余受发布顺序约束）
 
 ---
 
@@ -115,4 +115,10 @@
 | B0 | 已完成 | inventory CSV + 9 模块对照表 |
 | B1 | 已完成 | ARCHITECTURE.md LOCKED |
 | B2 | 进行中 | crates/ 源文件计数 |
-| V0-V6 | 未开始 | — |
+| V0 | ✅ 已完成 | audit_migration_layout.py + 报告（97.8% 已处置） |
+| V1 | ✅ 已完成 | fmt/check/test/clippy 四门禁全绿（约 1370 tests） |
+| V2 | ✅ 已完成 | 40.5% 镜像 + 5/5 golden 差分一致 |
+| V3 | ⏳ 进行中 | 40.20% → Phase 2/3 后复测（未达 60% 门禁） |
+| V4 | ✅ 已完成 | cargo audit（1 medium 已登记）+ deny 全绿 |
+| V5 | ✅ 已完成 | Redis 集成 14 tests 通过 |
+| V6 | ✅ 已完成 | workspace 依赖修复 + dry-run（发布顺序约束） |
