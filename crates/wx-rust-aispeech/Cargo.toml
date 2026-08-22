@@ -14,7 +14,7 @@ description = "WxRust 智能对话模块（对应 weixin-java-aispeech：对话�
 workspace = true
 
 [dependencies]
-wx-rust-common = { path = "../wx-rust-common" }
+wx-rust-common.workspace = true
 async-trait = { workspace = true }
 tokio = { workspace = true }
 reqwest = { workspace = true }

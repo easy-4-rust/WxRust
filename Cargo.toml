@@ -15,6 +15,16 @@ keywords = ["wechat", "weixin", "wx", "sdk", "mp", "miniapp", "pay"]
 categories = ["api-bindings", "web-programming"]
 
 [workspace.dependencies]
+# 内部 crate 统一声明（version + path）：本地构建走 path，publish 时携带 crates.io 版本号
+wx-rust-common = { version = "0.1.0", path = "crates/wx-rust-common" }
+wx-rust-mp = { version = "0.1.0", path = "crates/wx-rust-mp" }
+wx-rust-miniapp = { version = "0.1.0", path = "crates/wx-rust-miniapp" }
+wx-rust-pay = { version = "0.1.0", path = "crates/wx-rust-pay" }
+wx-rust-cp = { version = "0.1.0", path = "crates/wx-rust-cp" }
+wx-rust-open = { version = "0.1.0", path = "crates/wx-rust-open" }
+wx-rust-channel = { version = "0.1.0", path = "crates/wx-rust-channel" }
+wx-rust-aispeech = { version = "0.1.0", path = "crates/wx-rust-aispeech" }
+wx-rust-qidian = { version = "0.1.0", path = "crates/wx-rust-qidian" }
 async-trait = "0.1.89"
 tokio = { version = "1.52.4", features = ["io-util", "macros", "net", "rt", "sync", "time"] }
 reqwest = { version = "0.13.4", default-features = false, features = ["json", "rustls", "stream", "multipart"] }

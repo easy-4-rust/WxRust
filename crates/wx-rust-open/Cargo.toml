@@ -14,11 +14,11 @@ description = "WxRust 开放平台（第三方平台）模块（对应 weixin-ja
 workspace = true
 
 [dependencies]
-wx-rust-common = { path = "../wx-rust-common" }
+wx-rust-common.workspace = true
 # Wave 4：代 mp/ma 服务桥接（对应 Java weixin-java-open 依赖
 # weixin-java-mp/weixin-java-miniapp；mp/miniapp 均不依赖 open，无循环）
-wx-rust-mp = { path = "../wx-rust-mp" }
-wx-rust-miniapp = { path = "../wx-rust-miniapp" }
+wx-rust-mp.workspace = true
+wx-rust-miniapp.workspace = true
 async-trait = { workspace = true }
 tokio = { workspace = true }
 reqwest = { workspace = true }

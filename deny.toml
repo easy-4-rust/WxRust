@@ -1,0 +1,39 @@
+# WxRust 依赖治理配置（cargo deny）
+# 用途：CI 门禁（V4 安全审计 / Phase 4 生产加固）与本地依赖合规检查
+# 运行：cargo deny check
+
+[advisories]
+# rsa 0.9.10 的 Marvin Attack（RUSTSEC-2023-0071，medium）无修复版本可用：
+# 稳定版唯一 0.9.x，0.10 尚为 RC；以 RSA-OAEP 盲化与固定消息加密缓解，接受为已知风险。
+# 待 rsa 0.10 稳定后升级并移除本例外。
+ignore = [
+    "RUSTSEC-2023-0071",
+]
+
+[bans]
+multiple-versions = "allow"
+skip = []
+skip-tree = []
+
+[licenses]
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "0BSD",
+    "ISC",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Zlib",
+    "OpenSSL",
+    "CDLA-Permissive-2.0",
+    "CC0-1.0",
+    "Unlicense",
+]
+confidence-threshold = 0.8
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-git = []
