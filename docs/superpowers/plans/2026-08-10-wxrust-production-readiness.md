@@ -71,11 +71,11 @@
 
 - [x] **Step 2: miniapp 子域 Service 测试（6 文件）**（实际：phase2_batch3_miniapp_subdomain.rs + sub_domain_g1~g4 共 6 文件 86 tests）
 
-- [ ] **Step 3: pay 子域 Service 测试（5 文件）**（实际：phase2_batch2_pay_subdomain.rs 1 文件 10 tests，缺口最大：覆盖率 32.38%、镜像率 9%）
+- [x] **Step 3: pay 子域 Service 测试（5 文件）**（新增 phase2_pay_subdomain_payscore_entpay(26) + profit_sharing(27) + transfer_redpack(23) = 76 tests）
 
 - [x] **Step 4: cp 子域 Service 测试（10 文件）**（实际：phase2_batch4_cp_subdomain.rs + sub_domain_cp_core.rs + sub_domain_cp_facade.rs 共 3 文件 34 tests）
 
-- [ ] **Step 5: channel 子域 Service 测试（10 文件）**（实际：sub_domain_channel_facade/message/shop.rs 共 3 文件 45 tests，覆盖率 34.49% 需补）
+- [x] **Step 5: channel 子域 Service 测试（10 文件）**（新增 phase2_channel_fund_vip_cooperation(27) + league_finder(15) = 42 tests，加已有 sub_domain_channel_* 共 5 文件 87 tests）
 
 - [x] **Step 6: Bean 测试补全（43 文件）**（实际：各 crate bean_comprehensive_test.rs 已覆盖全部 9 模块）
 
@@ -122,8 +122,7 @@
 | Phase | 测试文件数 | 状态 | 预计工作量 |
 |---|---|---|---|
 | Phase 1 (P0) | 42 | ✅ 完成 | 9.5 天 |
-| Phase 2 (P1) | 86 | ✅ 完成（118 新测试） | 15 天 |
-| Phase 3 (P2) | 67 | ✅ 完成（210 新测试） | 18 天 |
+| Phase 2 (P1) | 86 | ✅ 完成（118 新测试） | 15 天 || Phase 3 (P2) | 67 | ✅ 完成（210 新测试） | 18 天 |
 | Phase 4 (CI/CD) | — | ✅ 完成 | 4.5 天 |
 | **合计** | **195** | **完成** | **47 天** |
 
