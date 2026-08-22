@@ -65,17 +65,19 @@
 
 ### Task 2: Phase 2 — P1 重要测试（86 个测试文件）
 
-- [ ] **Step 1: mp 子域 Service 测试（12 文件）**
+> 状态核对（2026-08-23）：计划文件数为按 Java 测试类估算的目标；实际测试按功能域聚合组织。已存在 phase2_batch* + sub_domain_* 共 16 个文件（约 200 个测试），覆盖 mp/miniapp/pay/cp/channel 子域。缺失重点：pay 子域（覆盖率 32.38% 最低）、channel 子域。
 
-- [ ] **Step 2: miniapp 子域 Service 测试（6 文件）**
+- [x] **Step 1: mp 子域 Service 测试（12 文件）**（实际：phase2_batch1_mp_subdomain.rs + sub_domain_services.rs + sub_domain_services2.rs 共 3 文件 43 tests）
 
-- [ ] **Step 3: pay 子域 Service 测试（5 文件）**
+- [x] **Step 2: miniapp 子域 Service 测试（6 文件）**（实际：phase2_batch3_miniapp_subdomain.rs + sub_domain_g1~g4 共 6 文件 86 tests）
 
-- [ ] **Step 4: cp 子域 Service 测试（10 文件）**
+- [ ] **Step 3: pay 子域 Service 测试（5 文件）**（实际：phase2_batch2_pay_subdomain.rs 1 文件 10 tests，缺口最大：覆盖率 32.38%、镜像率 9%）
 
-- [ ] **Step 5: channel 子域 Service 测试（10 文件）**
+- [x] **Step 4: cp 子域 Service 测试（10 文件）**（实际：phase2_batch4_cp_subdomain.rs + sub_domain_cp_core.rs + sub_domain_cp_facade.rs 共 3 文件 34 tests）
 
-- [ ] **Step 6: Bean 测试补全（43 文件）**
+- [ ] **Step 5: channel 子域 Service 测试（10 文件）**（实际：sub_domain_channel_facade/message/shop.rs 共 3 文件 45 tests，覆盖率 34.49% 需补）
+
+- [x] **Step 6: Bean 测试补全（43 文件）**（实际：各 crate bean_comprehensive_test.rs 已覆盖全部 9 模块）
 
 ### Task 3: Phase 3 — P2 扩展测试（67 个测试文件）
 

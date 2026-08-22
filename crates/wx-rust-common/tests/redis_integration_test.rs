@@ -18,7 +18,7 @@ use std::process::{Child, Command, Stdio};
 use std::sync::Arc;
 use std::time::Duration;
 
-use tempfile::{tempdir, TempDir};
+use tempfile::{TempDir, tempdir};
 
 use wx_rust_common::api::{WxMessageDuplicateChecker, WxMessageInRedisDuplicateChecker};
 use wx_rust_common::redis::{WxRedisOps, WxRedisOpsImpl};
@@ -72,10 +72,7 @@ impl RedisServer {
             let mut attempt = 0u32;
             loop {
                 if attempt >= 50 {
-                    panic!(
-                        "Redis 未在 5 秒内就绪（socket: {}）",
-                        sock_path.display()
-                    );
+                    panic!("Redis 未在 5 秒内就绪（socket: {}）", sock_path.display());
                 }
                 std::thread::sleep(Duration::from_millis(100));
                 if sock_path.exists() {
@@ -129,7 +126,11 @@ fn unique_key(base: &str) -> String {
     let mut h = DefaultHasher::new();
     tid.hash(&mut h);
     let rand_val: u64 = rand::random();
-    format!("test:{base}:pid{}:tid{:x}:r{rand_val}", std::process::id(), h.finish())
+    format!(
+        "test:{base}:pid{}:tid{:x}:r{rand_val}",
+        std::process::id(),
+        h.finish()
+    )
 }
 
 /// 获取全局 RedisServer 实例（所有测试共享同一进程，各自独立键前缀）。
@@ -246,7 +247,10 @@ fn redis_value_add_get_expire_missing_key_returns_none() {
     let key = unique_key("expire_missing");
 
     let ttl = ops.get_expire(&key);
-    assert!(ttl.is_none(), "不存在的键 get_expire 应返回 None，实际: {ttl:?}");
+    assert!(
+        ttl.is_none(),
+        "不存在的键 get_expire 应返回 None，实际: {ttl:?}"
+    );
 }
 
 /// 过期行为：过期键的 get_expire 也返回 None。
@@ -261,7 +265,10 @@ fn redis_value_add_get_expire_expired_key_returns_none() {
     std::thread::sleep(Duration::from_millis(1200));
 
     let ttl = ops.get_expire(&key);
-    assert!(ttl.is_none(), "过期键 get_expire 应返回 None，实际: {ttl:?}");
+    assert!(
+        ttl.is_none(),
+        "过期键 get_expire 应返回 None，实际: {ttl:?}"
+    );
 }
 
 /// WxMessageInRedisDuplicateChecker 语义：首次检查非重复。
@@ -343,7 +350,10 @@ fn redis_value_add_concurrent_distinct_msg_ids() {
 
     // 所有不同 msgId 的首次检查均应非重复
     for (i, result) in results.iter().enumerate() {
-        assert!(!result, "任务 {i} 的不同 msgId 首次检查应非重复，实际: {result}");
+        assert!(
+            !result,
+            "任务 {i} 的不同 msgId 首次检查应非重复，实际: {result}"
+        );
     }
 }
 
