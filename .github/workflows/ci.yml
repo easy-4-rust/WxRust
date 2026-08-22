@@ -64,5 +64,39 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Install cargo-llvm-cov
         run: cargo install cargo-llvm-cov
-      - name: Run coverage
-        run: cargo llvm-cov --workspace --summary-only
+      # Gate: fail CI if line coverage drops below 60%.
+      # Current coverage is ~40%; this gate intentionally fails today to
+      # mark the remaining work as Phase 2/3 test coverage is raised.
+      # Do NOT lower this threshold.
+      - name: Run coverage with gate
+        run: cargo llvm-cov --workspace --fail-under-lines 60 --summary-only
+
+  audit:
+    name: cargo audit + deny
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+      - name: Install cargo-deny
+        uses: taiki-e/install-action@cargo-deny
+      - name: Run cargo audit
+        run: cargo audit
+      - name: Run cargo deny check
+        run: cargo deny check
+
+  redis-test:
+    name: redis integration tests
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Redis
+        run: sudo apt-get update && sudo apt-get install -y redis-server
+      - name: Run Redis integration tests
+        run: cargo test -p wx-rust-common --features redis --test redis_integration_test
