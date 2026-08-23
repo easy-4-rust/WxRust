@@ -17,6 +17,9 @@
 //! 机制：MockServer + set_api_host_url + 预置 access_token，通过子服务
 //! getter 取 impl 实例并调用业务方法，验证请求路径/响应解析。
 
+// mock dispatcher 中多个端点有意返回相同的 canned 响应，
+// 该 lint 防的是生产逻辑重复，此处为测试意图，文件级豁免。
+#![allow(clippy::if_same_then_else)]
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -235,14 +238,7 @@ async fn order_search_order() {
 /// 对应 Java: `WxChannelOrderServiceImpl.updatePrice`
 #[tokio::test]
 async fn order_update_price() {
-    let server = MockServer::start(|path, _| {
-        if path.contains("/channels/ec/order/updateprice") {
-            ok_response()
-        } else {
-            ok_response()
-        }
-    })
-    .await;
+    let server = MockServer::start(|_path, _| ok_response()).await;
     let service = new_service(config_with_host(&server.url()));
     let order_svc = service.order_service().unwrap();
 
@@ -258,14 +254,7 @@ async fn order_update_price() {
 /// 对应 Java: `WxChannelOrderServiceImpl.updateRemark`
 #[tokio::test]
 async fn order_update_remark() {
-    let server = MockServer::start(|path, _| {
-        if path.contains("/channels/ec/order/updateremark") {
-            ok_response()
-        } else {
-            ok_response()
-        }
-    })
-    .await;
+    let server = MockServer::start(|_path, _| ok_response()).await;
     let service = new_service(config_with_host(&server.url()));
     let order_svc = service.order_service().unwrap();
 
@@ -281,14 +270,7 @@ async fn order_update_remark() {
 /// 对应 Java: `WxChannelOrderServiceImpl.updateAddress`
 #[tokio::test]
 async fn order_update_address() {
-    let server = MockServer::start(|path, _| {
-        if path.contains("/channels/ec/order/updateaddress") {
-            ok_response()
-        } else {
-            ok_response()
-        }
-    })
-    .await;
+    let server = MockServer::start(|_path, _| ok_response()).await;
     let service = new_service(config_with_host(&server.url()));
     let order_svc = service.order_service().unwrap();
 
@@ -440,10 +422,6 @@ async fn after_sale_full_chain() {
         } else if path.contains("/channels/ec/aftersale/get") {
             r#"{"errcode":0,"errmsg":"ok","after_sale_order":{"after_sale_order_id":"AS123"}}"#
                 .to_string()
-        } else if path.contains("/channels/ec/aftersale/accept") {
-            ok_response()
-        } else if path.contains("/channels/ec/aftersale/reject") {
-            ok_response()
         } else {
             ok_response()
         }
@@ -489,9 +467,9 @@ async fn after_sale_reject_and_complaint() {
     let server = MockServer::start(|path, _| {
         if path.contains("/channels/ec/aftersale/reject") {
             ok_response()
-        } else if path.contains("/channels/ec/aftersale/uploadrefundevidence") {
-            ok_response()
-        } else if path.contains("/channels/ec/complaint/addcomplaintmaterial") {
+        } else if path.contains("/channels/ec/aftersale/uploadrefundevidence")
+            || path.contains("/channels/ec/complaint/addcomplaintmaterial")
+        {
             ok_response()
         } else if path.contains("/channels/ec/complaint/addcomplaintproof") {
             ok_response()
@@ -552,10 +530,6 @@ async fn after_sale_reasons_and_exchange() {
         } else if path.contains("/channels/ec/aftersale/getrejectreason") {
             r#"{"errcode":0,"errmsg":"ok","reason_list":[]}"#.to_string()
         } else if path.contains("/channels/ec/aftersale/acceptexchangereship") {
-            ok_response()
-        } else if path.contains("/channels/ec/aftersale/rejectexchangereship") {
-            ok_response()
-        } else if path.contains("/channels/ec/aftersale/merchantupdateaftersale") {
             ok_response()
         } else {
             ok_response()
@@ -882,9 +856,9 @@ async fn brand_full_chain() {
             r#"{"errcode":0,"errmsg":"ok","audit_id":"A1"}"#.to_string()
         } else if path.contains("/channels/ec/brand/update") {
             r#"{"errcode":0,"errmsg":"ok","audit_id":"A2"}"#.to_string()
-        } else if path.contains("/channels/ec/brand/cancel") {
-            ok_response()
-        } else if path.contains("/channels/ec/brand/delete") {
+        } else if path.contains("/channels/ec/brand/cancel")
+            || path.contains("/channels/ec/brand/delete")
+        {
             ok_response()
         } else if path.contains("/channels/ec/brand/get") {
             r#"{"errcode":0,"errmsg":"ok","brand":{"brand_id":"B1"}}"#.to_string()
@@ -1077,10 +1051,6 @@ async fn address_full_chain() {
             r#"{"errcode":0,"errmsg":"ok","address_detail":{}}"#.to_string()
         } else if path.contains("/channels/ec/address/add") {
             r#"{"errcode":0,"errmsg":"ok","address_id":"A1"}"#.to_string()
-        } else if path.contains("/channels/ec/address/update") {
-            ok_response()
-        } else if path.contains("/channels/ec/address/delete") {
-            ok_response()
         } else {
             ok_response()
         }
@@ -1141,13 +1111,13 @@ async fn warehouse_full_chain() {
             r#"{"errcode":0,"errmsg":"ok","out_warehouse_id_list":[]}"#.to_string()
         } else if path.contains("/channels/ec/warehouse/get") {
             r#"{"errcode":0,"errmsg":"ok","warehouse_info":{}}"#.to_string()
-        } else if path.contains("/channels/ec/warehouse/update") {
+        } else if path.contains("/channels/ec/warehouse/update")
+            || path.contains("/channels/ec/warehouse/addarea")
+        {
             ok_response()
-        } else if path.contains("/channels/ec/warehouse/addarea") {
-            ok_response()
-        } else if path.contains("/channels/ec/warehouse/deletearea") {
-            ok_response()
-        } else if path.contains("/channels/ec/warehouse/setpriority") {
+        } else if path.contains("/channels/ec/warehouse/deletearea")
+            || path.contains("/channels/ec/warehouse/setpriority")
+        {
             ok_response()
         } else if path.contains("/channels/ec/warehouse/getpriority") {
             r#"{"errcode":0,"errmsg":"ok","priority_list":[]}"#.to_string()
