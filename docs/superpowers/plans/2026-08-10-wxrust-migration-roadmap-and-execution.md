@@ -4,7 +4,7 @@
 
 **From:** `docs/MIGRATION_ROADMAP.md`、`docs/MIGRATION_EXECUTION_PLAN.md`
 **创建日期：** 2026-08-10
-**状态：** 进行中（核对日期：2026-08-12；2026-08-23 复核对：B0/B1/B2 已完成，V0/V1/V2/V4/V5/V6 已完成，V3 覆盖率未达标待 Phase 2/3 后复测）
+**状态：** 已完成（2026-08-24：B0/B1/B2、V0-V6 全部完成；V3 覆盖率 61.57% ≥ 60% 门禁达标）
 
 **Goal:** 定义 WxRust 迁移的总体路线图（B0→B1→B2→V0-V6）和多智能体并行执行计划，确保迁移过程可追踪、可验证、可回滚。
 
@@ -98,7 +98,7 @@
 
 - [x] **Step 3: V2 — 行为验证（Java 测试镜像 + golden 差分）**（报告：40.5% 镜像 + 5/5 golden 一致）
 
-- [ ] **Step 4: V3 — 覆盖率验证（cargo-llvm-cov >= 60%）**（40.20% → Phase 2/3 后复测，见 docs/verification/V3）
+- [x] **Step 4: V3 — 覆盖率验证（cargo-llvm-cov >= 60%）**（40.20% → 61.57%，门禁 exit 0；三波次 api/impl mock + 枚举/Bean/trait 提升，见 docs/verification/V3）
 
 - [x] **Step 5: V4 — 安全审计（cargo audit + cargo deny）**（deny.toml 全绿，rsa medium 已登记例外）
 
@@ -118,7 +118,7 @@
 | V0 | ✅ 已完成 | audit_migration_layout.py + 报告（97.8% 已处置） |
 | V1 | ✅ 已完成 | fmt/check/test/clippy 四门禁全绿（约 1370 tests） |
 | V2 | ✅ 已完成 | 40.5% 镜像 + 5/5 golden 差分一致 |
-| V3 | ⏳ 进行中 | 40.20% → Phase 2/3 后复测（未达 60% 门禁） |
+| V3 | ✅ 已完成 | 61.57% ≥ 60% 门禁（提升波次 +21.02pp，1905 tests） |
 | V4 | ✅ 已完成 | cargo audit（1 medium 已登记）+ deny 全绿 |
 | V5 | ✅ 已完成 | Redis 集成 14 tests 通过 |
 | V6 | ✅ 已完成 | workspace 依赖修复 + dry-run（发布顺序约束） |

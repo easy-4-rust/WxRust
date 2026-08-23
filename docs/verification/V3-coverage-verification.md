@@ -1,49 +1,41 @@
 # V3 覆盖率验证报告
 
-日期：2026-08-23（首测）/ 2026-08-23（Phase 2/3 后复测）
+日期：2026-08-23（首测）/ 2026-08-24（覆盖率提升波次后终测）
 计划：`docs/superpowers/plans/2026-08-10-wxrust-migration-roadmap-and-execution.md` Task 4 Step 4
 
-## 验证结果：❌ 未达目标（40.55% < 60%）
+## 验证结果：✅ 达标（61.57% >= 60% 门禁）
 
-| 指标 | 首测值 | Phase 2/3 后复测 | 目标 | 状态 |
-|---|---|---|---|---|
-| 行覆盖率（line） | 40.20% | **40.55%** | >= 60% | ❌ |
-| 函数覆盖率（function） | 25.99% | 26.19% | — | 信号 |
-| 分支覆盖率（branch） | 38.45% | 38.75% | — | 信号 |
-| 未覆盖行数 / 总行数 | 39,714 / 66,409 | 39,482 / 66,409 | — | — |
+| 指标 | 首测 | Phase 2/3 后 | 提升波次后（终测） | 目标 | 状态 |
+|---|---|---|---|---|---|
+| 行覆盖率（line） | 40.20% | 40.55% | **61.57%** | >= 60% | ✅ |
+| 函数覆盖率（function） | 25.99% | 26.19% | 41.80% | — | 信号 |
+| 分支覆盖率（branch） | 38.45% | 38.75% | 59.64% | — | 信号 |
+| 未覆盖行数 / 总行数 | 39,714 / 66,409 | 39,482 / 66,409 | **25,523 / 66,409** | — | — |
 
-> 注：llvm-cov `--summary-only` 的 TOTAL 行第二列为 **Missed Lines（未覆盖行数）**；
-> 行覆盖率 = (总行数 - 未覆盖行数) / 总行数，即 (66409-39714)/66409 = 40.20%，数值经 python 复核无误。
+门禁验证：`cargo llvm-cov --workspace --fail-under-lines 60 --summary-only` → **exit 0**（cargo-llvm-cov 0.8.7）
 
-命令：`cargo llvm-cov --workspace --summary-only`（cargo-llvm-cov 0.8.7）
+> 注：llvm-cov TOTAL 行第二列为 Missed Lines（未覆盖行数）；行覆盖率 = (总-未覆盖)/总。
 
-## 复测分析（2026-08-23，Phase 2/3 新增 328 测试后）
+## 提升路径复盘（40.55% → 61.57%，+21.02pp）
 
-- 新增 328 个测试（P1 118 + P2 210）后覆盖率仅 +0.35pp：新增测试集中在 bean serde 层，
-  而该层已由各 crate 的 bean_comprehensive_test 覆盖；真正缺口在 `api/impl/*` 的 HTTP
-  Service 实现（需 mock HTTP 或真实环境才能覆盖）。
-- 结论：覆盖率的有效提升路径是**服务实现层测试**（HTTP mock：`reqwest` MockServer 或
-  httpmock 集成），而非更多 bean serde 测试。建议后续迭代优先补充 api/impl 层 mock 测试。
-- 门禁：ci.yml 已启用 `--fail-under-lines 60`，当前 CI 覆盖率 job 会失败——按计划约束
-  「覆盖率只作信号，台账状态为权威」，此失败标记剩余工作，不阻塞台账完成判定。
+三个波次、全部离线可跑（HTTP mock / 纯逻辑测试）：
 
-## 分模块覆盖率（行）
+| 波次 | 手段 | 关键成果 |
+|---|---|---|
+| 一：api/impl HTTP mock | config `api_host_url` 重定向到本地 mock server（httpmock / 手写 MockServer） | pay +10.09pp、open +12.83pp、channel 全链路 |
+| 二：api/impl 续（mp/cp/miniapp） | 同上 + 修复 mock↔bean 字段名/类型匹配 | mp/cp/miniapp 三 crate 全绿 |
+| 三：巨型枚举/消息 Bean/trait 默认方法 | 脚本生成全量断言遍历 | common 错误枚举 0.38%→100%（+1,829 行）；miniapp 44.54%→70.12%；cp +9.84pp；mp +6.52pp；url 枚举群 100%；pay/channel trait 默认方法大面积覆盖 |
 
-| 模块 | 行覆盖 | 函数覆盖 | 分支覆盖 |
-|---|---|---|---|
-| wx-rust-common | 43.53% | 26.23% | 42.55% |
-| wx-rust-mp | 47.79% | 27.16% | 46.92% |
-| wx-rust-miniapp | 48.16% | 30.18% | 47.02% |
-| wx-rust-pay | 32.38% | 20.90% | 29.93% |
-| wx-rust-cp | 46.30% | 30.40% | 44.63% |
-| wx-rust-open | 38.58% | 24.25% | 36.17% |
-| wx-rust-channel | 34.49% | 21.76% | 32.68% |
-| wx-rust-aispeech | 高（测试全覆盖） | — | — |
-| wx-rust-qidian | 高（测试全覆盖） | — | — |
+## 关键技术发现
 
-## 结论与处置
+1. **可配置 base URL 是 mock 化的前提**：`WxPayConfig::api_host_url()`、`WxChannelConfig`、`WxOpenHostConfig`、mp/miniapp/cp 的 config storage 均支持域名重定向——这是 api/impl 层可测性的架构基础。
+2. **URL 常量必须对照 enums 源码逐一核对**（曾因臆测路径导致 mock fallthrough）。
+3. **部分方法有数字参数校验**（如 category 的 cat_id 必须可解析为 i64），传参错误直接返回 -99 内部错误而非发起请求。
+4. **巨型 match/枚举用脚本生成全量测试**：读取源码字面量生成断言数组，一次覆盖上千行。
+5. **llvm-cov 并发限制**：共享 `target/llvm-cov-target` 的并发测量会互相破坏（偶发 "never executed"），必须串行运行。
 
-- 覆盖率 **40.20% 未达 60% 门禁**，这是真实缺口信号（与生产就绪计划 Phase 2/3 的 153 个测试文件缺口一致）
-- 按计划约束「覆盖率只作信号，台账状态为权威」：V3 记为 **未通过（需 Phase 2/3 测试补齐后复测）**
-- 已生成完整明细日志：`/tmp/wxrust-cov.log`（含逐文件覆盖率）
-- 复测时机：Phase 2（P1 86 文件）与 Phase 3（P2 67 文件）完成后，重跑 `cargo llvm-cov --workspace --summary-only`
+## 结论
+
+- V3 判定由「未通过」改为 **通过**：61.57% ≥ 60%，CI 门禁（ci.yml `--fail-under-lines 60`）本地验证 exit 0
+- 覆盖率与台账双达标：workspace 1905 个测试全绿 + clippy `-D warnings` 干净 + fmt 干净
+- 剩余未覆盖（25,523 行）主要为：pay 固定域名成功路径（真实微信域名，mock 需改 src）、并发锁竞争分支、不可达防御分支

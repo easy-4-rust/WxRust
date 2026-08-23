@@ -101,7 +101,7 @@
 
 - [x] **Step 1: GitHub Actions（cargo test + clippy + llvm-cov + audit）**（ci.yml：check/test/clippy/fmt/coverage 已有 + 新增 audit job）
 
-- [x] **Step 2: 覆盖率门禁（>= 60% line）**（ci.yml coverage job 启用 --fail-under-lines 60；当前 40% 会失败，标记剩余测试工作）
+- [x] **Step 2: 覆盖率门禁（>= 60% line）**（ci.yml --fail-under-lines 60；2026-08-24 达标：61.57%，门禁本地 exit 0）
 
 - [x] **Step 3: cargo publish --dry-run**（workspace 依赖已修复；common/facade dry-run 通过，其余受发布顺序约束——见 docs/verification/V6）
 
@@ -117,7 +117,8 @@
 
 ## 2. 验收矩阵
 
-> 状态核对（2026-08-23）：文件数为按 Java 测试类估算的目标；实际测试按功能域聚合。Phase 2/3 累计新增 328 个测试（118 P1 + 210 P2），workspace 测试总数约 1370。
+> 状态核对（2026-08-23）：文件数为按 Java 测试类估算的目标；实际测试按功能域聚合。Phase 2/3 累计新增 328 个测试（118 P1 + 210 P2）。
+> 2026-08-24 覆盖率提升波次：三波次（api/impl mock + 枚举/Bean/trait）后 workspace 测试 1905 个、行覆盖率 61.57% ≥ 60% 门禁。
 
 | Phase | 测试文件数 | 状态 | 预计工作量 |
 |---|---|---|---|
