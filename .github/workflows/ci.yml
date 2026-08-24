@@ -31,6 +31,20 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --workspace
+      # Gate: block_on 仅允许出现在 sync 门面文件（blocking.rs）内
+      - name: block_on gate
+        run: scripts/check_block_on.sh
+
+  sync-feature:
+    name: sync feature (blocking facade)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Run blocking facade tests (feature=sync)
+        run: cargo test -p wx-rust-miniapp --features sync --test blocking_facade_test
 
   clippy:
     name: cargo clippy

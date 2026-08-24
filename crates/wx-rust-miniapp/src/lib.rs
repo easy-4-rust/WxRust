@@ -14,3 +14,9 @@ pub mod constant;
 pub mod enums;
 pub mod message;
 pub mod util;
+
+/// 同步门面（feature="sync"）：`WxMaServiceBlocking` 以全局 current_thread
+/// runtime 逐调用驱动 async 门面，供纯同步上下文使用。runtime 阻塞驱动
+/// 仅允许出现在本模块（CI 以 scripts 门禁脚本强制）。
+#[cfg(feature = "sync")]
+pub mod blocking;

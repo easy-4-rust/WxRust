@@ -10,6 +10,11 @@ homepage.workspace = true
 readme.workspace = true
 description = "WxRust 小程序模块（对应 weixin-java-miniapp）"
 
+[features]
+# 同步门面（WxMaServiceBlocking）：OnceLock 全局 current_thread runtime
+# + block_on 包装（仅 blocking.rs 内使用；tokio rt feature 已由 workspace 提供）
+sync = []
+
 [lints]
 workspace = true
 
