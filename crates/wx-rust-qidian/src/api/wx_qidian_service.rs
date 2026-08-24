@@ -27,9 +27,7 @@ use wx_rust_common::enums::TicketType;
 use wx_rust_common::error::WxErrorException;
 use wx_rust_common::util::RandomUtils;
 use wx_rust_common::util::crypto::Sha1;
-use wx_rust_common::util::http::{SimpleGetRequestExecutor, SimplePostRequestExecutor};
 
-use crate::api::r#impl::base_wx_qidian_service_impl::execute_with_retry;
 use crate::api::{WxQidianCallDataService, WxQidianDialService};
 use crate::config::WxQidianConfigStorage;
 use crate::enums::ApiUrl;
@@ -374,12 +372,16 @@ pub trait WxQidianService: Send + Sync {
     }
 
     /// 原始地址 GET（对应 Java `get(String, String)`）。
+    ///
+    /// 走统一管线 [`wx_rust_common::pipeline::execute_pipeline`]（经
+    /// `execute_get_via_pipeline`：-1 指数退避重试（Runtime 变体收束）
+    /// + token 失效单次重放；query 拼接语义内联于封装——原
+    /// `SimpleGetRequestExecutor` 路径）。
     async fn get_by_url(&self, url: &str, query_param: &str) -> Result<String, WxErrorException> {
-        execute_with_retry(
+        crate::api::r#impl::base_wx_qidian_service_impl::execute_get_via_pipeline(
             self,
-            &SimpleGetRequestExecutor::new(self.http_client()),
             url,
-            query_param.to_string(),
+            query_param,
         )
         .await
     }
@@ -392,12 +394,13 @@ pub trait WxQidianService: Send + Sync {
     }
 
     /// 原始地址 POST（对应 Java `post(String, String)`）。
+    ///
+    /// 走统一管线（经 `execute_post_via_pipeline`：POST 文本体原样透传 +
+    /// -1 指数退避重试（Runtime 变体收束）+ token 失效单次重放——原
+    /// `SimplePostRequestExecutor` 路径）。
     async fn post_by_url(&self, url: &str, post_data: &str) -> Result<String, WxErrorException> {
-        execute_with_retry(
-            self,
-            &SimplePostRequestExecutor::new(self.http_client()),
-            url,
-            post_data.to_string(),
+        crate::api::r#impl::base_wx_qidian_service_impl::execute_post_via_pipeline(
+            self, url, post_data,
         )
         .await
     }
