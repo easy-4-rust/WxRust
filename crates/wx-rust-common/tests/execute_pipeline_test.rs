@@ -56,6 +56,7 @@ async fn ok_response_parses_without_replay() {
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
         replay_on_token_invalid: true,
+        breaker: None,
     };
     let r: i32 = execute_pipeline(
         ctx,
@@ -98,6 +99,7 @@ async fn token_invalid_replays_exactly_once() {
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
         replay_on_token_invalid: true,
+        breaker: None,
     };
     let r: i32 = execute_pipeline(
         ctx,
@@ -135,6 +137,7 @@ async fn uri_with_access_token_rejected_before_send() {
         uri: "https://mock.local/get?access_token=LEAK".into(),
         body: TransportBody::None,
         replay_on_token_invalid: true,
+        breaker: None,
     };
     let res: Result<i32, WxErrorException> =
         execute_pipeline(ctx, WxType::MiniApp, |_| Ok(0i32), None).await;
@@ -164,6 +167,7 @@ async fn non_token_error_code_returns_without_replay() {
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
         replay_on_token_invalid: true,
+        breaker: None,
     };
     let res: Result<i32, WxErrorException> = execute_pipeline(
         ctx,
@@ -199,6 +203,7 @@ async fn token_invalid_replay_still_fails_returns_error() {
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
         replay_on_token_invalid: true,
+        breaker: None,
     };
     let res: Result<i32, WxErrorException> = execute_pipeline(
         ctx,
@@ -235,6 +240,7 @@ async fn replay_disabled_still_expires_token_without_replay() {
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
         replay_on_token_invalid: false,
+        breaker: None,
     };
     let res: Result<i32, WxErrorException> = execute_pipeline(
         ctx,
@@ -269,6 +275,7 @@ async fn text_body_maps_to_raw_post() {
         uri: "https://mock.local/post".into(),
         body: TransportBody::Text("{\"k\":1}".into()),
         replay_on_token_invalid: true,
+        breaker: None,
     };
     let r: i32 = execute_pipeline(ctx, WxType::MiniApp, |_| Ok(7i32), None)
         .await

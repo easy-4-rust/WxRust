@@ -29,6 +29,15 @@
 //! 6. errcode 为 0 时交 `parse` 闭包提取成功值（parse 自身的错误原样
 //!    上抛，不吞不换）。
 //!
+//! # 熔断（可选，默认关闭）
+//!
+//! `ctx.breaker` 为 `Some` 时：发送前 `before(host)`（host 为从
+//! `ctx.uri` 解析的 `scheme://host[:port]`；解析失败退回整段 uri 作键）
+//! ——熔断开启则直接返回熔断错误、零 transport 调用；整个执行
+//! （发送 + errcode 校验 + 重放 + parse）以最终结果调用
+//! `after(host, ok)`（`Ok` → 复位、`Err`（含传输/parse 错误）→ 计
+//! 失败）。`breaker: None`（默认）时行为与无熔断完全一致。
+//!
 //! # body → 请求方法映射规则
 //!
 //! - [`TransportBody::None`] → `GET`（无请求体）；
@@ -45,6 +54,33 @@ use crate::error::{WxError, WxErrorError, WxErrorException};
 use crate::http::{
     HttpTransport, TransportBody, TransportMethod, TransportRequest, TransportResponse,
 };
+
+/// 管线侧最小熔断接口（避免与具体熔断实现耦合）。
+///
+/// [`crate::circuit::CircuitBreaker`] 实现本 trait；其他实现（如空操作、
+/// 自定义窗口策略）亦可注入 [`PipelineContext::breaker`]。
+#[async_trait::async_trait]
+pub trait CircuitBreakerLike: Send + Sync {
+    /// 请求发送前调用：熔断开启时应返回 `Err` 阻止发送。
+    async fn before(&self, host: &str) -> Result<(), WxErrorException>;
+    /// 请求结束后调用：`ok = true` 复位，`ok = false` 计失败。
+    async fn after(&self, host: &str, ok: bool);
+}
+
+/// 从 uri 解析熔断键 `scheme://host[:port]`。
+///
+/// 解析失败（或无 host 段）时退回整段 uri 作键——保持熔断行为确定性，
+/// 不影响请求本身。
+fn breaker_host_key(uri: &str) -> String {
+    match url::Url::parse(uri) {
+        Ok(parsed) => match (parsed.scheme(), parsed.host_str(), parsed.port()) {
+            (scheme, Some(host), Some(port)) => format!("{scheme}://{host}:{port}"),
+            (scheme, Some(host), None) => format!("{scheme}://{host}"),
+            _ => uri.to_string(),
+        },
+        Err(_) => uri.to_string(),
+    }
+}
 
 /// 统一执行管线上下文：注入一次执行所需的差异点。
 pub struct PipelineContext<'a> {
@@ -63,6 +99,9 @@ pub struct PipelineContext<'a> {
     /// 置过期、不重放——对齐 miniapp `execute_internal` 的
     /// 「lock→compare→expire 恒执行、重放仅当 auto_refresh」语义）
     pub replay_on_token_invalid: bool,
+    /// 可选 per-host 熔断器（默认 `None` 关闭，行为与现状完全一致；
+    /// `Some` 时按模块文档「熔断」节接入）
+    pub breaker: Option<&'a dyn CircuitBreakerLike>,
 }
 
 /// 执行并处理 token 失效重放。
@@ -74,7 +113,7 @@ pub struct PipelineContext<'a> {
 /// （`replayed` flag 防无限递归）。
 ///
 /// # 参数
-/// - `ctx`：执行上下文（transport / token / uri / body / 重放开关）
+/// - `ctx`：执行上下文（transport / token / uri / body / 重放开关 / 可选熔断器）
 /// - `wx_type`：微信平台类型（errcode 错误信息翻译表选择）
 /// - `parse`：errcode 为 0 时的成功应答提取函数
 /// - `on_token_invalid`：token 失效回调（`None` 时既不置过期也不重放）
@@ -101,6 +140,13 @@ where
         ));
     }
 
+    // 熔断（默认关闭）：before 拒绝则零 transport 调用直接返回；
+    // host 键只解析一次，after 沿用同一键
+    let breaker_key = ctx.breaker.is_some().then(|| breaker_host_key(&ctx.uri));
+    if let (Some(breaker), Some(key)) = (ctx.breaker, breaker_key.as_deref()) {
+        breaker.before(key).await?;
+    }
+
     // token 注入（? 已存在则 & 追加）——循环外组装一次，重放沿用同一 URL
     let url = if ctx.uri.contains('?') {
         format!("{}&access_token={}", ctx.uri, ctx.access_token)
@@ -117,9 +163,9 @@ where
     // Java 以递归实现单次 token 自动刷新；Rust 以 flag 循环表达同一
     // 语义（replayed=true 后不再重放，防无限递归）
     let mut replayed = false;
-    loop {
+    let outcome = loop {
         // 传输错误（error_code 为 None）直接上抛，不重放
-        let resp = ctx
+        let resp = match ctx
             .transport
             .send(TransportRequest {
                 method: method.clone(),
@@ -127,7 +173,11 @@ where
                 headers: vec![],
                 body: ctx.body.clone(),
             })
-            .await?;
+            .await
+        {
+            Ok(resp) => resp,
+            Err(e) => break Err(e),
+        };
 
         // 与标准执行器 handle_response 一致的 errcode 校验
         let body_text = String::from_utf8_lossy(&resp.body);
@@ -148,8 +198,15 @@ where
                 }
             }
             // 保留完整 WxError（含原始报文 json）供上层回解析
-            return Err(WxErrorException::Wx(WxErrorError::new(wx_error)));
+            break Err(WxErrorException::Wx(WxErrorError::new(wx_error)));
         }
-        return parse(resp);
+        break parse(resp);
+    };
+
+    // 熔断收口：以最终结果（含传输 / parse / 业务错误）计入 after——
+    // 重放成功视为 ok（与单次成功请求等价）
+    if let (Some(breaker), Some(key)) = (ctx.breaker, breaker_key.as_deref()) {
+        breaker.after(key, outcome.is_ok()).await;
     }
+    outcome
 }

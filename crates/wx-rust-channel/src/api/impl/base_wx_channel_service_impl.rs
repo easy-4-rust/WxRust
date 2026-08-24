@@ -251,6 +251,7 @@ where
             uri,
             body,
             replay_on_token_invalid: config.auto_refresh_token(),
+            breaker: None,
         },
         WxType::Channel,
         // errcode 校验后的原始应答文本（与 SimpleGet/SimplePost 的

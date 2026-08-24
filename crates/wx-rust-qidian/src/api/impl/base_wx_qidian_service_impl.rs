@@ -223,6 +223,7 @@ where
             uri: uri.to_string(),
             body,
             replay_on_token_invalid: config.auto_refresh_token(),
+            breaker: None,
         },
         // 与原 execute_internal 相同：qidian 的 errcode 翻译走 Mp 表
         WxType::Mp,
