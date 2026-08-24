@@ -139,6 +139,235 @@ COMPOUND_WORD_NORMALIZATIONS = {
     "XPay": "xpay",          # WxMaXPayService -> wx_ma_xpay_service (非 wx_ma_x_pay_service)
 }
 
+# ---------- 逐项显式处置（Task 12 V0 缺口清零，2026-08-24） ----------
+# 依据：各模块台账脚本（audit_channel_ledger / audit_cp_ledger / audit_open_ledger /
+# audit_miniapp_ledger / audit_pay_ledger）既有 SPECIAL/INLINED 归类 + 本次逐项核对
+# WxJava 源码后的处置结论（详见 docs/verification/V0-gap-closure.md）。
+# 三张表均以 (module, java_name) 为键；仅在文件存在性/复合词模糊匹配未命中时生效
+# （新增文件落在预期路径的项由存在性判定优先，无需进表）。
+
+# 已实现——符号改名/合并/跨 crate/生成器平铺（IMPLEMENTED，路径差异）
+EXPLICIT_IMPLEMENTED = {
+    # ---- weixin-java-channel（源自 audit_channel_ledger SPECIAL_SYMBOLS/UTIL_REUSED）----
+    ("weixin-java-channel", "BaseWxChannelMessageService"): (
+        "api/wx_channel_message_service.rs",
+        "命名差异：Rust 文件去 Base 前缀（Java 接口 42 事件方法全量镜像）",
+    ),
+    ("weixin-java-channel", "BaseWxChannelService"): (
+        "api/wx_channel_service.rs",
+        "Java 三层继承链（Impl→HttpComponentsImpl→Base）在 Rust 以 trait 默认实现 + 组合合一，"
+        "与 WxChannelService 同文件承载（doc 头注释声明）",
+    ),
+    ("weixin-java-channel", "BaseWxChannelMessageServiceImpl"): (
+        "api/impl/wx_channel_message_service_impl.rs",
+        "命名差异：Rust 文件去 Base 前缀；Java 抽象基类（addDefaultRule 39 条）"
+        "Rust 以默认规则 + 消费者扩展点承载",
+    ),
+    ("weixin-java-channel", "MessageEventConstants"): (
+        "constant/wx_channel_message_event_constants.rs",
+        "命名差异：Rust 文件为 wx_channel_message_event_constants.rs",
+    ),
+    ("weixin-java-channel", "WxChannelApiUrlConstants"): (
+        "enums/url_*.rs（URL 常量按子域拆分 25 文件）",
+        "URL 常量按子域拆分至 enums/（url_core/url_order/url_product/url_funds/url_league 等）",
+    ),
+    ("weixin-java-channel", "WxChannelErrorMsgEnum"): (
+        "wx-rust-common/src/error/（wx_channel_error_msg_enum）",
+        "跨 crate 迁移：错误码→文案映射迁至 wx-rust-common（find_msg_by_code，"
+        "WxType::Channel 分支接入）",
+    ),
+    # ---- weixin-java-cp（源自 audit_cp_ledger INLINED）----
+    ("weixin-java-cp", "WxCpOaOaScheduleServiceImpl"): (
+        "api/impl/wx_cp_oa_schedule_service_impl.rs",
+        "命名差异：Rust 文件名去重（Java 类名含双 Oa）",
+    ),
+    ("weixin-java-cp", "WxCpApiPathConsts"): (
+        "enums/url_*.rs（URL 常量按子域拆分 23 文件）",
+        "URL 常量按子域拆分至 enums/（url_core/url_agent/url_chat/url_corp_group 等）",
+    ),
+    ("weixin-java-cp", "WxCpConsts"): (
+        "constant/wx_cp_constants.rs",
+        "命名差异：Rust 文件名为 wx_cp_constants.rs（模块文档注明对应 WxCpConsts 全量静态常量）",
+    ),
+    ("weixin-java-cp", "WxCpCryptUtil"): (
+        "util/crypto/wx_cp_crypt_utils.rs::WxCpCryptUtils",
+        "命名差异：Rust 符号名 WxCpCryptUtils（构造/decryptXml/encrypt/decryptPriKey 语义镜像；"
+        "消息 XML 加解密由 common WxCryptUtil 承载）",
+    ),
+    # ---- weixin-java-miniapp（源自 audit_miniapp_ledger）----
+    ("weixin-java-miniapp", "WxMaApiUrlConstants"): (
+        "enums/url_*.rs（URL 常量按子域拆分）",
+        "URL 常量按子域拆分至 enums/（url_core/url_business/g1_urls/g2_urls/g3_urls/g4_urls 等）",
+    ),
+    # ---- weixin-java-mp ----
+    ("weixin-java-mp", "WxMpTemplateData"): (
+        "bean/template/wx_mp_template_message.rs::WxMpTemplateData",
+        "合并实现：模板消息数据节点与 WxMpTemplateMessage 同文件承载（mod.rs pub use 导出）",
+    ),
+    ("weixin-java-mp", "WxMpMapConfigImpl"): (
+        "config/impl/wx_mp_default_config_impl.rs::WxMpDefaultConfigImpl",
+        "Java 变体仅将 access_token 存储换为 ConcurrentHashMap（单机高并发）；"
+        "Rust WxMpDefaultConfigImpl 的 Mutex/RwLock 字段原生并发安全，"
+        "无 JVM 侧按存储结构分型的需求，语义合一承载",
+    ),
+    # ---- weixin-java-open（源自 audit_open_ledger SPECIAL_SYMBOLS）----
+    ("weixin-java-open", "WxOpenFastMaService"): (
+        "api/impl/wx_open_ma_service.rs::WxOpenMaService",
+        "Java @Deprecated 接口（2021-06-23 起以 WxOpenMaService 替代），"
+        "Rust 统一以 WxOpenMaService 承载，ADAPTED",
+    ),
+    ("weixin-java-open", "WxOpenFastMaServiceImpl"): (
+        "api/impl/wx_open_ma_service.rs::WxOpenMaService",
+        "Java @Deprecated（以 WxOpenMaService 替代），Rust 统一承载，ADAPTED",
+    ),
+    ("weixin-java-open", "WxOpenInMemoryConfigStorage"): (
+        "config/impl/wx_open_default_config_impl.rs::WxOpenDefaultConfigImpl",
+        "命名差异：Rust 以 WxOpenDefaultConfigImpl（与 mp/ma 的 DefaultConfigImpl 对齐）实现内存存储",
+    ),
+    ("weixin-java-open", "WxOpenMaServiceImpl"): (
+        "api/impl/wx_open_ma_service.rs::WxOpenMaService",
+        "代 ma 桥接（Java 继承 WxMaServiceImpl 表达代运营语义，"
+        "Rust trait 默认实现 + 组合，ADAPTED）",
+    ),
+    ("weixin-java-open", "WxOpenMessageRouter"): (
+        "api/impl/wx_open_component_service_impl.rs::route",
+        "Java WxOpenMessageRouter 覆写 mp 路由为 component 回调；Rust 分发内联于 "
+        "component service route()（verify_ticket/authorized/updateauthorized/"
+        "notify_third_fasteregister）",
+    ),
+    ("weixin-java-open", "WxOpenMpServiceImpl"): (
+        "api/impl/wx_open_mp_service.rs::WxOpenMpService",
+        "代 mp 桥接（Java 继承 WxMpServiceImpl 覆写 token/config，"
+        "Rust trait 默认实现 + 组合，ADAPTED）",
+    ),
+    ("weixin-java-open", "WxOpenServiceAbstractImpl"): (
+        "api/impl/base_wx_open_service_impl.rs（执行引擎自由函数）",
+        "trait 无法携带泛型方法，执行引擎抽为自由函数（execute_with_retry/"
+        "execute_internal/get_component_access_token_with_lock 等）",
+    ),
+    ("weixin-java-open", "WxOpenCryptUtil"): (
+        "util/crypto/wx_open_crypt_utils.rs",
+        "路径差异：实际位于 util/crypto/ 且文件名复数（wx_open_crypt_utils.rs）",
+    ),
+    # ---- weixin-java-common ----
+    ("weixin-java-common", "Required"): (
+        "annotation/mod.rs::RequiredField",
+        "合并实现：Java @Required 运行时注解的 Rust 等价物为 RequiredField 特性"
+        "（validate_required 返回缺失字段名），位于 annotation/mod.rs（无单独 required.rs）",
+    ),
+    ("weixin-java-common", "WxOAuth2ServiceDecorator"): (
+        "service/wx_oauth2_service.rs（trait 对象组合）",
+        "Java 类为 lombok @Delegate 纯委托装饰器（零自有行为）；Rust 以 "
+        "Arc<dyn WxOAuth2Service> 直接组合承载同一替代能力，无继承装饰样板需求",
+    ),
+    # ---- weixin-java-pay ----
+    ("weixin-java-pay", "WxPayServiceImpl"): (
+        "api/impl/base_wx_pay_service_impl.rs",
+        "Java 继承链 BaseWxPayServiceImpl→HttpComponentsImpl→WxPayServiceImpl 的末层空壳"
+        "（WxPayServiceImpl 仅选择 Apache HttpClient 后端）；Rust 以 reqwest 单一后端，"
+        "api/impl/base_wx_pay_service_impl.rs 即默认完整实现",
+    ),
+    ("weixin-java-pay", "GlobalTradeTypeEnum"): (
+        "enums/global_trade_type.rs::GlobalTradeTypeEnum",
+        "命名差异：Rust 文件去 Enum 后缀，位于 enums/（doc 注释标对应 Java 类）",
+    ),
+    ("weixin-java-pay", "BaseWxPayRequest"): (
+        "bean/request/*.rs（生成器平铺）",
+        "Java 抽象基类字段（appid/mch_id/sub_appid/sub_mch_id/nonce_str/sign/sign_type 等）"
+        "由 gen_pay_bean_structs.py 平铺进每个请求 bean（serde 字段带 XStreamAlias rename）；"
+        "签名/校验语义位于 base_wx_pay_service_impl 与 util/sign_utils",
+    ),
+    ("weixin-java-pay", "BaseWxPayResult"): (
+        "bean/result/*.rs（生成器平铺）",
+        "Java 抽象基类字段（return_code/return_msg/result_code/err_code/err_code_des）"
+        "平铺进每个结果 bean；fromXML/校验语义由 quick-xml serde + 服务 impl 承载",
+    ),
+    ("weixin-java-pay", "BaseWxPayV3Result"): (
+        "bean/**/*_result.rs（rawJsonString 字段内联）",
+        "Java 基类仅持有 rawJsonString；Rust v3 结果 bean（如 favor_stocks_get_result）"
+        "内联同名字段（serde rename rawJsonString）",
+    ),
+    ("weixin-java-pay", "WxPayBaseNotifyV3Result"): (
+        "bean/notify/wx_pay_notify_v3_result.rs 等（raw_data + 解密模式内联）",
+        "Java 泛型接口（setRawData/setResult）；Rust notify v3 结果 bean 内联 "
+        "raw_data: OriginNotifyResponse 字段 + parse/decrypt 关联函数承载同一模式",
+    ),
+}
+
+# 平台/机制不可达——逐项依据（PLATFORM_NA）
+EXPLICIT_PLATFORM_NA = {
+    ("weixin-java-pay", "HttpClientBuilderCustomizer"): (
+        "Apache HttpClientBuilder 定制钩子；Rust 以 reqwest Client 构建承载"
+        "（代理/超时由宿主配置 reqwest，见 config/wx_pay_http_proxy.rs 说明）"
+    ),
+    ("weixin-java-pay", "SignatureExec"): (
+        "Apache HttpClient 请求拦截器（签名注入机构）；Rust 以 reqwest 单一后端承载，"
+        "签名内联于请求构造（util/crypto/create_authorization_header 与 "
+        "v3/auth/wx_pay_credentials.rs::get_token）"
+    ),
+    ("weixin-java-pay", "WechatPayUploadHttpPost"): (
+        "Apache HttpPost 变体（图片上传 meta 参与签名）；上传语义由服务 impl 上传方法 + "
+        "wx-rust-common util::http 执行引擎承载，meta 签名内化于构造请求体处"
+    ),
+    ("weixin-java-pay", "WxPayV3DownloadHttpGet"): (
+        "Apache HttpGet 变体（对账单流式下载）；Rust 由 reqwest execute_stream 流式下载承载"
+        "（download_bill_stream，见 tests/download_stream_test.rs）"
+    ),
+    ("weixin-java-pay", "WxPayV3HttpClientBuilder"): (
+        "Apache CloseableHttpClient 构建器（挂载 SignatureExec/Validator）；"
+        "Rust 以 reqwest Client + v3 认证族（v3/auth）组合承载"
+    ),
+    ("weixin-java-pay", "HttpProxyUtils"): (
+        "Apache HttpClientBuilder 代理/凭据注入；Rust 代理由宿主配置 reqwest Client"
+        "（配置数据由 config/wx_pay_http_proxy.rs::WxPayHttpProxy 承载）"
+    ),
+    ("weixin-java-pay", "RequestUtils"): (
+        "javax.servlet HttpServletRequest 读取工具（V3 回调读体）；Rust 无 Servlet 容器，"
+        "回调 body 由宿主 Web 框架直接给出（wx_pay_notify_utils 解析入口）"
+    ),
+    ("weixin-java-pay", "ResourcesUtils"): (
+        "Java classpath 资源加载（jodd ClassUtil 改造）；Rust 以文件路径/std::include_bytes "
+        "或宿主资源机制承载，无类加载器链"
+    ),
+    ("weixin-java-pay", "XmlConfig"): (
+        "Java 反射式 XML 序列化的 fastMode 开关（graalvm native 优化）；"
+        "Rust quick-xml serde 常态即为无反射实现（等价 fastMode=true），无切换需求"
+    ),
+    ("weixin-java-pay", "BusinessOperationTransferExample"): (
+        "示例/演示代码（example 包，非 SDK 运行时类）；对应业务方法已实现于 "
+        "api/business_operation_transfer_service*.rs"
+    ),
+    ("weixin-java-pay", "NewTransferApiExample"): (
+        "示例/演示代码（example 包，非 SDK 运行时类）；对应业务方法已实现于 "
+        "api/transfer_service*.rs"
+    ),
+    ("weixin-java-mp", "MediaImgUploadHttpRequestExecutor"): (
+        "Jodd HTTP 客户端专属变体（import jodd.http.*，同族 Apache/HttpComponents/Okhttp "
+        "变体均已 PLATFORM_NA）；上传语义由 api/impl material service 的 media_img_upload + "
+        "wx-rust-common util::http 执行引擎承载"
+    ),
+    ("weixin-java-common", "StringManager"): (
+        "Apache Tomcat 式 ResourceBundle i18n 消息管理器（util/res 包，Java 资源束机制专属）；"
+        "错误文案在 Rust 侧直接内联于各错误类型（WxErrorException/WxPayException 等）"
+    ),
+}
+
+# 依赖内化——逐项依据（DEPENDENCY_REUSED）
+EXPLICIT_DEPENDENCY_REUSED = {
+    ("weixin-java-channel", "ChannelWxError"): (
+        "wx-rust-common::error::WxError",
+        "跨 crate 复用：Java 类为 @Deprecated 的 WxError 子类（无 channel 特有字段），"
+        "构造器仅按 WxChannelErrorMsgEnum 翻译中文文案；该语义由 "
+        "WxError::from_json_with_type(WxType::Channel)（translate_error_msg 已接入 "
+        "wx_channel_error_msg_enum::find_msg_by_code 分支）完整承载",
+    ),
+    ("weixin-java-pay", "WxPayOrderNotifyResultConverter"): (
+        "bean/notify/wx_pay_order_notify_result.rs 的 serde 派生",
+        "XStream 反射 converter（couponList 节点展开/收起 + 字段映射）语义内化于 "
+        "quick-xml serde 派生与 bean 字段 rename（coupon_list/coupon_type/coupon_id 等）",
+    ),
+}
+
 # ---------- 证据文案 ----------
 
 EVIDENCE_IMPLEMENTED = "文件存在：预期路径或同名文件在 crate src 树内定位成功"
@@ -172,6 +401,10 @@ EVIDENCE_NA_ABSTRACT = (
     "Java 抽象基类（继承链）；Rust 以 trait 默认实现 / 组合模式承载"
 )
 EVIDENCE_MISSING = "未实现：crate src 树内无对应 .rs 文件"
+EVIDENCE_NA_PACKAGE_INFO = (
+    "Java 包级文档文件（package-info.java，仅承载 javadoc/包注解，无运行时类）；"
+    "Rust 以模块 mod.rs 的模块级 doc 注释承载同一信息"
+)
 
 
 def is_http_backend(java_name, java_file):
@@ -297,7 +530,7 @@ def is_json_xml_util(java_name):
 def normalize_compound_words(java_name):
     """将 Java 类名中的复合词规范化为 Rust 文件名等价形式。
 
-    例如 WxOAuth2Service -> [wx_oauth2_service, wx_o_auth2_service]
+    例如 WxOAuth2Service -> [wx_cp_oauth2_service 形态候选]
     返回多个候选 snake_case 文件名（用于模糊匹配）。
     """
     import re
@@ -307,6 +540,11 @@ def normalize_compound_words(java_name):
     base = base.lower().replace("__", "_")
 
     candidates = [base]
+
+    def snake_of(word):
+        s = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", word)
+        s = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", "_", s)
+        return s.lower()
 
     # 对每个复合词规范化，生成额外候选
     for compound, normalized in COMPOUND_WORD_NORMALIZATIONS.items():
@@ -320,11 +558,19 @@ def normalize_compound_words(java_name):
             alt2 = base.replace(normalized, compound.lower())
             if alt2 != base and alt2 not in candidates:
                 candidates.append(alt2)
+            # 拆分形式 -> 规范化形式（Task 12 修复）：
+            # 基础转换把 OAuth2 拆成 o_auth2、XPay 拆成 x_pay，而实际 Rust
+            # 文件名为连续拼写（wx_cp_oauth2_service.rs / wx_ma_xpay_service.rs），
+            # 此前缺该方向导致明明存在的文件被判 MISSING
+            split_form = snake_of(compound)
+            alt3 = base.replace(split_form, normalized)
+            if alt3 != base and alt3 not in candidates:
+                candidates.append(alt3)
 
     return candidates
 
 
-def classify(java_name, java_file, rust_path, found_paths, extra_found_paths, kind="?"):
+def classify(java_name, java_file, rust_path, found_paths, extra_found_paths, kind="?", module="?"):
     """逐行处置。返回 (status, actual_path, evidence)。
 
     found_paths: 按预期文件名精确匹配的路径列表
@@ -350,6 +596,26 @@ def classify(java_name, java_file, rust_path, found_paths, extra_found_paths, ki
         if len(extra_found_paths) > 1:
             note += f"（多处命中 {extra_found_paths}，需人工复核）"
         return "IMPLEMENTED", actual, note
+
+    # 2c) Java 包文档文件（package-info.java 仅承载包级 javadoc/注解，
+    #     CSV 行的 java_name/kind/rust_path 均为 "?"）
+    if java_file.replace("\\", "/").endswith("package-info.java"):
+        return "PLATFORM_NA", rust_path, EVIDENCE_NA_PACKAGE_INFO
+
+    # 2d) 逐项显式处置表（Task 12：改名/合并/跨 crate/生成器平铺的已实现项）
+    explicit_impl = EXPLICIT_IMPLEMENTED.get((module, java_name))
+    if explicit_impl:
+        actual, reason = explicit_impl
+        return "IMPLEMENTED", actual, f"已实现（符号改名/合并/跨 crate/平铺）：{reason}"
+
+    explicit_reused = EXPLICIT_DEPENDENCY_REUSED.get((module, java_name))
+    if explicit_reused:
+        actual, reason = explicit_reused
+        return "DEPENDENCY_REUSED", actual, f"依赖内化：{reason}"
+
+    explicit_na = EXPLICIT_PLATFORM_NA.get((module, java_name))
+    if explicit_na:
+        return "PLATFORM_NA", rust_path, f"平台/机制不可达：{explicit_na}"
 
     # 3) PLATFORM_NA 归类
     if is_http_backend(java_name, java_file):
@@ -488,7 +754,9 @@ def main():
         if exact_exists and rust_path not in found:
             found.insert(0, rust_path)
 
-        status, actual, evidence = classify(java_name, java_file, rust_path, found, extra_found, kind)
+        status, actual, evidence = classify(
+            java_name, java_file, rust_path, found, extra_found, kind, module
+        )
 
         stats[status] += 1
         per_module[module][status] += 1
