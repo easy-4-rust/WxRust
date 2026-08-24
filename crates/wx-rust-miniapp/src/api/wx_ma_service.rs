@@ -377,8 +377,9 @@ pub trait WxMaService: Send + Sync {
 
     /// 获取 access_token（可强制刷新）。
     ///
-    /// 对应 Java `getAccessToken(boolean forceRefresh)`：双检锁 +
-    /// tryLock(100ms) 轮询 + 3 秒超时；稳定版接口按配置切换。
+    /// 对应 Java `getAccessToken(boolean forceRefresh)`：双检锁 + 3 秒超时
+    /// 等待（原 tryLock(100ms) 轮询的 Rust 原生化，语义不变）；稳定版接口
+    /// 按配置切换。
     async fn get_access_token_with_force(
         &self,
         force_refresh: bool,
@@ -391,25 +392,37 @@ pub trait WxMaService: Send + Sync {
         }
 
         let lock = config.access_token_lock();
-        let timeout_at = std::time::Instant::now() + std::time::Duration::from_millis(3000);
-        // 对应 Java tryLock(100ms) 轮询：guard 必须持有到刷新完成（双检锁）
-        let _guard = loop {
+        // 对应 Java tryLock(100ms) 轮询 + 3s 总超时：timeout 包裹「先查—
+        // 再等锁—得锁后再查」全流程；拿到 guard 后持有到刷新完成（双检锁）。
+        // 等待者提前返回语义：他人刷新出未过期 token 后，等待者在等待前的
+        // 双检或取到锁后的双检中直接返回，不发起自己的 token 请求。
+        // lock_owned 产生 'static guard（超时 future 完成后仍可持有）。
+        let outcome = tokio::time::timeout(std::time::Duration::from_millis(3000), async {
             if !force_refresh && !config.is_access_token_expired() {
+                return None;
+            }
+            let guard = lock.lock_owned().await;
+            if !force_refresh && !config.is_access_token_expired() {
+                // 双检通过：他人已刷新出未过期 token，放锁并提前返回
+                return None;
+            }
+            Some(guard)
+        })
+        .await;
+
+        let _guard = match outcome {
+            // 等待者提前返回：无需自行刷新
+            Ok(None) => {
                 return config
                     .access_token()
                     .ok_or_else(|| WxErrorException::from_code(-99, "access token 为空"));
             }
-            match lock.try_lock() {
-                Ok(guard) => break guard,
-                Err(_) => {
-                    if std::time::Instant::now() > timeout_at {
-                        return Err(WxErrorException::from_code(
-                            -99,
-                            "获取accessToken超时：获取时间超时",
-                        ));
-                    }
-                    tokio::time::sleep(std::time::Duration::from_millis(100)).await;
-                }
+            Ok(Some(guard)) => guard,
+            Err(_) => {
+                return Err(WxErrorException::from_code(
+                    -99,
+                    "获取accessToken超时：获取时间超时",
+                ));
             }
         };
 
