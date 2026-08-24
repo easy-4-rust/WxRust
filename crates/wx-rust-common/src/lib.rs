@@ -17,6 +17,7 @@ pub mod config;
 pub mod enums;
 pub mod error;
 pub mod executor;
+pub mod http;
 pub mod redis;
 pub mod service;
 pub mod session;
