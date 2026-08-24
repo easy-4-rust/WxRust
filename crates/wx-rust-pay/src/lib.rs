@@ -17,4 +17,6 @@ pub mod builder;
 pub mod config;
 pub mod constant;
 pub mod enums;
+pub mod exception;
 pub mod util;
+pub mod v3;

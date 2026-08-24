@@ -411,6 +411,11 @@ impl WxPayAutoUpdateCertificatesVerifier {
         inner.get_valid_certificate().cloned()
     }
 
+    /// 证书更新间隔（分钟，对应 Java 字段 `minutesInterval`）。
+    pub fn minutes_interval(&self) -> u64 {
+        self.minutes_interval
+    }
+
     /// 是否需要刷新证书（对应 Java `checkAndAutoUpdateCert` 的间隔判断：
     /// `instant == null || instant.plus(minutesInterval).compareTo(now) <= 0`）。
     pub fn need_update(&self) -> bool {
