@@ -6,6 +6,7 @@
 //! - 会话管理、重复消息检查、请求执行器抽象、配置存储抽象
 //! - HTTP 传输抽象与统一执行管线（token 注入 + 失效单次重放）
 //! - per-host 熔断器（可选注入，默认关闭）
+//! - 可注入时钟（`WxClock`：默认 `SystemClock`，测试可注入 `FakeClock`）
 //! - 加密工具（SHA1 / 微信消息加解密 / PKCS7）
 //!
 //! 设计约束：全 crate `#![forbid(unsafe_code)]`，HTTP 统一使用 `reqwest`。
@@ -16,6 +17,7 @@ pub mod annotation;
 pub mod api;
 pub mod bean;
 pub mod circuit;
+pub mod clock;
 pub mod config;
 pub mod enums;
 pub mod error;

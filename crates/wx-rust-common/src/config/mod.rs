@@ -5,7 +5,10 @@
 
 use std::sync::Arc;
 use std::sync::Mutex;
+use std::sync::OnceLock;
 use tokio::sync::Mutex as AsyncMutex;
+
+use crate::clock::{SystemClock, WxClock};
 
 /// access token 缓存条目。
 #[derive(Debug, Clone)]
@@ -127,6 +130,8 @@ pub struct WxDefaultConfig {
     pub http_proxy_host: Option<String>,
     /// 代理端口
     pub http_proxy_port: Option<u16>,
+    /// 可注入时钟（惰性默认 `SystemClock`；测试经 `set_clock` 注入 `FakeClock`）
+    clock: OnceLock<Arc<dyn WxClock>>,
 }
 
 impl WxDefaultConfig {
@@ -145,15 +150,26 @@ impl WxDefaultConfig {
             auto_refresh: true,
             http_proxy_host: None,
             http_proxy_port: None,
+            clock: OnceLock::new(),
         }
     }
 
-    /// 当前时间（UNIX 秒）。
-    fn now() -> i64 {
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_secs() as i64)
-            .unwrap_or(0)
+    /// 注入时钟（仅测试使用：注入 `FakeClock` 后 token 过期测试零 sleep）。
+    ///
+    /// 须在首次读取时间（`update_access_token`/`is_access_token_expired`）
+    /// 之前调用——默认 `SystemClock` 惰性初始化后不可再替换；重复或迟到
+    /// 调用返回 `false` 且不生效。
+    pub fn set_clock(&self, clock: Arc<dyn WxClock>) -> bool {
+        self.clock.set(clock).is_ok()
+    }
+
+    /// 当前时间（UNIX 秒，经可注入时钟；默认 `SystemClock` 行为与直接读
+    /// `SystemTime` 逐字节一致）。
+    fn now_secs(&self) -> i64 {
+        self.clock
+            .get_or_init(|| Arc::new(SystemClock) as Arc<dyn WxClock>)
+            .now_ms()
+            / 1000
     }
 }
 
@@ -174,7 +190,7 @@ impl WxConfigStorage for WxDefaultConfig {
     fn is_access_token_expired(&self) -> bool {
         let guard = self.access_token.lock().unwrap();
         match guard.as_ref() {
-            Some(t) => t.is_expired(Self::now()),
+            Some(t) => t.is_expired(self.now_secs()),
             None => true,
         }
     }
@@ -188,7 +204,7 @@ impl WxConfigStorage for WxDefaultConfig {
         let mut guard = self.access_token.lock().unwrap();
         *guard = Some(TokenEntry {
             value: access_token.to_string(),
-            expires_at: Some(Self::now() + expires_in_seconds as i64),
+            expires_at: Some(self.now_secs() + expires_in_seconds as i64),
         });
     }
 
