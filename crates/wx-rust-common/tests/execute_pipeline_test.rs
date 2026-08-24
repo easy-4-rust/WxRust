@@ -55,6 +55,7 @@ async fn ok_response_parses_without_replay() {
         access_token: "T1".into(),
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
+        replay_on_token_invalid: true,
     };
     let r: i32 = execute_pipeline(
         ctx,
@@ -96,6 +97,7 @@ async fn token_invalid_replays_exactly_once() {
         access_token: "T1".into(),
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
+        replay_on_token_invalid: true,
     };
     let r: i32 = execute_pipeline(
         ctx,
@@ -132,6 +134,7 @@ async fn uri_with_access_token_rejected_before_send() {
         access_token: "T1".into(),
         uri: "https://mock.local/get?access_token=LEAK".into(),
         body: TransportBody::None,
+        replay_on_token_invalid: true,
     };
     let res: Result<i32, WxErrorException> =
         execute_pipeline(ctx, WxType::MiniApp, |_| Ok(0i32), None).await;
@@ -160,6 +163,7 @@ async fn non_token_error_code_returns_without_replay() {
         access_token: "T1".into(),
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
+        replay_on_token_invalid: true,
     };
     let res: Result<i32, WxErrorException> = execute_pipeline(
         ctx,
@@ -194,6 +198,7 @@ async fn token_invalid_replay_still_fails_returns_error() {
         access_token: "T1".into(),
         uri: "https://mock.local/get".into(),
         body: TransportBody::None,
+        replay_on_token_invalid: true,
     };
     let res: Result<i32, WxErrorException> = execute_pipeline(
         ctx,
@@ -205,6 +210,42 @@ async fn token_invalid_replay_still_fails_returns_error() {
     let err = res.unwrap_err();
     assert_eq!(err.error_code(), Some(40001));
     assert_eq!(calls.load(Ordering::SeqCst), 2);
+    assert!(expired.load(Ordering::SeqCst));
+}
+
+/// `replay_on_token_invalid = false`（对应 miniapp `auto_refresh_token()`
+/// 为 false）：errcode 命中 token 失效码时仍执行 on_token_invalid（置过期），
+/// 但不重放——transport 恰调用 1 次，返回原 errcode 错误。
+#[tokio::test]
+async fn replay_disabled_still_expires_token_without_replay() {
+    let calls = Arc::new(AtomicUsize::new(0));
+    let c = calls.clone();
+    let t = MockTransport::new(move |_| {
+        c.fetch_add(1, Ordering::SeqCst);
+        Ok(TransportResponse {
+            status: 200,
+            headers: vec![],
+            body: br#"{"errcode":40001,"errmsg":"invalid credential"}"#.to_vec(),
+        })
+    });
+    let expired = Arc::new(AtomicBool::new(false));
+    let ctx = PipelineContext {
+        transport: &t,
+        access_token: "T1".into(),
+        uri: "https://mock.local/get".into(),
+        body: TransportBody::None,
+        replay_on_token_invalid: false,
+    };
+    let res: Result<i32, WxErrorException> = execute_pipeline(
+        ctx,
+        WxType::MiniApp,
+        |_| Ok(0i32),
+        Some(&flag_setter(&expired)),
+    )
+    .await;
+    let err = res.unwrap_err();
+    assert_eq!(err.error_code(), Some(40001));
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
     assert!(expired.load(Ordering::SeqCst));
 }
 
@@ -227,6 +268,7 @@ async fn text_body_maps_to_raw_post() {
         access_token: "T1".into(),
         uri: "https://mock.local/post".into(),
         body: TransportBody::Text("{\"k\":1}".into()),
+        replay_on_token_invalid: true,
     };
     let r: i32 = execute_pipeline(ctx, WxType::MiniApp, |_| Ok(7i32), None)
         .await

@@ -20,11 +20,12 @@
 //!    （含原始报文 `json`）返回 `Err`；
 //! 5. errcode ∈ [`crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES`]
 //!    （40001/40014/42001）时先执行 `on_token_invalid`（各 crate 承接
-//!    「加锁比对→置过期」，内部含 `.await` 故为 `BoxFuture`），随后
-//!    首次失败时单次重放（`replayed` flag 防无限递归，对应 miniapp
-//!    `do_not_auto_refresh`）；重放沿用同一 URL 与同一 token——token
-//!    刷新由服务层在下一次独立请求时发生（与 miniapp 现实现一致：
-//!    重放循环使用同一 `uri_with_access_token`）；
+//!    「加锁比对→置过期」，内部含 `.await` 故为 `BoxFuture`）——置过期
+//!    恒执行；随后仅当 `replay_on_token_invalid`（对应 miniapp
+//!    `auto_refresh_token()`）为真且未重放过时单次重放（`replayed`
+//!    flag 防无限递归，对应 miniapp `do_not_auto_refresh`）；重放沿用
+//!    同一 URL 与同一 token——token 刷新由服务层在下一次独立请求时发生
+//!    （与 miniapp 现实现一致：重放循环使用同一 `uri_with_access_token`）；
 //! 6. errcode 为 0 时交 `parse` 闭包提取成功值（parse 自身的错误原样
 //!    上抛，不吞不换）。
 //!
@@ -57,6 +58,11 @@ pub struct PipelineContext<'a> {
     pub uri: String,
     /// 请求体（按模块文档的映射规则决定 GET/POST）
     pub body: TransportBody,
+    /// token 失效时是否重放一次（对应 miniapp 配置
+    /// `auto_refresh_token()`；为 false 时仅执行 `on_token_invalid`
+    /// 置过期、不重放——对齐 miniapp `execute_internal` 的
+    /// 「lock→compare→expire 恒执行、重放仅当 auto_refresh」语义）
+    pub replay_on_token_invalid: bool,
 }
 
 /// 执行并处理 token 失效重放。
@@ -64,10 +70,11 @@ pub struct PipelineContext<'a> {
 /// 语义与 miniapp base impl 的 `execute_internal` 一致：首次执行；
 /// errcode ∈ [`crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES`] 且
 /// `on_token_invalid`（加锁比对→置过期，内部含 `.await`，故返回
-/// `BoxFuture`）执行后重放一次（`replayed` flag 防无限递归）。
+/// `BoxFuture`）执行后，`replay_on_token_invalid` 为真时重放一次
+/// （`replayed` flag 防无限递归）。
 ///
 /// # 参数
-/// - `ctx`：执行上下文（transport / token / uri / body）
+/// - `ctx`：执行上下文（transport / token / uri / body / 重放开关）
 /// - `wx_type`：微信平台类型（errcode 错误信息翻译表选择）
 /// - `parse`：errcode 为 0 时的成功应答提取函数
 /// - `on_token_invalid`：token 失效回调（`None` 时既不置过期也不重放）
@@ -78,11 +85,14 @@ pub async fn execute_pipeline<T, F>(
     ctx: PipelineContext<'_>,
     wx_type: WxType,
     parse: F,
-    on_token_invalid: Option<&dyn Fn() -> futures_util::future::BoxFuture<'static, ()>>,
+    on_token_invalid: Option<&(dyn Fn() -> futures_util::future::BoxFuture<'static, ()> + Sync)>,
 ) -> Result<T, WxErrorException>
 where
     F: Fn(TransportResponse) -> Result<T, WxErrorException>,
 {
+    // 注：回调 trait 对象需 `+ Sync`——`&dyn Fn` 跨 `.await` 持有，服务的
+    // async_trait 门面要求整体 future 为 Send（现有实现闭包均为 Sync，
+    // 纯编译期约束加强，不改变运行时语义）
     // 与 Java/miniapp 一致的前置校验：uri 不允许自带 access_token
     if ctx.uri.contains("access_token=") {
         return Err(WxErrorException::from_code(
@@ -126,9 +136,12 @@ where
             if crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES.contains(&wx_error.error_code) {
                 if let Some(on_token_invalid) = on_token_invalid {
                     // 强制设置 access token 过期，下一次请求里就会刷新
-                    // （重放沿用同一 token，与 miniapp 现实现一致）
+                    // （重放沿用同一 token，与 miniapp 现实现一致）。
+                    // 置过期恒执行；重放仅在 replay_on_token_invalid 为真
+                    // 且未重放过时发生（对齐 miniapp「auto_refresh_token()
+                    // && !do_not_auto_refresh」语义）
                     on_token_invalid().await;
-                    if !replayed {
+                    if ctx.replay_on_token_invalid && !replayed {
                         replayed = true;
                         continue;
                     }
