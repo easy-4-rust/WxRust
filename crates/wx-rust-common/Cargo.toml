@@ -54,5 +54,11 @@ criterion = { version = "0.5", features = ["html_reports"] }
 name = "crypto_bench"
 harness = false
 
+# 并发验收基准（G7）：--test 模式进 CI（cargo bench -- --test），
+# 断言失败即 CI 红；token 单飞基准见 wx-rust-miniapp（真实刷新路径所在）
+[[bench]]
+name = "pipeline_concurrency_bench"
+harness = false
+
 [package.metadata.docs.rs]
 all-features = true

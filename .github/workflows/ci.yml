@@ -34,6 +34,15 @@ jobs:
       # Gate: block_on 仅允许出现在 sync 门面文件（blocking.rs）内
       - name: block_on gate
         run: scripts/check_block_on.sh
+      # Gate: 并发验收（G7）。benches 不在 `cargo test --workspace` 内
+      # （harness=false 的 criterion 基准需独立运行），故为独立 step；
+      # `--test` 模式 = 每个基准跑一次迭代做正确性断言（断言 panic 即 CI 红）：
+      # - common：1000 并发共享未过期 token + 熔断开合（Open 零 transport 调用）
+      # - miniapp：1000 并发 token 单飞刷新（断言 token 端点应答数 == 1）
+      - name: concurrency bench (wx-rust-common, pipeline + circuit breaker)
+        run: cargo bench -p wx-rust-common --bench pipeline_concurrency_bench -- --test
+      - name: concurrency bench (wx-rust-miniapp, token single-flight)
+        run: cargo bench -p wx-rust-miniapp --bench token_single_flight_bench -- --test
 
   sync-feature:
     name: sync feature (blocking facade)

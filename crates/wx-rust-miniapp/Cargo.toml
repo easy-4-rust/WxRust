@@ -36,3 +36,15 @@ hex = { workspace = true }
 sha1 = { workspace = true }
 sha2 = { workspace = true }
 hmac = { workspace = true }
+
+# 并发验收基准（G7）专用 dev 依赖：criterion 与 common 侧同一版本；
+# futures-util 供 join_all 驱动并发批次（均为 workspace 既有依赖）
+[dev-dependencies]
+criterion = "0.5"
+futures-util = { workspace = true }
+
+# token 单飞验收基准：--test 模式进 CI（cargo bench -- --test），
+# 断言「token 端点应答数 == 1」失败即 CI 红
+[[bench]]
+name = "token_single_flight_bench"
+harness = false
