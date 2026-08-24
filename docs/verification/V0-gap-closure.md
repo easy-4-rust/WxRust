@@ -16,13 +16,13 @@
 
 模块明细（终态）：channel 618 / cp 594 / miniapp 611 / mp 428 / open 240 / pay 570 / common 174 / qidian 27 / aispeech 25，全部 MISSING=0。
 
-72 项缺口处置统计：**新增实现 22（全部 pay）· 既有实现映射修正 37（改名/合并/跨 crate/生成器平铺/复合词匹配修复）· PLATFORM_NA 13（Apache HttpClient/JVM 机制/示例代码/包文档）· DEPENDENCY_REUSED 2**。
+72 项缺口处置统计：**新增实现 21（全部 pay）· 既有实现映射修正 34（显式表 29 + 复合词匹配修复 5：改名/合并/跨 crate/生成器平铺）· PLATFORM_NA 15（Apache HttpClient/JVM 机制/示例代码/包文档）· DEPENDENCY_REUSED 2**。
 
-回归：`cargo test --workspace` 全绿 **1968**（基线 1933，+35：pay v3/config/exception 新增单测）；`cargo clippy --workspace --all-targets -- -D warnings` 干净；`cargo fmt --all` 无 diff。
+回归：`cargo test --workspace` 全绿 **1968**（基线 1942，+26：pay v3/config/exception 新增单测）；`cargo clippy --workspace --all-targets -- -D warnings` 干净；`cargo fmt --all` 无 diff。
 
 ## 一、pay 39 项
 
-### 1.1 新增实现（22 项，文件落在预期路径）
+### 1.1 新增实现（21 项，文件落在预期路径）
 
 新建 `crates/wx-rust-pay/src/v3/` 模块（对应 Java `com.github.binarywang.wxpay.v3` 包，按 Java 目录镜像；加密/验签引擎复用既有 `util/crypto/` 纯函数，零重复）与 config/exception/util 补齐：
 
@@ -49,9 +49,10 @@
 | 19 | `exception/WxPayException` | `exception/wx_pay_exception.rs` | 七字段 + Builder（fluent 六 setter）+ `build_error_msg`「，」拼装（逐片段与 Java 一致）+ `from_base_result_fields`（对应 `from(BaseWxPayResult)` 含 errorCode/errorMessage 覆盖分支）+ `From → WxErrorException::Runtime` |
 | 20 | `exception/WxSignTestException` | `exception/wx_sign_test_exception.rs` | 携带 `WxPayException` 的子类形态（`From` 向上转型），对应 Java 仅两构造器的空子类 |
 | 21 | `util/ZipUtils` | `util/zip_utils.rs` | `un_gzip_file`（去扩展名，对应 `FilenameUtils.removeExtension` 仅剥文件名段内扩展名）+ `gunzip_bytes`；flate2 往返测试 |
-| 22 | （引擎补齐）`WxPayAutoUpdateCertificatesVerifier` | `util/crypto/wx_pay_cert_verifier.rs` | 补 `minutes_interval()` getter（供 v3 镜像层暴露 Java 字段） |
 
-### 1.2 既有实现映射修正（7 项 IMPLEMENTED + 1 项 DEPENDENCY_REUSED）
+另附引擎补齐 1 项（既有文件增强，非新增文件、不计入 72 项缺口）：`WxPayAutoUpdateCertificatesVerifier`（`util/crypto/wx_pay_cert_verifier.rs`）补 `minutes_interval()` getter（供 v3 镜像层暴露 Java 字段）。
+
+### 1.2 既有实现映射修正（6 项 IMPLEMENTED + 1 项 DEPENDENCY_REUSED）
 
 | Java 类 | 当前 Rust 承载 | 说明 |
 |---|---|---|
@@ -85,7 +86,7 @@
 
 | Java 类 | 当前 Rust 承载 | 说明 |
 |---|---|---|
-| `WxOpenInMemoryConfigStorage` | `config/impl/wx_open_default_config_impl.rs::WxOpenDefaultConfigImpl` | 命名对齐 mp/ma DefaultConfigImpl |
+| `WxOpenInMemoryConfigStorage` | `config/impl/wx_open_default_config_impl.rs::WxOpenDefaultConfig` | 命名对齐 mp/ma DefaultConfig 家族 |
 | `WxOpenServiceAbstractImpl` | `api/impl/base_wx_open_service_impl.rs` | 执行引擎自由函数（trait 无法携带泛型方法） |
 | `WxOpenMaServiceImpl` | `api/impl/wx_open_ma_service.rs::WxOpenMaService` | 代 ma 桥接（trait 默认实现+组合，ADAPTED） |
 | `WxOpenFastMaService` / `WxOpenFastMaServiceImpl` | 同上 | Java @Deprecated，统一以 WxOpenMaService 承载 |
@@ -118,7 +119,7 @@
 
 ### mp（3）
 - `WxMpTemplateData` → `bean/template/wx_mp_template_message.rs::WxMpTemplateData`（合并实现，mod.rs 导出）
-- `WxMpMapConfigImpl` → `config/impl/wx_mp_default_config_impl.rs`（Java 变体仅将 token 存储换 ConcurrentHashMap；Rust DefaultConfigImpl 的 Mutex/RwLock 原生并发安全，语义合一）
+- `WxMpMapConfigImpl` → `config/impl/wx_mp_default_config_impl.rs`（Java 变体仅将 token 存储换 ConcurrentHashMap；Rust WxMpDefaultConfig 的 Mutex/RwLock 原生并发安全，语义合一）
 - `MediaImgUploadHttpRequestExecutor` → **PLATFORM_NA**（Jodd HTTP 变体，同族 Apache/HttpComponents/Okhttp 均已 NA；上传语义由 material service `media_img_upload` + common 执行引擎承载）
 
 ### common（4）
@@ -132,15 +133,15 @@
 1. `normalize_compound_words` 补「拆分形式→连续拼写」候选方向（`o_auth2→oauth2`、`x_pay→xpay`）：修复 5 项既有文件误报（cp 2、common 1、miniapp 2）；
 2. `package-info.java` 行归 PLATFORM_NA（新增 `EVIDENCE_NA_PACKAGE_INFO`）；
 3. 新增三张逐项显式处置表（键 `(module, java_name)`，仅在文件存在性/模糊匹配未命中时生效）：
-   - `EXPLICIT_IMPLEMENTED`（25 项：channel 6、cp 4、open 8、mp 2、common 2、pay 6 —— 另有 pay 1 项 GlobalTradeTypeEnum 经复合词/存在性路径命中）；
-   - `EXPLICIT_PLATFORM_NA`（12 项：pay 11 + mp 1，另 common StringManager、miniapp package-info×2 经规则命中，合计 15）；
+   - `EXPLICIT_IMPLEMENTED`（29 项：channel 6、cp 4、open 8、mp 2、common 2、pay 6（含 GlobalTradeTypeEnum 改名）、miniapp 1）；
+   - `EXPLICIT_PLATFORM_NA`（13 项：pay 11 + mp 1 + common 1（StringManager），另 miniapp package-info×2 经规则命中，合计 15）；
    - `EXPLICIT_DEPENDENCY_REUSED`（2 项：ChannelWxError、WxPayOrderNotifyResultConverter）。
    依据沿各模块台账脚本（audit_channel/cp/open/miniapp/pay_ledger.py）既有 SPECIAL/INLINED 归类，并逐项核对 WxJava 源码（`/Users/wandl/workspaces/workspace-github/WxJava`）。
 
 ## 五、测试证据
 
 - 新增离线单测（`crates/wx-rust-pay/src/**` inline `#[cfg(test)]`，共 21 项）：SHA256withRSA 签名/验签往返（随机密钥）、Authorization token 五元组格式、`signUriStripPrefix` 规范化与签名串剥离、`build_message` 布局、validator 非 JSON 放行/缺头 false/篡改 false、公钥验证器兜底路由、X509PublicCertificate 序列号前缀剥离、AES-GCM 加解密往返、RSA-OAEP 往返、验证器构建三模式、payBaseUrl 前缀提取、config holder 线程隔离、http_proxy is_effective、gzip 文件/字节往返、WxPayException 文案拼装与覆盖分支、WxSignTestException 向上转型。
-- 既有基线无回归：workspace 1968 全绿（基线 1933）。
+- 既有基线无回归：workspace 1968 全绿（基线 1942，+26）。
 - clippy `--workspace --all-targets -D warnings` 干净；`cargo fmt --all` 无 diff。
 
 ## 六、ADAPTED 汇总（与 Java 的刻意差异）
@@ -153,4 +154,4 @@
 | `SpecEncrypt`/`RsaCryptoUtil.encryptFields` 反射加密 | Rust 无运行时反射；调用侧显式 `encrypt_oaep`（标记 trait 约定可选） |
 | `WxPayException` 受检异常 | 结构体 + `From → WxErrorException::Runtime`，文案/Builder 逐字段一致 |
 | `VerifierBuilder` 不接收 `wxPayHttpProxy` | 代理由 reqwest 承载（Java 参数仅为 Apache 注入用） |
-| `WxMpMapConfigImpl` 并发变体 | Rust DefaultConfigImpl 原生并发安全，无按存储结构分型需求 |
+| `WxMpMapConfigImpl` 并发变体 | Rust WxMpDefaultConfig 原生并发安全，无按存储结构分型需求 |

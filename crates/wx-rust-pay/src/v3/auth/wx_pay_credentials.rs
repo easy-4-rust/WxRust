@@ -10,6 +10,7 @@
 //! `build_request_message`/`build_authorization_token`/`gen_nonce_str`/
 //! `gen_timestamp`（与既有 `create_authorization_header` 流程同源）。
 
+use std::borrow::Cow;
 use std::sync::Arc;
 
 use crate::util::crypto::{
@@ -112,7 +113,7 @@ impl WxPayCredentials {
         timestamp: i64,
         request: &CredentialsRequest,
     ) -> String {
-        let mut canonical_url = self.strip_path_prefix(&request.path).to_string();
+        let mut canonical_url = self.strip_path_prefix(&request.path).into_owned();
         if let Some(query) = &request.query {
             canonical_url.push('?');
             canonical_url.push_str(query);
@@ -128,19 +129,26 @@ impl WxPayCredentials {
 
     /// 从 rawPath 中剥离签名前缀（对应 Java 私有 `stripPathPrefix`）：
     /// 无前缀配置/空路径/路径不以前缀开头 → 原样返回；剥离后为空 → `/`；
-    /// 不以 `/` 开头 → 补 `/`。
-    pub fn strip_path_prefix<'a>(&self, raw_path: &'a str) -> &'a str {
+    /// 剥离后不以 `/` 开头 → 补 `/`（Java
+    /// `stripped.startsWith("/") ? stripped : "/" + stripped`）。注意命中
+    /// 判定为纯字符串 `startsWith`（部分段亦命中，如前缀 `/api` 命中
+    /// `/apiv2/x`，剥离得 `v2/x` 后补 `/` 为 `/v2/x`）。
+    pub fn strip_path_prefix<'a>(&self, raw_path: &'a str) -> Cow<'a, str> {
         let Some(prefix) = &self.sign_uri_strip_prefix else {
-            return raw_path;
+            return Cow::Borrowed(raw_path);
         };
         if raw_path.is_empty() || !raw_path.starts_with(prefix.as_str()) {
-            return raw_path;
+            return Cow::Borrowed(raw_path);
         }
         let stripped = &raw_path[prefix.len()..];
         if stripped.is_empty() {
-            return "/";
+            return Cow::Borrowed("/");
         }
-        stripped
+        if stripped.starts_with('/') {
+            Cow::Borrowed(stripped)
+        } else {
+            Cow::Owned(format!("/{stripped}"))
+        }
     }
 
     /// 生成 token（对应 Java `getToken` 主体：签名串经 `signer.sign` 后拼
@@ -265,5 +273,48 @@ mod tests {
         assert!(token.starts_with("mchid=\"mch\",nonce_str=\""));
         assert!(token.contains("\",timestamp=\""));
         assert!(token.ends_with(",serial_no=\"SERIAL\",signature=\"SIG\""));
+    }
+
+    /// 部分段匹配边界（Java 纯字符串 `startsWith` 语义）：前缀 `/api`
+    /// 亦命中 `/apiv2/x`，剥离得 `v2/x` 不以 `/` 开头 → 补 `/` 为
+    /// `/v2/x`，签名串使用补齐后的 canonical_url。
+    #[test]
+    fn strip_prefix_partial_segment_boundary_prepends_slash() {
+        let mut rng = OsRng;
+        let private_key = RsaPrivateKey::new(&mut rng, 2048).expect("生成测试密钥");
+        let credentials = WxPayCredentials::with_sign_uri_strip_prefix(
+            "mch",
+            Arc::new(PrivateKeySigner::new("SERIAL", private_key)),
+            Some("/api"),
+        );
+        assert_eq!(credentials.strip_path_prefix("/apiv2/x"), "/v2/x");
+        // 签名串 canonical_url 与 Java 语义一致（补 `/` + query 拼接）
+        let request = CredentialsRequest::new("GET", "/apiv2/x", "").with_query("offset=1");
+        let message = credentials.build_message("NONCE", 1700000000, &request);
+        assert_eq!(message, "GET\n/v2/x?offset=1\n1700000000\nNONCE\n\n");
+    }
+
+    /// 前缀 `/` 场景：规范化保留单字符 `/`（不触发去结尾 `/`），任意以
+    /// `/` 开头的路径剥离首字符后补 `/` 还原为原路径；`/` 自身剥离后为
+    /// 空 → `/`。
+    #[test]
+    fn strip_prefix_root_slash_keeps_paths_invariant() {
+        let mut rng = OsRng;
+        let private_key = RsaPrivateKey::new(&mut rng, 2048).expect("生成测试密钥");
+        let mut credentials = WxPayCredentials::new(
+            "mch",
+            Arc::new(PrivateKeySigner::new("SERIAL", private_key)),
+        );
+        credentials.set_sign_uri_strip_prefix(Some("/"));
+        assert_eq!(credentials.sign_uri_strip_prefix(), Some("/"));
+        assert_eq!(
+            credentials.strip_path_prefix("/v3/pay/transactions"),
+            "/v3/pay/transactions"
+        );
+        assert_eq!(credentials.strip_path_prefix("/"), "/");
+        // 签名串 canonical_url 保持原路径不变
+        let request = CredentialsRequest::new("GET", "/v3/pay/transactions", "");
+        let message = credentials.build_message("NONCE", 1700000000, &request);
+        assert_eq!(message, "GET\n/v3/pay/transactions\n1700000000\nNONCE\n\n");
     }
 }

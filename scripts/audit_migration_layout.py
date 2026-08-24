@@ -205,9 +205,9 @@ EXPLICIT_IMPLEMENTED = {
         "合并实现：模板消息数据节点与 WxMpTemplateMessage 同文件承载（mod.rs pub use 导出）",
     ),
     ("weixin-java-mp", "WxMpMapConfigImpl"): (
-        "config/impl/wx_mp_default_config_impl.rs::WxMpDefaultConfigImpl",
+        "config/impl/wx_mp_default_config_impl.rs::WxMpDefaultConfig",
         "Java 变体仅将 access_token 存储换为 ConcurrentHashMap（单机高并发）；"
-        "Rust WxMpDefaultConfigImpl 的 Mutex/RwLock 字段原生并发安全，"
+        "Rust WxMpDefaultConfig 的 Mutex/RwLock 字段原生并发安全，"
         "无 JVM 侧按存储结构分型的需求，语义合一承载",
     ),
     # ---- weixin-java-open（源自 audit_open_ledger SPECIAL_SYMBOLS）----
@@ -221,8 +221,8 @@ EXPLICIT_IMPLEMENTED = {
         "Java @Deprecated（以 WxOpenMaService 替代），Rust 统一承载，ADAPTED",
     ),
     ("weixin-java-open", "WxOpenInMemoryConfigStorage"): (
-        "config/impl/wx_open_default_config_impl.rs::WxOpenDefaultConfigImpl",
-        "命名差异：Rust 以 WxOpenDefaultConfigImpl（与 mp/ma 的 DefaultConfigImpl 对齐）实现内存存储",
+        "config/impl/wx_open_default_config_impl.rs::WxOpenDefaultConfig",
+        "命名差异：Rust 以 WxOpenDefaultConfig（与 mp/ma 的 DefaultConfig 对齐）实现内存存储",
     ),
     ("weixin-java-open", "WxOpenMaServiceImpl"): (
         "api/impl/wx_open_ma_service.rs::WxOpenMaService",
