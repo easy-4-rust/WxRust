@@ -374,27 +374,27 @@ pub trait WxCpService: Send + Sync {
 
     /// GET 请求（对应 Java `get(String, String)`；query 为空传 ""，
     /// 对应 Java null）。
+    ///
+    /// 走统一管线 [`wx_rust_common::pipeline::execute_pipeline`]（经
+    /// `execute_get_via_pipeline`：-1 指数退避重试 + token 失效单次重放；
+    /// query 拼接语义内联于封装——原 `SimpleGetRequestExecutor` 路径）。
     async fn get(&self, url: &str, query_param: &str) -> Result<String, WxErrorException> {
-        let executor = SimpleGetRequestExecutor::new(self.http_client().clone());
-        crate::api::r#impl::base_wx_cp_service_impl::execute_with_retry(
+        crate::api::r#impl::base_wx_cp_service_impl::execute_get_via_pipeline(
             self,
-            &executor,
             url,
-            query_param.to_string(),
+            query_param,
         )
         .await
     }
 
     /// POST 请求（对应 Java `post(String, String)`）。
+    ///
+    /// 走统一管线（经 `execute_post_via_pipeline`：POST 文本体原样透传 +
+    /// -1 指数退避重试 + token 失效单次重放——原
+    /// `SimplePostRequestExecutor` 路径）。
     async fn post(&self, url: &str, post_data: &str) -> Result<String, WxErrorException> {
-        let executor = SimplePostRequestExecutor::new(self.http_client().clone());
-        crate::api::r#impl::base_wx_cp_service_impl::execute_with_retry(
-            self,
-            &executor,
-            url,
-            post_data.to_string(),
-        )
-        .await
+        crate::api::r#impl::base_wx_cp_service_impl::execute_post_via_pipeline(self, url, post_data)
+            .await
     }
 
     /// 当不需要自动带 accessToken 的时候，可以用这个发起 post 请求
