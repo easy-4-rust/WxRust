@@ -27,7 +27,7 @@ use wx_rust_common::bean::ToJson;
 use wx_rust_common::error::WxErrorException;
 use wx_rust_common::executor::CommonUploadRequestExecutor;
 use wx_rust_common::util::crypto::Sha1;
-use wx_rust_common::util::http::{SimpleGetRequestExecutor, SimplePostRequestExecutor};
+use wx_rust_common::util::http::SimpleGetRequestExecutor;
 
 use crate::api::{
     WxAssistantService, WxChannelAddressService, WxChannelAfterSaleService, WxChannelBasicService,
@@ -129,6 +129,12 @@ pub trait WxChannelService: Send + Sync {
     }
 
     /// GET 请求（对应 Java `get(String url, String queryParam)`）。
+    ///
+    /// **保留原执行器路径**（`SimpleGetRequestExecutor` + `execute`）：
+    /// 测试 `get_appends_token_and_query` 冻结了 Java 字节序
+    /// 「token 在前、query 在后」（`?access_token=..&a=1`）；统一管线
+    /// 在组装 URL 时注入 token（恒在末尾），无法复现该顺序——按
+    /// 「宁可少接也不改语义」约定 get 不接管线（见 task-4 报告）。
     async fn get(&self, url: &str, query_param: &str) -> Result<String, WxErrorException> {
         let executor = SimpleGetRequestExecutor::new(self.http_client().clone());
         crate::api::r#impl::base_wx_channel_service_impl::execute(
@@ -141,13 +147,15 @@ pub trait WxChannelService: Send + Sync {
     }
 
     /// POST 请求（对应 Java `post(String url, String postData)`）。
+    ///
+    /// 走统一管线（经 `execute_post_via_pipeline`：POST 文本体原样透传 +
+    /// -1 指数退避重试（channel 特有「原错误码 + ！」收束）+
+    /// `api_host_url` 域名替换 + token 失效单次重放——原
+    /// `SimplePostRequestExecutor` 路径；POST 无 query 拼接，URL 字节序
+    /// 与原路径完全一致）。
     async fn post(&self, url: &str, post_data: &str) -> Result<String, WxErrorException> {
-        let executor = SimplePostRequestExecutor::new(self.http_client().clone());
-        crate::api::r#impl::base_wx_channel_service_impl::execute(
-            self,
-            &executor,
-            url,
-            post_data.to_string(),
+        crate::api::r#impl::base_wx_channel_service_impl::execute_post_via_pipeline(
+            self, url, post_data,
         )
         .await
     }
