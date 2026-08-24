@@ -9,6 +9,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
+use futures_util::{Stream, TryStreamExt};
 
 use crate::error::WxErrorException;
 
@@ -144,6 +145,49 @@ impl ReqwestTransport {
             _ => builder,
         };
         builder
+    }
+
+    /// 发送请求并返回响应体分块流（流式下载实现侧能力，非 trait 方法）。
+    ///
+    /// RUST_OBLIGATION：大文件可流式。设计决定（Task 7）：流式能力不进
+    /// [`HttpTransport`] trait——当前仅 reqwest 后端需要流式（hyper 分块
+    /// 读），保持 trait 最小；需要零网络流式的测试可用
+    /// `futures_util::stream::iter` 构造分块流，不走本方法。
+    ///
+    /// 请求构造与 [`HttpTransport::send`] 完全同一（[`Self::build_request`]）；
+    /// 差异仅在响应消费：不聚合全量 body，而以 [`bytes::Bytes`] 分块流交付。
+    ///
+    /// # 错误语义
+    /// - 传输建立失败，或响应状态非 2xx（如 500）：直接返回 `Err`（错误含
+    ///   状态码与响应体内容），不产出流；
+    /// - 流中读取失败（连接中断等）：以对应分块 `Err(WxErrorException::Http)`
+    ///   表达。
+    ///
+    /// # 参数
+    /// - `req`：与 [`HttpTransport::send`] 同构的请求描述
+    pub async fn send_stream(
+        &self,
+        req: TransportRequest,
+    ) -> Result<
+        impl Stream<Item = Result<bytes::Bytes, WxErrorException>> + Send + use<>,
+        WxErrorException,
+    > {
+        let resp = self.build_request(&req).send().await?;
+        let status = resp.status();
+        if !status.is_success() {
+            // 非 2xx：读取完整错误响应体后以 Http 错误返回（不产出流）
+            let body = resp.bytes().await.unwrap_or_default();
+            return Err(WxErrorException::Http(format!(
+                "流式下载失败，HTTP状态码：{}，响应内容：{}",
+                status.as_u16(),
+                String::from_utf8_lossy(&body)
+            )));
+        }
+        // `use<>`：返回的分块流不借用本 transport（响应体自持有），
+        // 调用方可直接 `.boxed()` 成 'static BoxStream
+        Ok(resp
+            .bytes_stream()
+            .map_err(|e| WxErrorException::Http(e.to_string())))
     }
 }
 

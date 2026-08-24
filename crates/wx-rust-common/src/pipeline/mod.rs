@@ -47,7 +47,10 @@
 //! # 适用边界
 //!
 //! 本管线按「JSON 报文 + errcode 校验」语义工作；二进制应答下载
-//! （如二维码图片字节流）不适用，应走各自执行器或后续流式管线。
+//! （如二维码图片字节流）不适用，应走各自执行器或后续流式管线
+//! （[`stream::execute_stream`]，Task 7 落地）。
+
+pub mod stream;
 
 use crate::enums::WxType;
 use crate::error::{WxError, WxErrorError, WxErrorException};

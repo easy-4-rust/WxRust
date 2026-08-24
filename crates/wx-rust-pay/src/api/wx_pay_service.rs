@@ -39,9 +39,14 @@ use std::path::Path;
 use std::sync::Arc;
 
 use async_trait::async_trait;
+use bytes::Bytes;
 use chrono::{DateTime, Utc};
+use futures_util::StreamExt;
+use futures_util::stream::BoxStream;
 
 use wx_rust_common::error::WxErrorException;
+use wx_rust_common::http::{ReqwestTransport, TransportBody, TransportMethod, TransportRequest};
+use wx_rust_common::pipeline::stream::execute_stream;
 
 use crate::api::{
     Apply4SubjectConfirmService, Applyment4SubService, BankService, BrandMerchantTransferService,
@@ -2549,6 +2554,58 @@ pub trait WxPayService: Send + Sync {
             request.bill_type.as_deref().unwrap_or_default(),
         )
         .unwrap_or_default())
+    }
+
+    /// 流式下载对账单原始字节流（WxRust 原生新增能力——Java
+    /// `WxPayService.downloadBill` 的流式变体；原 [`WxPayService::download_bill`]
+    /// / [`WxPayService::download_raw_bill`] 保留且行为不变）。
+    ///
+    /// 请求构造与签名与 [`WxPayService::download_raw_bill_with_request`]
+    /// 一致（同 URL `/pay/downloadbill`、同约束检查 + `checkAndSign` XML
+    /// 报文，`device_info` 不传）；差异仅在响应消费方式：响应体以
+    /// [`Bytes`] 分块流交付（经 `wx_rust_common::pipeline::stream::execute_stream`），
+    /// 传输层不聚合全量 body——大账单可边收边处理/落盘。
+    ///
+    /// # GZIP 语义
+    /// 流透传**原始（可能 GZIP 压缩的）字节**，不做解压、不做错误 XML 检测：
+    /// - 需要「自动解压 + 错误报文转错误」语义时用
+    ///   [`WxPayService::download_raw_bill`]；
+    /// - 需要流式解压时调用方可用 flate2（pay 既有依赖）自行处理。
+    ///
+    /// # 错误
+    /// 非 2xx 状态码（如 500）直接返回 `Err`（错误含状态码与响应体内容），
+    /// 不产出流；流中读取失败以对应分块 `Err(WxErrorException::Http)` 表达。
+    async fn download_bill_stream(
+        &self,
+        bill_date: &str,
+        bill_type: &str,
+        tar_type: &str,
+    ) -> Result<BoxStream<'static, Result<Bytes, WxErrorException>>, WxErrorException> {
+        let mut request = WxPayDownloadBillRequest::default();
+        request.bill_type = Some(bill_type.to_string());
+        request.bill_date = Some(bill_date.to_string());
+        request.tar_type = Some(tar_type.to_string());
+        let config = self.wx_pay_config();
+        download_bill_request_check(&request)?;
+        impl_utils::check_and_sign(config.as_ref(), &mut request)?;
+        let xml = request
+            .to_xml()
+            .map_err(|e| impl_utils::runtime(format!("生成XML失败: {e}")))?;
+        let url = format!("{}{}", self.get_pay_base_url(), pay_url::DOWNLOAD_BILL_URL);
+        // 复用服务自身 HTTP 客户端（连接池/超时配置随客户端走）；
+        // 下载通道 use_key=false（与原方法一致，不走 p12 证书通道）
+        let transport = ReqwestTransport::new(self.http_client().clone());
+        let stream = execute_stream(
+            &transport,
+            TransportRequest {
+                method: TransportMethod::PostXml(xml),
+                url,
+                headers: vec![],
+                body: TransportBody::None,
+            },
+        )
+        .await?;
+        Ok(stream.boxed())
     }
 
     /// 下载资金账单（对应 Java

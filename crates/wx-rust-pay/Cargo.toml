@@ -18,6 +18,10 @@ wx-rust-common.workspace = true
 async-trait = { workspace = true }
 tokio = { workspace = true }
 reqwest = { workspace = true }
+# 流式下载（Task 7 download_bill_stream）：Bytes 分块流 / BoxStream 类型
+# （workspace 既有依赖，wx-rust-common 同源，零新增第三方代码）
+bytes = { workspace = true }
+futures-util = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 # quick-xml serialize 特性：v2 XML 报文 bean 的 serde 序列化/反序列化
