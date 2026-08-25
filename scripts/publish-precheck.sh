@@ -17,7 +17,7 @@ run_check() {
   local name="$1"
   shift
   printf "  %-48s" "$name"
-  if output=$("$@" 2>&1); then
+  if output=$("$@" >/dev/null 2>&1); then
     echo "[PASS]"
     RESULTS["$name"]="PASS"
     ((PASS++))
