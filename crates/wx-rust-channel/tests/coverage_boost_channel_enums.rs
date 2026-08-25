@@ -12,7 +12,10 @@ use wx_rust_channel::enums::*;
 #[test]
 fn complaint_item_type_key_val_all() {
     assert_eq!(ComplaintItemType::ApplyPlatformIntervention.key(), 1);
-    assert_eq!(ComplaintItemType::ApplyPlatformIntervention.val(), "申请平台介入");
+    assert_eq!(
+        ComplaintItemType::ApplyPlatformIntervention.val(),
+        "申请平台介入"
+    );
     assert_eq!(ComplaintItemType::UserMessage.key(), 2);
     assert_eq!(ComplaintItemType::MerchantMessage.key(), 3);
     assert_eq!(ComplaintItemType::SubmitComplaintSuccess.key(), 4);
@@ -25,18 +28,36 @@ fn complaint_item_type_key_val_all() {
     assert_eq!(ComplaintItemType::CancelPlatformIntervention.key(), 12);
     assert_eq!(ComplaintItemType::PlatformProcessing.key(), 13);
     assert_eq!(ComplaintItemType::WaitUserSupplementaryEvidence.key(), 14);
-    assert_eq!(ComplaintItemType::WaitMerchantSupplementaryEvidence.key(), 16);
-    assert_eq!(ComplaintItemType::WaitBothPartiesSupplementaryEvidence.key(), 18);
+    assert_eq!(
+        ComplaintItemType::WaitMerchantSupplementaryEvidence.key(),
+        16
+    );
+    assert_eq!(
+        ComplaintItemType::WaitBothPartiesSupplementaryEvidence.key(),
+        18
+    );
     assert_eq!(ComplaintItemType::WaitMerchantConfirm.key(), 20);
     assert_eq!(ComplaintItemType::MerchantAppealing.key(), 21);
     assert_eq!(ComplaintItemType::MediationComplete.key(), 22);
     assert_eq!(ComplaintItemType::WaitPlatformVerify.key(), 23);
     assert_eq!(ComplaintItemType::RefundingAgain.key(), 24);
     assert_eq!(ComplaintItemType::MediationClosed.key(), 26);
-    assert_eq!(ComplaintItemType::PlatformJudgmentUserResponsibility.key(), 30);
-    assert_eq!(ComplaintItemType::PlatformJudgmentMerchantResponsibility.key(), 31);
-    assert_eq!(ComplaintItemType::PlatformJudgmentBothPartiesResponsibility.key(), 32);
-    assert_eq!(ComplaintItemType::PlatformJudgmentNoResponsibility.key(), 33);
+    assert_eq!(
+        ComplaintItemType::PlatformJudgmentUserResponsibility.key(),
+        30
+    );
+    assert_eq!(
+        ComplaintItemType::PlatformJudgmentMerchantResponsibility.key(),
+        31
+    );
+    assert_eq!(
+        ComplaintItemType::PlatformJudgmentBothPartiesResponsibility.key(),
+        32
+    );
+    assert_eq!(
+        ComplaintItemType::PlatformJudgmentNoResponsibility.key(),
+        33
+    );
     assert_eq!(ComplaintItemType::PlatformJudgmentAppealInvalid.key(), 34);
     assert_eq!(ComplaintItemType::PlatformJudgmentAppealEffective.key(), 35);
     assert_eq!(ComplaintItemType::PlatformJudgmentRefundEffective.key(), 36);

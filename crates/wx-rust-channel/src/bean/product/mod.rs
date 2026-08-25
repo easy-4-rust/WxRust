@@ -1,9 +1,17 @@
 //! 对应 Java `me.chanjar.weixin.channel.bean.product` 包（生成）。
 
 pub mod after_sale_info;
+pub mod assistant;
 pub mod description_info;
 pub mod express_info;
 pub mod extra_service_info;
+pub mod gift_activity_add_response;
+pub mod gift_activity_info;
+pub mod gift_product_add_response;
+pub mod gift_product_get_response;
+pub mod gift_product_info;
+pub mod gift_product_list_param;
+pub mod gift_product_list_response;
 pub mod limit_info;
 pub mod link;
 pub mod product_qua_info;
@@ -29,6 +37,7 @@ pub mod spu_size_chart_item;
 pub mod spu_stock_info;
 pub mod spu_update_info;
 pub mod spu_update_response;
+pub mod stock;
 pub mod timing_on_sale_info;
 pub mod warehouse_stock_info;
 
@@ -36,6 +45,13 @@ pub use after_sale_info::AfterSaleInfo;
 pub use description_info::DescriptionInfo;
 pub use express_info::ExpressInfo;
 pub use extra_service_info::ExtraServiceInfo;
+pub use gift_activity_add_response::GiftActivityAddResponse;
+pub use gift_activity_info::GiftActivityInfo;
+pub use gift_product_add_response::GiftProductAddResponse;
+pub use gift_product_get_response::GiftProductGetResponse;
+pub use gift_product_info::GiftProductInfo;
+pub use gift_product_list_param::GiftProductListParam;
+pub use gift_product_list_response::GiftProductListResponse;
 pub use limit_info::LimitInfo;
 pub use link::product_h5_url_response::ProductH5UrlResponse;
 pub use link::product_qr_code_response::ProductQrCodeResponse;

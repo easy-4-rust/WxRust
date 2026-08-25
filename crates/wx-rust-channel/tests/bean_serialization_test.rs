@@ -228,3 +228,204 @@ fn test_order_detail_info_serde() {
     let detail: OrderDetailInfo = serde_json::from_str(json).unwrap();
     assert_eq!(detail.product_infos.len(), 0);
 }
+
+// ═══ Ewaybill ═══
+
+#[test]
+fn test_ewaybill_template_config_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok","template_config_list":[{"template_code":"T001","template_name":"标准模板"}]}"#;
+    let resp: wx_rust_channel::bean::ewaybill::TemplateConfigResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+    assert_eq!(resp.template_config_list.len(), 1);
+    assert_eq!(resp.template_config_list[0].template_code, "T001");
+}
+
+#[test]
+fn test_ewaybill_create_order_request_serde() {
+    let json = r#"{"delivery_id":"SF","template_id":"T001","order_id":"ORD-001","recv_addr":{"name":"张三","phone":"13700137000","province":"浙江","city":"杭州","district":"西湖","address":"文三路"},"send_addr":{"name":"李四","phone":"13800138000","province":"广东","city":"深圳","district":"南山","address":"科技园"}}"#;
+    let req: wx_rust_channel::bean::ewaybill::CreateOrderRequest =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(req.delivery_id, "SF");
+    assert_eq!(req.recv_addr.name, "张三");
+    assert_eq!(req.send_addr.city, "深圳");
+}
+
+// ═══ Favorite ═══
+
+#[test]
+fn test_favorite_count_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok","favorite_count":12345}"#;
+    let resp: wx_rust_channel::bean::favorite::FavoriteCountResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+    assert_eq!(resp.favorite_count, 12345);
+}
+
+// ═══ Kf ═══
+
+#[test]
+fn test_kf_send_msg_param_serde() {
+    let json = r#"{"open_id":"ox123","msg_type":"text","content":"你好"}"#;
+    let param: wx_rust_channel::bean::kf::WxChannelKfSendMsgParam =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(param.open_id, "ox123");
+    assert_eq!(param.msg_type, "text");
+    assert_eq!(param.content, "你好");
+}
+
+#[test]
+fn test_kf_send_msg_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok"}"#;
+    let resp: wx_rust_channel::bean::kf::WxChannelKfSendMsgResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+}
+
+// ═══ Qic ═══
+
+#[test]
+fn test_qic_inspect_config_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok","is_opened":true}"#;
+    let resp: wx_rust_channel::bean::qic::InspectConfigResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+    assert!(resp.is_opened);
+}
+
+#[test]
+fn test_qic_submit_inspect_request_serde() {
+    let json = r#"{"order_id":"ORD-001","inspect_code":"CODE-001"}"#;
+    let req: wx_rust_channel::bean::qic::SubmitInspectRequest = serde_json::from_str(json).unwrap();
+    assert_eq!(req.order_id, "ORD-001");
+    assert_eq!(req.inspect_code, "CODE-001");
+}
+
+// ═══ Supplier ═══
+
+#[test]
+fn test_supplier_list_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok","supplier_list":[{"supplier_id":"S001","supplier_name":"供货商A"}],"next_key":"key123"}"#;
+    let resp: wx_rust_channel::bean::supplier::SupplierListResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+    assert_eq!(resp.supplier_list.len(), 1);
+    assert_eq!(resp.supplier_list[0].supplier_id, "S001");
+    assert_eq!(resp.next_key, "key123");
+}
+
+#[test]
+fn test_dropship_assign_request_serde() {
+    let json = r#"{"order_id":"ORD-001","supplier_id":"S001"}"#;
+    let req: wx_rust_channel::bean::supplier::DropshipAssignRequest =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(req.order_id, "ORD-001");
+    assert_eq!(req.supplier_id, "S001");
+}
+
+// ═══ Talent ═══
+
+#[test]
+fn test_talent_order_list_param_serde() {
+    let json = r#"{"page_size":10,"next_key":"key123"}"#;
+    let param: wx_rust_channel::bean::talent::TalentOrderListParam =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(param.page_size, 10);
+    assert_eq!(param.next_key, "key123");
+}
+
+#[test]
+fn test_talent_order_list_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok","order_list":[{"order_id":"T-001","product_id":"P-001"}],"next_key":"key456"}"#;
+    let resp: wx_rust_channel::bean::talent::TalentOrderListResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+    assert_eq!(resp.order_list.len(), 1);
+    assert_eq!(resp.order_list[0].order_id, "T-001");
+}
+
+#[test]
+fn test_talent_window_product_list_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok","product_list":[{"product_id":"P-001","product_name":"商品A"}],"next_key":""}"#;
+    let resp: wx_rust_channel::bean::talent::TalentWindowProductListResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+    assert_eq!(resp.product_list.len(), 1);
+    assert_eq!(resp.product_list[0].product_name, "商品A");
+}
+
+// ═══ Limit (update) ═══
+
+#[test]
+fn test_limit_task_update_param_serde() {
+    let json = r#"{"task_id":"T-001","product_id":"P-001","start_time":"2024-01-01","end_time":"2024-01-02","limited_discount_skus":[]}"#;
+    let param: wx_rust_channel::bean::limit::LimitTaskUpdateParam =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(param.task_id, "T-001");
+    assert_eq!(param.product_id, "P-001");
+}
+
+// ═══ Product Gift ═══
+
+#[test]
+fn test_gift_product_info_serde() {
+    let json = r#"{"product_id":"GP-001","title":"赠品A","sub_title":"赠品副标题"}"#;
+    let info: wx_rust_channel::bean::product::GiftProductInfo = serde_json::from_str(json).unwrap();
+    assert_eq!(info.product_id, "GP-001");
+    assert_eq!(info.title, "赠品A");
+}
+
+#[test]
+fn test_gift_activity_info_serde() {
+    let json = r#"{"activity_name":"买一送一","start_time":"2024-01-01","end_time":"2024-01-31"}"#;
+    let info: wx_rust_channel::bean::product::GiftActivityInfo =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(info.activity_name, "买一送一");
+}
+
+// ═══ Product Assistant ═══
+
+#[test]
+fn test_category_pre_check_param_serde() {
+    let json = r#"{"category_id":"CAT-001"}"#;
+    let param: wx_rust_channel::bean::product::assistant::CategoryPreCheckParam =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(param.category_id, "CAT-001");
+}
+
+#[test]
+fn test_product_brand_recommend_param_serde() {
+    let json = r#"{"product_name":"手机壳"}"#;
+    let param: wx_rust_channel::bean::product::assistant::ProductBrandRecommendParam =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(param.product_name, "手机壳");
+}
+
+#[test]
+fn test_begin_timing_sale_param_serde() {
+    let json = r#"{"product_id":"P-001"}"#;
+    let param: wx_rust_channel::bean::product::assistant::BeginTimingSaleParam =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(param.product_id, "P-001");
+}
+
+// ═══ Product Stock Flow ═══
+
+#[test]
+fn test_stock_flow_param_serde() {
+    let json = r#"{"product_id":"P-001","sku_id":"SKU-001","start_time":"2024-01-01","end_time":"2024-01-31","page_size":10,"next_key":""}"#;
+    let param: wx_rust_channel::bean::product::stock::StockFlowParam =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(param.product_id, "P-001");
+    assert_eq!(param.sku_id, "SKU-001");
+}
+
+#[test]
+fn test_stock_flow_response_serde() {
+    let json = r#"{"errcode":0,"errmsg":"ok","flow_list":[{"flow_id":"F-001","flow_type":1,"stock_num":10,"create_time":"2024-01-01"}],"next_key":""}"#;
+    let resp: wx_rust_channel::bean::product::stock::StockFlowResponse =
+        serde_json::from_str(json).unwrap();
+    assert_eq!(resp.err_code, 0);
+    assert_eq!(resp.flow_list.len(), 1);
+    assert_eq!(resp.flow_list[0].flow_id, "F-001");
+}

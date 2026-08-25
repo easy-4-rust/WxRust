@@ -20,7 +20,17 @@ pub mod wx_channel_warehouse_service_impl;
 pub mod h2b_impls;
 // H2c 消息服务实现（Wave 2 H2c 产物，原由 api/mod.rs `#[path]` 临时注册，
 // Wave 3 收尾并入本模块统一注册）。
+pub mod wx_channel_ewaybill_service_impl;
+pub mod wx_channel_favorite_service_impl;
+pub mod wx_channel_gift_service_impl;
+pub mod wx_channel_kf_service_impl;
+pub mod wx_channel_limited_discount_service_impl;
 pub mod wx_channel_message_service_impl;
+pub mod wx_channel_product_assistant_service_impl;
+pub mod wx_channel_product_stock_service_impl;
+pub mod wx_channel_qic_service_impl;
+pub mod wx_channel_supplier_service_impl;
+pub mod wx_talent_service_impl;
 
 pub use h2b_impls::*;
 pub use wx_channel_address_service_impl::WxChannelAddressServiceImpl;
@@ -29,13 +39,23 @@ pub use wx_channel_basic_service_impl::WxChannelBasicServiceImpl;
 pub use wx_channel_brand_service_impl::WxChannelBrandServiceImpl;
 pub use wx_channel_category_service_impl::WxChannelCategoryServiceImpl;
 pub use wx_channel_coupon_service_impl::WxChannelCouponServiceImpl;
+pub use wx_channel_ewaybill_service_impl::WxChannelEwaybillServiceImpl;
+pub use wx_channel_favorite_service_impl::WxChannelFavoriteServiceImpl;
 pub use wx_channel_freight_template_service_impl::WxChannelFreightTemplateServiceImpl;
+pub use wx_channel_gift_service_impl::WxChannelGiftServiceImpl;
+pub use wx_channel_kf_service_impl::WxChannelKfServiceImpl;
+pub use wx_channel_limited_discount_service_impl::WxChannelLimitedDiscountServiceImpl;
 pub use wx_channel_message_service_impl::WxChannelMessageServiceImpl;
 pub use wx_channel_order_service_impl::WxChannelOrderServiceImpl;
+pub use wx_channel_product_assistant_service_impl::WxChannelProductAssistantServiceImpl;
 pub use wx_channel_product_service_impl::WxChannelProductServiceImpl;
+pub use wx_channel_product_stock_service_impl::WxChannelProductStockServiceImpl;
+pub use wx_channel_qic_service_impl::WxChannelQicServiceImpl;
 pub use wx_channel_service_impl::WxChannelServiceImpl;
 pub use wx_channel_sharer_service_impl::WxChannelSharerServiceImpl;
+pub use wx_channel_supplier_service_impl::WxChannelSupplierServiceImpl;
 pub use wx_channel_warehouse_service_impl::WxChannelWarehouseServiceImpl;
+pub use wx_talent_service_impl::WxTalentServiceImpl;
 
 // 子服务实现注册（Wave 2 H2a：shop 域 11 个子服务实现批次，对应 Java
 // `BaseWxChannelServiceImpl` 构造器中的子服务字段；装配见 Wave 3 门面）。

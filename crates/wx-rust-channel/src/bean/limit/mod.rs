@@ -6,6 +6,8 @@ pub mod limit_task_info;
 pub mod limit_task_list_param;
 pub mod limit_task_list_response;
 pub mod limit_task_param;
+pub mod limit_task_update_param;
+pub mod limit_task_update_response;
 
 pub use limit_sku::LimitSku;
 pub use limit_task_add_response::LimitTaskAddResponse;
@@ -13,3 +15,5 @@ pub use limit_task_info::LimitTaskInfo;
 pub use limit_task_list_param::LimitTaskListParam;
 pub use limit_task_list_response::LimitTaskListResponse;
 pub use limit_task_param::LimitTaskParam;
+pub use limit_task_update_param::LimitTaskUpdateParam;
+pub use limit_task_update_response::LimitTaskUpdateResponse;
