@@ -17,7 +17,10 @@ run_check() {
   local name="$1"
   shift
   printf "  %-48s" "$name"
-  if output=$("$@" >/dev/null 2>&1); then
+  local tmpf=
+  tmpf=$(mktemp)
+  if "$@" >"$tmpf" 2>&1; then
+    rm -f "$tmpf"
     echo "[PASS]"
     RESULTS["$name"]="PASS"
     ((PASS++))
@@ -25,7 +28,8 @@ run_check() {
     echo "[FAIL]"
     RESULTS["$name"]="FAIL"
     ((FAIL++))
-    RESULTS["${name}_output"]="$(echo "$output" | head -20)"
+    RESULTS["${name}_output"]="$(head -20 "$tmpf")"
+    rm -f "$tmpf"
   fi
 }
 
