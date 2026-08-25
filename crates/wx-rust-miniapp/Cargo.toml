@@ -9,6 +9,8 @@ repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
 description = "WxRust 小程序模块（对应 weixin-java-miniapp）"
+keywords.workspace = true
+categories.workspace = true
 
 [features]
 # 同步门面（WxMaServiceBlocking）：OnceLock 全局 current_thread runtime
@@ -48,3 +50,6 @@ futures-util = { workspace = true }
 [[bench]]
 name = "token_single_flight_bench"
 harness = false
+
+[package.metadata.docs.rs]
+all-features = true

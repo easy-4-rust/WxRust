@@ -9,6 +9,8 @@ repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
 description = "WxRust 开放平台（第三方平台）模块（对应 weixin-java-open）"
+keywords.workspace = true
+categories.workspace = true
 
 [lints]
 workspace = true
@@ -35,3 +37,6 @@ hex = { workspace = true }
 sha1 = { workspace = true }
 sha2 = { workspace = true }
 hmac = { workspace = true }
+
+[package.metadata.docs.rs]
+all-features = true

@@ -9,6 +9,8 @@ repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
 description = "WxRust 企业微信模块（对应 weixin-java-cp）"
+keywords.workspace = true
+categories.workspace = true
 
 [lints]
 workspace = true
@@ -34,3 +36,6 @@ hex = { workspace = true }
 
 [dev-dependencies]
 rand_core = "0.6"
+
+[package.metadata.docs.rs]
+all-features = true

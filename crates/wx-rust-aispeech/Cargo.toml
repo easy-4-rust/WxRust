@@ -9,6 +9,8 @@ repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
 description = "WxRust 智能对话模块（对应 weixin-java-aispeech：对话机器人 + 知识库助理）"
+keywords.workspace = true
+categories.workspace = true
 
 [lints]
 workspace = true
@@ -28,3 +30,6 @@ sha2 = { workspace = true }
 aes = { workspace = true }
 cbc = { workspace = true }
 uuid = { version = "1.19.0", features = ["v4"] }
+
+[package.metadata.docs.rs]
+all-features = true

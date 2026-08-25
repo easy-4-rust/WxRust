@@ -9,6 +9,8 @@ repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
 description = "WxRust 微信支付模块（对应 weixin-java-pay）"
+keywords.workspace = true
+categories.workspace = true
 
 [lints]
 workspace = true
@@ -57,3 +59,6 @@ sha1 = "0.10.6"
 
 [dev-dependencies]
 httpmock = "0.8.2"
+
+[package.metadata.docs.rs]
+all-features = true

@@ -9,6 +9,8 @@ repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
 description = "WxRust 腾讯企点模块（对应 weixin-java-qidian：IVR 呼叫 + 通话数据）"
+keywords.workspace = true
+categories.workspace = true
 
 [lints]
 workspace = true
@@ -21,3 +23,6 @@ reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha1 = { workspace = true }
+
+[package.metadata.docs.rs]
+all-features = true

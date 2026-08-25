@@ -9,6 +9,8 @@ repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
 description = "WxRust 公众号模块（对应 weixin-java-mp）"
+keywords.workspace = true
+categories.workspace = true
 
 [lints]
 workspace = true
@@ -26,3 +28,6 @@ regex = "1.11.1"
 percent-encoding = { workspace = true }
 chrono = { workspace = true }
 url = { workspace = true }
+
+[package.metadata.docs.rs]
+all-features = true
