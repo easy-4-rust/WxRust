@@ -13,6 +13,7 @@ use wx_rust_aispeech::api::WxAispeechService;
 use wx_rust_aispeech::api::r#impl::WxAispeechServiceImpl;
 use wx_rust_aispeech::bean::knowledge::{
     KnowledgeManualCreateRequest, KnowledgeMoveRequest, KnowledgeTagRequest,
+    KnowledgeUpdateRequest, KnowledgeUrlCreateRequest,
 };
 use wx_rust_aispeech::config::r#impl::WxAispeechDefaultConfig;
 
@@ -384,4 +385,168 @@ async fn test_knowledge_headers_and_missing_config() {
         .await
         .expect("查询成功");
     assert_eq!(info.id.as_deref(), Some("k1"));
+}
+
+/// 接线复核补测：create_by_url/manual、list、update、delete、search 与
+/// post_raw/get_raw（对应 Java 同名方法的路径 / 方法 / 查询参数 / 响应解析）。
+#[tokio::test]
+async fn test_create_url_manual_list_update_delete_search_and_raw() {
+    let server = MockServer::start(|method, path| {
+        // createKnowledgeByUrl：POST /api/v1/knowledge-bases/kb1/knowledge/url
+        if path.starts_with("/api/v1/knowledge-bases/kb1/knowledge/url") {
+            r#"{"id":"k-url"}"#.to_string()
+        // createKnowledgeByManual：POST .../knowledge/manual
+        } else if path.starts_with("/api/v1/knowledge-bases/kb1/knowledge/manual") {
+            r#"{"id":"k-manual"}"#.to_string()
+        // listKnowledge：GET /api/v1/knowledge-bases/kb1/knowledge?page=...
+        } else if path.starts_with("/api/v1/knowledge-bases/kb1/knowledge?") {
+            r#"{"data":[{"id":"k1"},{"id":"k2"}],"page":1,"page_size":10,"total":2}"#.to_string()
+        // updateKnowledge / deleteKnowledge：同路径不同方法
+        } else if path.starts_with("/api/v1/knowledge/k1") && method == "PUT" {
+            r#"{"id":"k1"}"#.to_string()
+        } else if path.starts_with("/api/v1/knowledge/k1") && method == "DELETE" {
+            "{}".to_string()
+        // searchKnowledge：GET /api/v1/knowledge/search?...
+        } else if path.starts_with("/api/v1/knowledge/search") {
+            r#"{"data":[{"id":"k1"}]}"#.to_string()
+        // postRaw / getRaw：任意原始路径透传
+        } else if path.starts_with("/custom/raw-post") {
+            r#"{"raw":"post"}"#.to_string()
+        } else if path.starts_with("/custom/raw-get") {
+            r#"{"raw":"get"}"#.to_string()
+        } else {
+            "{}".to_string()
+        }
+    })
+    .await;
+    let service = service_with_host(&server.url(""));
+    let knowledge_service = service.knowledge_service().expect("知识库服务存在");
+
+    // createKnowledgeByUrl：POST，body 为 KnowledgeUrlCreateRequest 序列化
+    let url_request = KnowledgeUrlCreateRequest {
+        url: Some("https://example.com/page".to_string()),
+        title: Some("网页标题".to_string()),
+        description: None,
+    };
+    let created = knowledge_service
+        .create_knowledge_by_url("kb1", &url_request)
+        .await
+        .expect("URL 创建成功");
+    assert_eq!(created.id.as_deref(), Some("k-url"));
+    assert_eq!(server.last_method(), "POST");
+    assert_eq!(
+        server.last_path(),
+        "/api/v1/knowledge-bases/kb1/knowledge/url"
+    );
+    assert!(
+        server
+            .last_body()
+            .contains(r#""url":"https://example.com/page""#),
+        "body: {}",
+        server.last_body()
+    );
+
+    // createKnowledgeByManual：POST，body 为 Markdown 内容
+    let manual_request = KnowledgeManualCreateRequest {
+        content: Some("# 手工内容".to_string()),
+        title: Some("手工标题".to_string()),
+        ..Default::default()
+    };
+    let created = knowledge_service
+        .create_knowledge_by_manual("kb1", &manual_request)
+        .await
+        .expect("手工创建成功");
+    assert_eq!(created.id.as_deref(), Some("k-manual"));
+    assert!(
+        server.last_body().contains("# 手工内容"),
+        "body: {}",
+        server.last_body()
+    );
+
+    // listKnowledge：GET，page/page_size 进查询参数
+    let list = knowledge_service
+        .list_knowledge("kb1", Some(1), Some(10))
+        .await
+        .expect("分页查询成功")
+        .expect("结果非空");
+    assert_eq!(list.len(), 2);
+    assert_eq!(list[0].id.as_deref(), Some("k1"));
+    assert_eq!(server.last_method(), "GET");
+    let list_path = server.last_path();
+    assert!(
+        list_path.contains("page=1") && list_path.contains("page_size=10"),
+        "查询参数: {list_path}"
+    );
+
+    // updateKnowledge：PUT /api/v1/knowledge/k1
+    let update_request = KnowledgeUpdateRequest {
+        title: Some("新标题".to_string()),
+        enable_status: Some("enabled".to_string()),
+        ..Default::default()
+    };
+    let updated = knowledge_service
+        .update_knowledge("k1", &update_request)
+        .await
+        .expect("更新成功");
+    assert_eq!(updated.id.as_deref(), Some("k1"));
+    assert_eq!(server.last_method(), "PUT");
+    assert!(
+        server.last_body().contains(r#""enable_status":"enabled""#),
+        "body: {}",
+        server.last_body()
+    );
+
+    // deleteKnowledge：DELETE，恒返回 true
+    let deleted = knowledge_service
+        .delete_knowledge("k1")
+        .await
+        .expect("删除成功");
+    assert!(deleted);
+    assert_eq!(server.last_method(), "DELETE");
+    assert_eq!(server.last_path(), "/api/v1/knowledge/k1");
+
+    // searchKnowledge：GET，keyword/knowledge_base_id/page 进查询参数
+    let searched = knowledge_service
+        .search_knowledge("关键词", "kb1", Some(1), Some(10))
+        .await
+        .expect("检索成功")
+        .expect("结果非空");
+    assert_eq!(searched.len(), 1);
+    assert_eq!(searched[0].id.as_deref(), Some("k1"));
+    let search_path = server.last_path();
+    assert!(
+        search_path.contains("keyword=") && search_path.contains("knowledge_base_id=kb1"),
+        "查询参数: {search_path}"
+    );
+
+    // postRaw：POST 任意路径，请求体原样透传
+    let posted = knowledge_service
+        .post_raw("/custom/raw-post", Some(r#"{"k":"v"}"#))
+        .await
+        .expect("原始 POST 成功");
+    assert!(posted.contains(r#""raw":"post""#), "响应: {posted}");
+    assert_eq!(
+        server.last_body(),
+        r#"{"k":"v"}"#,
+        "原始 POST 请求体应原样透传"
+    );
+
+    // getRaw：GET 任意路径 + 查询参数
+    let mut query = std::collections::HashMap::new();
+    query.insert("a".to_string(), "1".to_string());
+    query.insert("skip".to_string(), String::new());
+    let got = knowledge_service
+        .get_raw("/custom/raw-get", Some(&query))
+        .await
+        .expect("原始 GET 成功");
+    assert!(got.contains(r#""raw":"get""#), "响应: {got}");
+    // 空 value 查询参数跳过（对应 Java URIBuilder 判空逻辑）
+    assert!(
+        !server.last_path().contains("skip="),
+        "空值参数应跳过: {}",
+        server.last_path()
+    );
+
+    // 共 8 次请求（url/manual/list/update/delete/search/post_raw/get_raw）
+    assert_eq!(server.request_count(), 8);
 }
