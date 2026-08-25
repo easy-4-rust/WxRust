@@ -59,7 +59,7 @@
   - `pub struct ReqwestTransport { client: reqwest::Client }`（`ReqwestTransport::new(client: reqwest::Client) -> Self`）
   - `pub struct MockTransport { handler: Arc<dyn Fn(&TransportRequest) -> Result<TransportResponse, WxErrorException> + Send + Sync> }`（`MockTransport::new<F>(f: F) -> Self where F: Fn(&TransportRequest) -> Result<TransportResponse, WxErrorException> + Send + Sync + 'static`，另提供 `MockTransport::ok_json(body: &str)` 便捷构造）
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```rust
 //! HttpTransport 抽象测试。RUST_OBLIGATION：trait 对象可用性 + MockTransport 零网络。
@@ -80,19 +80,19 @@ async fn mock_transport_answers_without_network() {
 }
 ```
 
-- [ ] **Step 2: 运行确认失败**
+- [x] **Step 2: 运行确认失败**
 
 Run: `cargo test -p wx-rust-common --test http_transport_test`
 Expected: FAIL（`unresolved module http`）
 
-- [ ] **Step 3: 最小实现**（`transport.rs`：上述类型与两个实现；`ReqwestTransport::send` 把请求映射到 `self.client` 执行并读取 status/headers/body；错误统一 `WxErrorException::Runtime`。`mod.rs` 写模块文档 + `pub use`。`lib.rs` 加 `pub mod http;`）
+- [x] **Step 3: 最小实现**（`transport.rs`：上述类型与两个实现；`ReqwestTransport::send` 把请求映射到 `self.client` 执行并读取 status/headers/body；错误统一 `WxErrorException::Runtime`。`mod.rs` 写模块文档 + `pub use`。`lib.rs` 加 `pub mod http;`）
 
-- [ ] **Step 4: 运行测试通过**
+- [x] **Step 4: 运行测试通过**
 
 Run: `cargo test -p wx-rust-common --test http_transport_test`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add crates/wx-rust-common/src/http crates/wx-rust-common/src/lib.rs crates/wx-rust-common/tests/http_transport_test.rs
@@ -132,7 +132,7 @@ pub async fn execute_pipeline<T, F>(
 where F: Fn(TransportResponse) -> Result<T, WxErrorException>;
 ```
 
-- [ ] **Step 1: 写失败测试**（三例：正常返回；首次 errcode=40001 + on_token_invalid 触发 + 第二次应答成功 → 重放一次成功；重放仍失败 → 返回错误且仅执行两次。用 `MockTransport` 计数器 `Arc<AtomicUsize>` 断言调用次数）
+- [x] **Step 1: 写失败测试**（三例：正常返回；首次 errcode=40001 + on_token_invalid 触发 + 第二次应答成功 → 重放一次成功；重放仍失败 → 返回错误且仅执行两次。用 `MockTransport` 计数器 `Arc<AtomicUsize>` 断言调用次数）
 
 ```rust
 #[tokio::test]
@@ -158,10 +158,10 @@ async fn token_invalid_replays_exactly_once() {
 
 （注：`WxErrorException::Runtime` 现为 `WxRuntimeError::new(impl Into<String>)` 构造，测试按现有错误变体名对齐，实现时以 `crates/wx-rust-common/src/error` 实际定义为准。）
 
-- [ ] **Step 2: 运行确认失败**（`cargo test -p wx-rust-common --test execute_pipeline_test` → FAIL 模块不存在）
-- [ ] **Step 3: 实现 execute_pipeline**（内部：`uri.contains("access_token=")` 时直接报错；组装 URL 注入 token；解析 errcode；命中 ACCESS_TOKEN_ERROR_CODES → 调 on_token_invalid → do_not_auto_refresh flag 循环重放一次；其余错误码直接 Err）
-- [ ] **Step 4: 测试通过 + 全量回归**（`cargo test -p wx-rust-common` 全绿）
-- [ ] **Step 5: Commit**（`git commit -m "feat(common): execute_pipeline 统一执行管线（token 失效单次重放）"`）
+- [x] **Step 2: 运行确认失败**（`cargo test -p wx-rust-common --test execute_pipeline_test` → FAIL 模块不存在）
+- [x] **Step 3: 实现 execute_pipeline**（内部：`uri.contains("access_token=")` 时直接报错；组装 URL 注入 token；解析 errcode；命中 ACCESS_TOKEN_ERROR_CODES → 调 on_token_invalid → do_not_auto_refresh flag 循环重放一次；其余错误码直接 Err）
+- [x] **Step 4: 测试通过 + 全量回归**（`cargo test -p wx-rust-common` 全绿）
+- [x] **Step 5: Commit**（`git commit -m "feat(common): execute_pipeline 统一执行管线（token 失效单次重放）"`）
 
 ---
 
@@ -174,10 +174,10 @@ async fn token_invalid_replays_exactly_once() {
 **Interfaces:**
 - Consumes: Task 2 `execute_pipeline/PipelineContext`；Task 1 `ReqwestTransport`（包装 base impl 现有 `http_client()`）
 
-- [ ] **Step 1: 基线记录**：`cargo test -p wx-rust-miniapp 2>&1 | tail -1` 记录通过数（当前 253）
-- [ ] **Step 2: 改造 execute_with_retry 为委托封装**（差异点：`effective_api_host_url` 替换、`is_stable_access_token` 通道选择留在 miniapp 侧；token 比对过期闭包原样传入）
-- [ ] **Step 3: 运行 miniapp 全量测试**：通过数不变（等价性证明）
-- [ ] **Step 4: clippy/fmt + Commit**（`git commit -m "refactor(miniapp): execute_with_retry 委托统一管线"`）
+- [x] **Step 1: 基线记录**：`cargo test -p wx-rust-miniapp 2>&1 | tail -1` 记录通过数（当前 253）
+- [x] **Step 2: 改造 execute_with_retry 为委托封装**（差异点：`effective_api_host_url` 替换、`is_stable_access_token` 通道选择留在 miniapp 侧；token 比对过期闭包原样传入）
+- [x] **Step 3: 运行 miniapp 全量测试**：通过数不变（等价性证明）
+- [x] **Step 4: clippy/fmt + Commit**（`git commit -m "refactor(miniapp): execute_with_retry 委托统一管线"`）
 
 ---
 
@@ -189,13 +189,13 @@ async fn token_invalid_replays_exactly_once() {
 **Interfaces:**
 - Consumes: 同 Task 3。各 crate 差异点（cp 的 corpid 域名、open 的 component_access_token 锁、qidian 的 host config）保留在各自封装内。
 
-- [ ] **Step 1: 逐 crate 记录基线**（`cargo test -p <crate> 2>&1 | tail -1`）
-- [ ] **Step 2: mp 接入 + 测试通过数不变 + commit**
-- [ ] **Step 3: cp 接入 + 测试通过数不变 + commit**
-- [ ] **Step 4: open 接入 + 测试通过数不变 + commit**
-- [ ] **Step 5: qidian 接入 + 测试通过数不变 + commit**
-- [ ] **Step 6: channel 接入（execute/execute0 变体）+ 测试通过数不变 + commit**
-- [ ] **Step 7: workspace 全量回归**（`cargo test --workspace`，1905 全绿）
+- [x] **Step 1: 逐 crate 记录基线**（`cargo test -p <crate> 2>&1 | tail -1`）
+- [x] **Step 2: mp 接入 + 测试通过数不变 + commit**
+- [x] **Step 3: cp 接入 + 测试通过数不变 + commit**
+- [x] **Step 4: open 接入 + 测试通过数不变 + commit**（实际未接入：component_access_token 键 + 重放重建 URL 与管线不同构；保持旧路径）
+- [x] **Step 5: qidian 接入 + 测试通过数不变 + commit**
+- [x] **Step 6: channel 接入（execute/execute0 变体）+ 测试通过数不变 + commit**（实际仅 post 走管线；GET 字节序被现有测试冻结，保持旧路径）
+- [x] **Step 7: workspace 全量回归**（`cargo test --workspace`，1905 全绿）
 
 ---
 
@@ -205,10 +205,10 @@ async fn token_invalid_replays_exactly_once() {
 - Modify: `crates/wx-rust-miniapp/src/api/wx_ma_service.rs:398-415`（try_lock 100ms 轮询循环 → `tokio::time::timeout(Duration::from_millis(3000), lock.lock()).await`，超时返回同一错误文案「获取accessToken超时：获取时间超时」；双检（取锁后再查 is_access_token_expired）保持）
 - Test: `crates/wx-rust-miniapp/tests/token_lock_timeout_test.rs`
 
-- [ ] **Step 1: 写失败测试**：持有锁的一方 sleep 3.2s，调用方应在 ~3s 收到含「获取accessToken超时」的错误（用 `tokio::time::pause()` + FakeClock 不适用于 tokio::time——直接真实时钟，测试限时 <4s）
-- [ ] **Step 2: 确认失败/确认现状行为**（改造前该路径为轮询，同样 3s 超时——测试先证明语义，改造后仍绿）
-- [ ] **Step 3: 改造为 timeout(lock().await)**
-- [ ] **Step 4: `cargo test -p wx-rust-miniapp` 全绿 + Commit**
+- [x] **Step 1: 写失败测试**：持有锁的一方 sleep 3.2s，调用方应在 ~3s 收到含「获取accessToken超时」的错误（用 `tokio::time::pause()` + FakeClock 不适用于 tokio::time——直接真实时钟，测试限时 <4s）
+- [x] **Step 2: 确认失败/确认现状行为**（改造前该路径为轮询，同样 3s 超时——测试先证明语义，改造后仍绿）
+- [x] **Step 3: 改造为 timeout(lock().await)**
+- [x] **Step 4: `cargo test -p wx-rust-miniapp` 全绿 + Commit**
 
 ---
 
@@ -233,10 +233,10 @@ impl CircuitBreaker {
 }
 ```
 
-- [ ] **Step 1: 写失败测试**：阈值 2、Open 100ms——两次失败后第三次 `before` 返回 Err；advance 110ms 后放行一次（HalfOpen 探测）成功后复位 Closed
-- [ ] **Step 2: 确认失败 → 实现 → 通过**
-- [ ] **Step 3: 管线接入测试**：breaker=Some 时熔断期间零 transport 调用（MockTransport 计数=0）
-- [ ] **Step 4: 全量回归 + Commit**
+- [x] **Step 1: 写失败测试**：阈值 2、Open 100ms——两次失败后第三次 `before` 返回 Err；advance 110ms 后放行一次（HalfOpen 探测）成功后复位 Closed
+- [x] **Step 2: 确认失败 → 实现 → 通过**
+- [x] **Step 3: 管线接入测试**：breaker=Some 时熔断期间零 transport 调用（MockTransport 计数=0）
+- [x] **Step 4: 全量回归 + Commit**
 
 ---
 
@@ -250,10 +250,10 @@ impl CircuitBreaker {
 **Interfaces:**
 - Produces: `pub async fn execute_stream(transport: &dyn HttpTransport, url: String, token: String) -> Result<impl futures_util::Stream<Item = Result<bytes::Bytes, WxErrorException>> + Send, WxErrorException>`（futures-util/bytes 已在 workspace deps）
 
-- [ ] **Step 1: 失败测试**：MockTransport 返回 3 个分块，断言流聚合等于全量、逐块顺序正确
-- [ ] **Step 2: 实现（ReqwestTransport 需补 `send_stream`）→ 通过**
-- [ ] **Step 3: pay 流式变体 + golden 对照（与既有 download_bill 输出逐字节一致）**
-- [ ] **Step 4: 全量回归 + Commit**
+- [x] **Step 1: 失败测试**：MockTransport 返回 3 个分块，断言流聚合等于全量、逐块顺序正确
+- [x] **Step 2: 实现（ReqwestTransport 需补 `send_stream`）→ 通过**
+- [x] **Step 3: pay 流式变体 + golden 对照（与既有 download_bill 输出逐字节一致）**
+- [x] **Step 4: 全量回归 + Commit**
 
 ---
 
@@ -267,9 +267,9 @@ impl CircuitBreaker {
 **Interfaces:**
 - Produces: `pub trait WxClock: Send + Sync { fn now_ms(&self) -> i64; }`、`pub struct SystemClock;`、`pub struct FakeClock(pub std::sync::Arc<std::sync::atomic::AtomicI64>)`（`FakeClock::advance_ms(i64)`）
 
-- [ ] **Step 1: 失败测试**（FakeClock advance 越过 expires_in → `is_access_token_expired` 翻转，零 sleep）
-- [ ] **Step 2: 实现 → 通过 → 全量回归（SystemClock 默认下既有测试不变）**
-- [ ] **Step 3: Commit**
+- [x] **Step 1: 失败测试**（FakeClock advance 越过 expires_in → `is_access_token_expired` 翻转，零 sleep）
+- [x] **Step 2: 实现 → 通过 → 全量回归（SystemClock 默认下既有测试不变）**
+- [x] **Step 3: Commit**
 
 ---
 
@@ -292,10 +292,10 @@ impl WxMaServiceBlocking {
 ```
 （门面不实现 async trait——类型上杜绝异步上下文误用。）
 
-- [ ] **Step 1: 失败测试**：同步上下文（非 #[tokio::test] 的 #[test]）调用 `js_code_to_session`（MockTransport 经 host 重定向），返回解析结果
-- [ ] **Step 2: 实现（OnceLock 全局 current_thread runtime + block_on 仅在此文件）→ 通过**
-- [ ] **Step 3: block_on 门禁**：`scripts/check_block_on.sh`——`grep -rn "block_on" crates/*/src --include="*.rs" | grep -v "blocking.rs" | grep -v "^.*//"` 非空则 exit 1；接入 ci.yml 新 step
-- [ ] **Step 4: 全量回归（含 feature 开关两态）+ Commit**
+- [x] **Step 1: 失败测试**：同步上下文（非 #[tokio::test] 的 #[test]）调用 `js_code_to_session`（MockTransport 经 host 重定向），返回解析结果
+- [x] **Step 2: 实现（OnceLock 全局 current_thread runtime + block_on 仅在此文件）→ 通过**
+- [x] **Step 3: block_on 门禁**：`scripts/check_block_on.sh`——`grep -rn "block_on" crates/*/src --include="*.rs" | grep -v "blocking.rs" | grep -v "^.*//"` 非空则 exit 1；接入 ci.yml 新 step
+- [x] **Step 4: 全量回归（含 feature 开关两态）+ Commit**
 
 ---
 
@@ -308,10 +308,10 @@ impl WxMaServiceBlocking {
 **Interfaces:**
 - Consumes: Task 1 MockTransport、Task 8 FakeClock、Task 6 CircuitBreaker
 
-- [ ] **Step 1: 写基准**：三组——(a) 1000 并发走 execute_pipeline 共享未过期 token，断言 MockTransport 收到的 token 全同且请求全成功；(b) token 过期场景 1000 并发刷新，断言「刷新应答」计数 = 1（单飞证明）；(c) 熔断阈值压测开合行为
-- [ ] **Step 2: `cargo bench -p wx-rust-common --bench concurrency_bench -- --test` 本地通过**
-- [ ] **Step 3: ci.yml 接入 + YAML 校验（python3 yaml.safe_load）**
-- [ ] **Step 4: 全量回归 + Commit**
+- [x] **Step 1: 写基准**：三组——(a) 1000 并发走 execute_pipeline 共享未过期 token，断言 MockTransport 收到的 token 全同且请求全成功；(b) token 过期场景 1000 并发刷新，断言「刷新应答」计数 = 1（单飞证明）；(c) 熔断阈值压测开合行为
+- [x] **Step 2: `cargo bench -p wx-rust-common --bench concurrency_bench -- --test` 本地通过**
+- [x] **Step 3: ci.yml 接入 + YAML 校验（python3 yaml.safe_load）**
+- [x] **Step 4: 全量回归 + Commit**
 
 ---
 
@@ -320,9 +320,9 @@ impl WxMaServiceBlocking {
 **Files:**
 - Test: `crates/wx-rust-common/tests/coverage_boost_error_enum_rest.rs`
 
-- [ ] **Step 1: 复用 open 枚举的脚本遍历模式**（读取 `wx_cp/wx_ma/wx_mp/wx_channel_error_msg_enum.rs` 的 match 臂生成 ALL_CODES 循环 + 未知码 None + 各 5 条 Java golden 比对，`// 对应 Java:` 注释；Java 参照 `WxJava/weixin-java-{cp,miniapp,mp,channel}` 对应枚举）
-- [ ] **Step 2: `cargo test -p wx-rust-common` 全绿（预计 +815 行覆盖）**
-- [ ] **Step 3: 覆盖率复测 ≥61.5% 保持 + Commit**
+- [x] **Step 1: 复用 open 枚举的脚本遍历模式**（读取 `wx_cp/wx_ma/wx_mp/wx_channel_error_msg_enum.rs` 的 match 臂生成 ALL_CODES 循环 + 未知码 None + 各 5 条 Java golden 比对，`// 对应 Java:` 注释；Java 参照 `WxJava/weixin-java-{cp,miniapp,mp,channel}` 对应枚举）
+- [x] **Step 2: `cargo test -p wx-rust-common` 全绿（预计 +815 行覆盖）**
+- [x] **Step 3: 覆盖率复测 ≥61.5% 保持 + Commit**
 
 ---
 
@@ -332,10 +332,10 @@ impl WxMaServiceBlocking {
 - 参照：`python3 scripts/audit_migration_layout.py --verbose`（MISSING 清单）
 - Create: `docs/verification/V0-gap-closure.md`（逐项处置结论）
 
-- [ ] **Step 1: 运行审计取最新 MISSING 清单**（pay 的 v3 auth/crypto 类、open 的 8 项等）
-- [ ] **Step 2: 逐项处置**——能实现则实现（pay v3 的 CertificateDownloader/Verifier 等语义迁移）；确属平台不可达（JNI/云内部）的记 PLATFORM_NA 并写明依据到报告
-- [ ] **Step 3: 重跑审计至 MISSING=0（或全部转 PLATFORM_NA 且有依据）**
-- [ ] **Step 4: 全量回归 + 报告 + Commit**
+- [x] **Step 1: 运行审计取最新 MISSING 清单**（pay 的 v3 auth/crypto 类、open 的 8 项等）
+- [x] **Step 2: 逐项处置**——能实现则实现（pay v3 的 CertificateDownloader/Verifier 等语义迁移）；确属平台不可达（JNI/云内部）的记 PLATFORM_NA 并写明依据到报告
+- [x] **Step 3: 重跑审计至 MISSING=0（或全部转 PLATFORM_NA 且有依据）**
+- [x] **Step 4: 全量回归 + 报告 + Commit**
 
 ---
 
@@ -344,9 +344,9 @@ impl WxMaServiceBlocking {
 **Files:**
 - Create: `docs/verification/aispeech-wiring-audit.md`
 
-- [ ] **Step 1: 对照图谱 50 个 degree=1 方法清单（WxAispeechDialogService/KnowledgeService trait 方法）逐一核对：facade 是否暴露、impl 是否接线、测试是否覆盖**
-- [ ] **Step 2: 缺接线的补线、缺测试的补测（沿用三层规范）**
-- [ ] **Step 3: 结论写入报告（含图谱复核前后对照）+ 全量回归 + Commit**
+- [x] **Step 1: 对照图谱 50 个 degree=1 方法清单（WxAispeechDialogService/KnowledgeService trait 方法）逐一核对：facade 是否暴露、impl 是否接线、测试是否覆盖**
+- [x] **Step 2: 缺接线的补线、缺测试的补测（沿用三层规范）**
+- [x] **Step 3: 结论写入报告（含图谱复核前后对照）+ 全量回归 + Commit**
 
 ---
 
