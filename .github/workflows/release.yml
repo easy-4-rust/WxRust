@@ -1,0 +1,200 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. v0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  validate-tag:
+    name: Validate Tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+    steps:
+      - name: Extract and validate version
+        id: extract
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.version }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid tag format: $TAG (expected vX.Y.Z)"
+            exit 1
+          fi
+          echo "version=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Validated version: $TAG"
+
+  build-and-test:
+    name: Build & Test
+    needs: validate-tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: cargo check
+        run: cargo check --workspace --all-features
+
+      - name: cargo test
+        run: cargo test --workspace
+
+      - name: cargo clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: block_on gate
+        run: scripts/check_block_on.sh
+
+      - name: concurrency bench (wx-rust-common, pipeline + circuit breaker)
+        run: cargo bench -p wx-rust-common --bench pipeline_concurrency_bench -- --test
+      - name: concurrency bench (wx-rust-miniapp, token single-flight)
+        run: cargo bench -p wx-rust-miniapp --bench token_single_flight_bench -- --test
+
+      - name: sync feature (blocking facade)
+        run: cargo test -p wx-rust-miniapp --features sync --test blocking_facade_test
+
+      - name: coverage gate (60%)
+        run: |
+          cargo install cargo-llvm-cov --locked
+          cargo llvm-cov --workspace --fail-under-lines 60 --summary-only
+
+  dry-run-publish:
+    name: Dry-run Publish
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Validate crate manifests (dry-run)
+        run: |
+          # Layer 0: wx-rust-common -- no internal deps, full dry-run
+          cargo publish -p wx-rust-common --dry-run --allow-dirty
+          # Layer 1/2: depend on unpublished internals, validate packaging only
+          for crate in wx-rust-aispeech wx-rust-channel wx-rust-cp wx-rust-miniapp wx-rust-mp wx-rust-pay wx-rust-qidian wx-rust-open; do
+            echo "::group::Packaging $crate"
+            cargo package -p "$crate" --list --allow-dirty
+            echo "::endgroup::"
+          done
+          # Layer 3: wx-rust umbrella -- no internal deps, full dry-run
+          cargo publish -p wx-rust --dry-run --allow-dirty
+
+  publish-crates:
+    name: Publish to crates.io
+    needs: [validate-tag, dry-run-publish]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Publish crates in dependency order
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          # 前置：token 未配置立即失败（避免空 token 重试 21x3 次的假绿）
+          if [ -z "$CARGO_REGISTRY_TOKEN" ]; then
+            echo "::error::CARGO_REGISTRY_TOKEN secret 未配置（仓库 Settings -> Secrets -> Actions）"
+            exit 1
+          fi
+          # Dependency-sorted publish order (see scripts/publish-order.sh)
+          CRATES=(
+            wx-rust-common
+            wx-rust-aispeech
+            wx-rust-channel
+            wx-rust-cp
+            wx-rust-miniapp
+            wx-rust-mp
+            wx-rust-pay
+            wx-rust-qidian
+            wx-rust-open
+            wx-rust
+          )
+          FAILED=()
+          for crate in "${CRATES[@]}"; do
+            echo "::group::Publishing $crate"
+            ok=0
+            # Retry up to 3 times with backoff for crates.io index propagation
+            for attempt in 1 2 3; do
+              if out=$(cargo publish -p "$crate" --allow-dirty 2>&1); then
+                echo "Successfully published $crate"
+                ok=1
+                break
+              fi
+              # 幂等重跑：版本已上传视为成功（cargo publish 对已存在版本报错退出）
+              if echo "$out" | grep -qiE "already (uploaded|exists)"; then
+                echo "$crate already published (version exists), skipping"
+                ok=1
+                break
+              fi
+              echo "$out" | tail -5
+              echo "Attempt $attempt failed for $crate, waiting before retry..."
+              sleep 15
+            done
+            if [ "$ok" -ne 1 ]; then
+              echo "::error::$crate 3 次重试后仍发布失败"
+              FAILED+=("$crate")
+            fi
+            echo "::endgroup::"
+          done
+          if [ "${#FAILED[@]}" -gt 0 ]; then
+            echo "::error::发布失败的 crate: ${FAILED[*]}"
+            exit 1
+          fi
+
+  create-release:
+    name: Create GitHub Release
+    needs: [validate-tag, publish-crates]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.validate-tag.outputs.version }}
+          name: ${{ needs.validate-tag.outputs.version }}
+          body: |
+            ## Release ${{ needs.validate-tag.outputs.version }}
+
+            See [CHANGELOG.md](CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

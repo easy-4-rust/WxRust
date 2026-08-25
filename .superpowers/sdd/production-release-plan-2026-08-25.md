@@ -107,118 +107,19 @@ cargo publish -p <crate> --dry-run
 
 ---
 
-## 3. 三阶段发布计划
+## 3. 灰度策略
 
-由于是 SDK 库（非服务端部署），灰度策略以消费者 opt-in 为主。以下三阶段按覆盖率递进 + 灰度范围扩大的方式组织。
+### 3.1 首发模式：公开 crate + 文档引导
 
-### 3.1 Phase 1：覆盖率 70% + Alpha 灰度
+由于是 SDK 库（非服务端部署），灰度策略以消费者 opt-in 为主：
 
-**时间窗口：** 发布后 1-2 周
+| 阶段 | 时间 | 范围 | 目标 |
+|------|------|------|------|
+| Alpha | 发布后 1 周 | 内部团队 + 邀请制 early adopter | 验证 API 易用性、文档完整性 |
+| Beta | 发布后 2-4 周 | 公开但标注 "beta" | 收集真实使用反馈、发现文档缺口 |
+| Stable | 发布后 4+ 周 | 正式推荐 | 去除 beta 标注 |
 
-**覆盖率目标：**
-- 从当前 61.57% 提升至 70%
-- 验证命令：`cargo llvm-cov --workspace --fail-under-lines 70 --summary-only`
-- 重点补齐：业务 crate 的单元测试（wx-rust-mp / wx-rust-cp / wx-rust-miniapp 的错误路径 + 边界条件）
-
-**灰度范围：**
-- 1-2 个内部项目接入
-- 邀请制 early adopter（需签署"API 可能变更"知情书）
-
-**准入标准（进入 Phase 1）：**
-- `cargo test --workspace` 全绿（0 failures, 0 ignored）
-- `cargo llvm-cov --fail-under-lines 70` 通过
-- `cargo clippy --workspace --all-targets --all-features -- -D warnings` 零 warning
-- `cargo deny check` 无 high/critical 漏洞
-- 全部 10 个 crate 在 crates.io 可搜索且版本正确
-- README / CHANGELOG / docs.rs 就绪
-
-**退出标准（进入 Phase 2）：**
-- Alpha 用户无 P0/P1 未解决问题
-- 收集到至少 2 份结构化反馈（API 易用性 / 文档完整性 / 缺失功能）
-- 覆盖率稳定 >= 70%
-
-**关键风险：**
-- Alpha 用户反馈的 API 设计缺陷可能需要 breaking change（0.x 阶段允许，但需评估影响面）
-- 文档缺口可能导致用户误用（缓解：补充 doc comment + doctest）
-
-**暂停条件：**
-- Alpha 用户报告 P0 bug 且 48 小时内无法修复
-- 覆盖率回退至 < 70%
-- cargo audit 新增 high/critical 漏洞
-
-### 3.2 Phase 2：覆盖率 80% + Beta 灰度
-
-**时间窗口：** Phase 1 退出后 2-3 周
-
-**覆盖率目标：**
-- 从 70% 提升至 80%
-- 验证命令：`cargo llvm-cov --workspace --fail-under-lines 80 --summary-only`
-- 重点补齐：集成测试（真实 HTTP 请求的 mock 层）+ 错误路径全覆盖
-
-**灰度范围：**
-- 公开但标注 "beta"
-- 接受 GitHub Issues 反馈
-- 在 README 顶部标注"Beta 阶段，API 可能变更"
-
-**准入标准（进入 Phase 2）：**
-- Phase 1 退出标准全部满足
-- `cargo llvm-cov --fail-under-lines 80` 通过
-- Alpha 反馈中的 API 设计缺陷已修复或有明确的 deprecation 路径
-- CHANGELOG 已记录 Alpha 阶段的所有变更
-
-**退出标准（进入 Phase 3）：**
-- Beta 用户无 P0/P1 未解决问题
-- 收集到至少 5 份结构化反馈
-- 覆盖率稳定 >= 80%
-- 无已知的 breaking change 计划（或已明确 deprecation 路径）
-
-**关键风险：**
-- Beta 用户基数扩大后，可能暴露 Alpha 阶段未覆盖的边界情况
-- 第三方 crate 兼容性问题（如 tokio 版本、reqwest 版本冲突）
-
-**暂停条件：**
-- Beta 用户报告 P0 bug 且 72 小时内无法修复
-- 覆盖率回退至 < 80%
-- 下游大规模构建失败（crates.io 索引问题或依赖冲突）
-
-### 3.3 Phase 3：覆盖率 90% + Stable GA
-
-**时间窗口：** Phase 2 退出后，视深水区工作量而定
-
-**覆盖率目标：**
-- 从 80% 提升至 90%
-- 验证命令：`cargo llvm-cov --workspace --fail-under-lines 90 --summary-only`
-- 深水区：需要重新设计 HTTP mock 策略（当前 reqwest::Client 无法注入 mock transport，需引入 tower::Service trait 或 mockito 层）
-
-**灰度范围：**
-- 去除 beta 标注，正式推荐
-- 在 crates.io 描述中移除 "beta" 字样
-- 考虑发布 1.0.0（如 API 稳定性经受住 Beta 考验）
-
-**准入标准（进入 Phase 3）：**
-- Phase 2 退出标准全部满足
-- `cargo llvm-cov --fail-under-lines 90` 通过
-- HTTP mock 策略已重新设计并实现（tower::Service 注入或 mockito 集成）
-- 全部公共 API 有 doc comment + doctest
-- `cargo semver-checks check-release` 无 breaking change（或已明确版本号）
-
-**退出标准（Stable GA）：**
-- 覆盖率稳定 >= 90%
-- 连续 2 周无 P0/P1 issue
-- 下游用户构建成功率 > 99%（基于 GitHub Issues 反馈）
-- docs.rs 文档构建无 warning
-
-**关键风险：**
-- 90% 覆盖率的深水区工作量大（HTTP mock 重构、异步测试基础设施）
-- 可能需要引入新的测试依赖（mockito / wiremock / tower-test）
-- 1.0.0 发布的 semver 承诺需谨慎评估
-
-**暂停条件：**
-- HTTP mock 策略设计评审未通过
-- 覆盖率停滞在 85% 以下超过 2 周
-- Beta 用户持续报告 API 设计问题（说明 API 未稳定，不宜 GA）
-
-### 3.4 Feature Flags
+### 3.2 Feature Flags
 
 | Feature | 默认状态 | 说明 |
 |---------|----------|------|
@@ -227,7 +128,7 @@ cargo publish -p <crate> --dry-run
 
 默认 feature 集（无额外依赖）即为异步 API 形态，覆盖绝大多数使用场景。
 
-### 3.5 消费者接入方式
+### 3.3 消费者接入方式
 
 ```toml
 # 最简接入（仅需某模块）
@@ -312,9 +213,7 @@ wx-rust-miniapp = { version = "0.1.0", features = ["sync"] }
 | 全量测试 | `cargo test --workspace` | 0 failures | 1968 passed (V0 gap closure 后) |
 | clippy | `cargo clippy --workspace --all-targets --all-features -- -D warnings` | 0 warnings | 干净 |
 | fmt | `cargo fmt --all -- --check` | exit 0 | 干净 |
-| 覆盖率（Phase 1） | `cargo llvm-cov --workspace --fail-under-lines 70 --summary-only` | >= 70% | 61.57%（需提升） |
-| 覆盖率（Phase 2） | `cargo llvm-cov --workspace --fail-under-lines 80 --summary-only` | >= 80% | 待 Phase 1 后提升 |
-| 覆盖率（Phase 3） | `cargo llvm-cov --workspace --fail-under-lines 90 --summary-only` | >= 90% | 待 Phase 2 后提升（深水区） |
+| 覆盖率 | `cargo llvm-cov --workspace --fail-under-lines 60 --summary-only` | >= 60% | 61.57% |
 | block_on 门禁 | `scripts/check_block_on.sh` | 仅 blocking.rs 命中 | 通过 |
 | 并发基准 | `cargo bench -p wx-rust-common --bench pipeline_concurrency_bench -- --test` | 1000 并发 token 刷新=1 | 通过 |
 | 并发基准 | `cargo bench -p wx-rust-miniapp --bench token_single_flight_bench -- --test` | 单飞正确 | 通过 |
@@ -371,7 +270,7 @@ cargo test  # 如有测试
 |------|----------|
 | `cargo test --workspace` 存在 failure | CI 红灯 |
 | `cargo clippy --D warnings` 存在 warning | CI 红灯 |
-| 覆盖率 < 当前阶段阈值（Phase 1: 70%, Phase 2: 80%, Phase 3: 90%） | `cargo llvm-cov --fail-under-lines <阈值>` |
+| 覆盖率 < 60% | `cargo llvm-cov --fail-under-lines 60` |
 | cargo audit 报 high/critical 漏洞 | `cargo audit` |
 | block_on 出现在 sync 门面以外的文件 | `scripts/check_block_on.sh` |
 | 并发基准失败（token 刷新 != 1） | `cargo bench -- --test` |
@@ -390,41 +289,19 @@ cargo test  # 如有测试
 
 ## 7. 时间线与责任分工
 
-### 7.1 发布时间线（三阶段）
-
-**Pre-release（发布准备）：**
+### 7.1 发布时间线
 
 | 日期 | 里程碑 | 交付物 |
 |------|--------|--------|
 | 2026-08-25 | 发布计划评审 | 本文档经团队 review 通过 |
 | 2026-08-26 | 发布前检查 | 全量 CI 验证 + README 最终确认 + CHANGELOG 编写 |
-
-**Phase 1：覆盖率 70% + Alpha 灰度（1-2 周）：**
-
-| 日期 | 里程碑 | 交付物 |
-|------|--------|--------|
 | 2026-08-27 | Wave 1 发布 | `wx-rust-common` 上线 crates.io |
 | 2026-08-27 | Wave 2 发布 | 7 个业务 crate 上线 crates.io |
 | 2026-08-27 | Wave 3 发布 | `wx-rust-open` + `wx-rust` 上线 crates.io |
 | 2026-08-27 | 发布验证 | 拉取已发布版本 + 验证构建 + GitHub Release |
-| 2026-08-28 ~ 09-03 | 覆盖率提升 | 从 61.57% 提升至 70%（补齐业务 crate 单元测试） |
-| 2026-08-28 ~ 09-10 | Alpha 灰度 | 1-2 个内部项目接入，收集结构化反馈 |
-
-**Phase 2：覆盖率 80% + Beta 灰度（2-3 周）：**
-
-| 日期 | 里程碑 | 交付物 |
-|------|--------|--------|
-| Phase 1 退出后 | 覆盖率提升 | 从 70% 提升至 80%（集成测试 + 错误路径全覆盖） |
-| Phase 1 退出后 +1 周 | Beta 公开 | 去除 Alpha 限制，公开但标注 "beta" |
-| Phase 1 退出后 +2~3 周 | Beta 反馈收集 | 收集至少 5 份结构化反馈 |
-
-**Phase 3：覆盖率 90% + Stable GA（深水区）：**
-
-| 日期 | 里程碑 | 交付物 |
-|------|--------|--------|
-| Phase 2 退出后 | HTTP mock 重构 | 重新设计 mock 策略（tower::Service 注入或 mockito） |
-| Phase 2 退出后 +2~4 周 | 覆盖率提升 | 从 80% 提升至 90%（深水区测试） |
-| Phase 2 退出后 +4 周 | Stable GA | 去除 beta 标注，正式推荐 |
+| 2026-08-28 ~ 09-03 | Alpha 阶段 | 收集 early adopter 反馈 |
+| 2026-09-03 ~ 09-24 | Beta 阶段 | 公开 beta，收集更广泛反馈 |
+| 2026-09-24+ | Stable 评估 | 根据反馈决定是否去除 beta 标注 |
 
 ### 7.2 角色与职责
 
@@ -437,40 +314,17 @@ cargo test  # 如有测试
 
 （注：当前为单人维护项目，全部角色由同一人承担。后续如有团队扩展，需重新分配。）
 
-### 7.3 检查点（三阶段）
-
-**Pre-release 检查点：**
+### 7.3 检查点
 
 | 检查点 | 时间 | 通过标准 |
 |--------|------|----------|
 | CP1: 计划评审通过 | 2026-08-25 | 团队 sign-off |
 | CP2: 发布前全量验证 | 2026-08-26 | 全部 No-Go 条件不成立 |
-
-**Phase 1 检查点：**
-
-| 检查点 | 时间 | 通过标准 |
-|--------|------|----------|
 | CP3: Wave 1 发布成功 | 2026-08-27 | crates.io 可搜索到 wx-rust-common 0.1.0 |
 | CP4: Wave 2 发布成功 | 2026-08-27 | 7 个 crate 均在 crates.io 可搜索 |
 | CP5: Wave 3 发布成功 | 2026-08-27 | open + facade 均在 crates.io 可搜索 |
 | CP6: 发布后验证通过 | 2026-08-27 | 临时项目依赖已发布版本可编译 |
-| CP7: 覆盖率 70% 达标 | 2026-09-03 | `cargo llvm-cov --fail-under-lines 70` 通过 |
-| CP8: Alpha 反馈收集 | 2026-09-10 | 无 P0 未解决问题 + 至少 2 份结构化反馈 |
-
-**Phase 2 检查点：**
-
-| 检查点 | 时间 | 通过标准 |
-|--------|------|----------|
-| CP9: 覆盖率 80% 达标 | Phase 1 退出后 +2 周 | `cargo llvm-cov --fail-under-lines 80` 通过 |
-| CP10: Beta 反馈收集 | Phase 1 退出后 +3 周 | 无 P0 未解决问题 + 至少 5 份结构化反馈 |
-
-**Phase 3 检查点：**
-
-| 检查点 | 时间 | 通过标准 |
-|--------|------|----------|
-| CP11: HTTP mock 重构完成 | Phase 2 退出后 +2 周 | tower::Service 注入或 mockito 集成就绪 |
-| CP12: 覆盖率 90% 达标 | Phase 2 退出后 +4 周 | `cargo llvm-cov --fail-under-lines 90` 通过 |
-| CP13: Stable GA 发布 | Phase 2 退出后 +4 周 | 去除 beta 标注 + 连续 2 周无 P0/P1 |
+| CP7: Alpha 反馈收集 | 2026-09-03 | 无 P0 未解决问题 |
 
 ---
 

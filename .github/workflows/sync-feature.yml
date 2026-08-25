@@ -1,0 +1,30 @@
+name: Sync Feature
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  sync-feature:
+    name: sync feature (blocking facade)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run blocking facade tests (feature=sync)
+        run: cargo test -p wx-rust-miniapp --features sync --test blocking_facade_test

@@ -1,0 +1,59 @@
+name: Coverage
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo-llvm-cov
+        run: cargo install cargo-llvm-cov --locked
+
+      # Gate: fail CI if line coverage drops below 60%.
+      # Do NOT lower this threshold.
+      - name: Run coverage with gate
+        run: cargo llvm-cov --workspace --fail-under-lines 60 --summary-only
+
+      - name: Generate LCOV report
+        run: cargo llvm-cov --workspace --lcov --output-path lcov.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
+          # CODECOV_TOKEN 未配置时上传失败不阻断（配置 secret 后可改回 true）
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests
+
+      - name: Generate HTML coverage report
+        run: cargo llvm-cov --workspace --html --output-dir coverage-html
+
+      - name: Upload HTML coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: coverage-html/
+          retention-days: 30
