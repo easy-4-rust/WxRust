@@ -15,6 +15,7 @@ pub mod complaint_service_impl;
 pub mod custom_declaration_service_impl;
 pub mod ecommerce_service_impl;
 pub mod ent_pay_service_impl;
+pub mod gold_plan_service_impl;
 pub mod marketing_busi_favor_service_impl;
 pub mod marketing_favor_service_impl;
 pub mod marketing_media_service_impl;

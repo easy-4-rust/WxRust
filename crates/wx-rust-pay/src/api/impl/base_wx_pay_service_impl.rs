@@ -26,12 +26,13 @@ use crate::api::r#impl::SubServiceBundle;
 use crate::api::{
     Apply4SubjectConfirmService, Applyment4SubService, BankService, BrandMerchantTransferService,
     BusinessCircleService, BusinessOperationTransferService, ComplaintService,
-    CustomDeclarationService, EcommerceService, EntPayService, MarketingBusiFavorService,
-    MarketingFavorService, MarketingMediaService, MerchantLimitationService, MerchantMediaService,
-    MerchantTransferService, MiPayService, PartnerPayScoreService, PartnerPayScoreSignPlanService,
-    PartnerTransferService, PayScoreService, PayrollService, ProfitSharingService, RealNameService,
-    RedpackService, SubscriptionBillingService, TransferService, WxDepositService,
-    WxEntrustPapService, WxPayService,
+    CustomDeclarationService, EcommerceService, EntPayService, GoldPlanService,
+    MarketingBusiFavorService, MarketingFavorService, MarketingMediaService,
+    MerchantLimitationService, MerchantMediaService, MerchantTransferService, MiPayService,
+    PartnerPayScoreService, PartnerPayScoreSignPlanService, PartnerTransferService, PayScoreService,
+    PayrollService, ProfitSharingService, RealNameService, RedpackService,
+    SubscriptionBillingService, TransferService, WxDepositService, WxEntrustPapService,
+    WxPayService,
 };
 use crate::bean::WxPayApiData;
 use crate::config::WxPayConfig;
@@ -441,6 +442,10 @@ impl WxPayService for WxPayServiceImpl {
 
     fn ent_pay_service(&self) -> Option<Arc<dyn EntPayService>> {
         self.sub_services.get().and_then(|b| b.ent_pay.clone())
+    }
+
+    fn gold_plan_service(&self) -> Option<Arc<dyn GoldPlanService>> {
+        self.sub_services.get().and_then(|b| b.gold_plan.clone())
     }
 
     fn redpack_service(&self) -> Option<Arc<dyn RedpackService>> {

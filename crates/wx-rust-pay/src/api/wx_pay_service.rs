@@ -51,12 +51,12 @@ use wx_rust_common::pipeline::stream::execute_stream;
 use crate::api::{
     Apply4SubjectConfirmService, Applyment4SubService, BankService, BrandMerchantTransferService,
     BusinessCircleService, BusinessOperationTransferService, ComplaintService,
-    CustomDeclarationService, EcommerceService, EntPayService, MarketingBusiFavorService,
-    MarketingFavorService, MarketingMediaService, MerchantLimitationService, MerchantMediaService,
-    MerchantTransferService, MiPayService, PartnerPayScoreService, PartnerPayScoreSignPlanService,
-    PartnerTransferService, PayScoreService, PayrollService, ProfitSharingService, RealNameService,
-    RedpackService, SubscriptionBillingService, TransferService, WxDepositService,
-    WxEntrustPapService,
+    CustomDeclarationService, EcommerceService, EntPayService, GoldPlanService,
+    MarketingBusiFavorService, MarketingFavorService, MarketingMediaService,
+    MerchantLimitationService, MerchantMediaService, MerchantTransferService, MiPayService,
+    PartnerPayScoreService, PartnerPayScoreSignPlanService, PartnerTransferService, PayScoreService,
+    PayrollService, ProfitSharingService, RealNameService, RedpackService,
+    SubscriptionBillingService, TransferService, WxDepositService, WxEntrustPapService,
 };
 use crate::bean::order::{
     WxPayAppOrderResult, WxPayMpOrderResult, WxPayMwebOrderResult, WxPayNativeOrderResult,
@@ -636,6 +636,11 @@ pub trait WxPayService: Send + Sync {
 
     /// 设置企业付款服务类，允许开发者自定义实现类（对应 Java `setEntPayService`）。
     fn set_ent_pay_service(&self, _ent_pay_service: Arc<dyn EntPayService>) {}
+
+    /// 点金计划服务（对应 Java `getGoldPlanService`）。
+    fn gold_plan_service(&self) -> Option<Arc<dyn GoldPlanService>> {
+        None
+    }
 
     /// 红包接口服务（对应 Java `getRedpackService`）。
     fn redpack_service(&self) -> Option<Arc<dyn RedpackService>> {

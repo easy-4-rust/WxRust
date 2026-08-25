@@ -24,6 +24,7 @@ pub struct SubServiceBundle {
     pub custom_declaration: Option<Arc<dyn CustomDeclarationService>>,
     pub ecommerce: Option<Arc<dyn EcommerceService>>,
     pub ent_pay: Option<Arc<dyn EntPayService>>,
+    pub gold_plan: Option<Arc<dyn GoldPlanService>>,
     pub marketing_busi_favor: Option<Arc<dyn MarketingBusiFavorService>>,
     pub marketing_favor: Option<Arc<dyn MarketingFavorService>>,
     pub marketing_media: Option<Arc<dyn MarketingMediaService>>,
@@ -87,6 +88,9 @@ impl SubServiceBundle {
             ent_pay: Some(Arc::new(ent_pay_service_impl::EntPayServiceImpl::new(
                 pay_service.clone(),
             ))),
+            gold_plan: Some(Arc::new(
+                gold_plan_service_impl::GoldPlanServiceImpl::new(pay_service.clone()),
+            )),
             marketing_busi_favor: Some(Arc::new(
                 marketing_busi_favor_service_impl::MarketingBusiFavorServiceImpl::new(
                     pay_service.clone(),
