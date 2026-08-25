@@ -88,9 +88,9 @@ impl SubServiceBundle {
             ent_pay: Some(Arc::new(ent_pay_service_impl::EntPayServiceImpl::new(
                 pay_service.clone(),
             ))),
-            gold_plan: Some(Arc::new(
-                gold_plan_service_impl::GoldPlanServiceImpl::new(pay_service.clone()),
-            )),
+            gold_plan: Some(Arc::new(gold_plan_service_impl::GoldPlanServiceImpl::new(
+                pay_service.clone(),
+            ))),
             marketing_busi_favor: Some(Arc::new(
                 marketing_busi_favor_service_impl::MarketingBusiFavorServiceImpl::new(
                     pay_service.clone(),

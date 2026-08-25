@@ -29,8 +29,8 @@ use crate::api::{
     CustomDeclarationService, EcommerceService, EntPayService, GoldPlanService,
     MarketingBusiFavorService, MarketingFavorService, MarketingMediaService,
     MerchantLimitationService, MerchantMediaService, MerchantTransferService, MiPayService,
-    PartnerPayScoreService, PartnerPayScoreSignPlanService, PartnerTransferService, PayScoreService,
-    PayrollService, ProfitSharingService, RealNameService, RedpackService,
+    PartnerPayScoreService, PartnerPayScoreSignPlanService, PartnerTransferService,
+    PayScoreService, PayrollService, ProfitSharingService, RealNameService, RedpackService,
     SubscriptionBillingService, TransferService, WxDepositService, WxEntrustPapService,
     WxPayService,
 };

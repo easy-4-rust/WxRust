@@ -57,7 +57,8 @@ impl GoldPlanServiceImpl {
         if let Some(scene) = operation_pay_scene {
             request["operation_pay_scene"] = json!(scene);
         }
-        let body = serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
         let response = svc.post_v3(&url, &body).await?;
         serde_json::from_str(&response).map_err(|e| impl_utils::runtime(e.to_string()))
     }
@@ -79,7 +80,8 @@ impl GoldPlanServiceImpl {
             "sub_mchid": sub_mch_id,
             "operation_type": operation_type,
         });
-        let body = serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
         let response = svc.post_v3(&url, &body).await?;
         serde_json::from_str(&response).map_err(|e| impl_utils::runtime(e.to_string()))
     }
@@ -105,10 +107,7 @@ impl GoldPlanService for GoldPlanServiceImpl {
             .await
     }
 
-    async fn open_custom_page(
-        &self,
-        sub_mch_id: &str,
-    ) -> Result<GoldPlanResult, WxErrorException> {
+    async fn open_custom_page(&self, sub_mch_id: &str) -> Result<GoldPlanResult, WxErrorException> {
         self.change_custom_page_status(sub_mch_id, OPEN).await
     }
 
@@ -133,7 +132,8 @@ impl GoldPlanService for GoldPlanServiceImpl {
             "sub_mchid": sub_mch_id,
             "advertising_industry_filters": advertising_industry_filters,
         });
-        let body = serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
         svc.post_v3(&url, &body).await?;
         Ok(())
     }
@@ -154,15 +154,13 @@ impl GoldPlanService for GoldPlanServiceImpl {
         if let Some(filters) = advertising_industry_filters {
             request["advertising_industry_filters"] = json!(filters);
         }
-        let body = serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
         svc.patch_v3(&url, &body).await?;
         Ok(())
     }
 
-    async fn close_advertising_show(
-        &self,
-        sub_mch_id: &str,
-    ) -> Result<(), WxErrorException> {
+    async fn close_advertising_show(&self, sub_mch_id: &str) -> Result<(), WxErrorException> {
         let svc = self.svc()?;
         let url = format!(
             "{}/v3/goldplan/merchants/close-advertising-show",
@@ -171,7 +169,8 @@ impl GoldPlanService for GoldPlanServiceImpl {
         let request = json!({
             "sub_mchid": sub_mch_id,
         });
-        let body = serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| impl_utils::runtime(e.to_string()))?;
         svc.post_v3(&url, &body).await?;
         Ok(())
     }

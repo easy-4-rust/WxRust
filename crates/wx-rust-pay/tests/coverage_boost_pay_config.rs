@@ -130,10 +130,16 @@ fn all_setters_and_getters() {
     assert_eq!(cfg.service_id(), Some("svc_1"));
 
     cfg.set_pay_score_notify_url("https://score.example.com");
-    assert_eq!(cfg.pay_score_notify_url(), Some("https://score.example.com"));
+    assert_eq!(
+        cfg.pay_score_notify_url(),
+        Some("https://score.example.com")
+    );
 
     cfg.set_pay_score_permission_notify_url("https://perm.example.com");
-    assert_eq!(cfg.pay_score_permission_notify_url(), Some("https://perm.example.com"));
+    assert_eq!(
+        cfg.pay_score_permission_notify_url(),
+        Some("https://perm.example.com")
+    );
 
     cfg.set_max_conn_total(50);
     assert_eq!(cfg.max_conn_total(), 50);

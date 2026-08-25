@@ -50,10 +50,7 @@ pub trait GoldPlanService: Send + Sync {
     ///
     /// # 参数
     /// - `sub_mch_id`: 特约商户号
-    async fn open_custom_page(
-        &self,
-        sub_mch_id: &str,
-    ) -> Result<GoldPlanResult, WxErrorException>;
+    async fn open_custom_page(&self, sub_mch_id: &str) -> Result<GoldPlanResult, WxErrorException>;
 
     /// 为特约商户关闭商家小票。
     ///
@@ -63,10 +60,8 @@ pub trait GoldPlanService: Send + Sync {
     ///
     /// # 参数
     /// - `sub_mch_id`: 特约商户号
-    async fn close_custom_page(
-        &self,
-        sub_mch_id: &str,
-    ) -> Result<GoldPlanResult, WxErrorException>;
+    async fn close_custom_page(&self, sub_mch_id: &str)
+    -> Result<GoldPlanResult, WxErrorException>;
 
     /// 设置特约商户的点金计划同业过滤标签。
     ///
@@ -106,8 +101,5 @@ pub trait GoldPlanService: Send + Sync {
     ///
     /// # 参数
     /// - `sub_mch_id`: 特约商户号
-    async fn close_advertising_show(
-        &self,
-        sub_mch_id: &str,
-    ) -> Result<(), WxErrorException>;
+    async fn close_advertising_show(&self, sub_mch_id: &str) -> Result<(), WxErrorException>;
 }

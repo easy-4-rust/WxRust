@@ -302,7 +302,9 @@ async fn test_open_gold_plan() {
     })
     .await;
     let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
-    let gold_plan_svc = service.gold_plan_service().expect("gold_plan_service 应已装配");
+    let gold_plan_svc = service
+        .gold_plan_service()
+        .expect("gold_plan_service 应已装配");
 
     let result = gold_plan_svc
         .open_gold_plan("1234567890", Some("JSAPI"))
@@ -328,7 +330,9 @@ async fn test_close_gold_plan() {
     })
     .await;
     let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
-    let gold_plan_svc = service.gold_plan_service().expect("gold_plan_service 应已装配");
+    let gold_plan_svc = service
+        .gold_plan_service()
+        .expect("gold_plan_service 应已装配");
 
     let result = gold_plan_svc
         .close_gold_plan("sub_mch_001", None)
@@ -353,7 +357,9 @@ async fn test_open_custom_page() {
     })
     .await;
     let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
-    let gold_plan_svc = service.gold_plan_service().expect("gold_plan_service 应已装配");
+    let gold_plan_svc = service
+        .gold_plan_service()
+        .expect("gold_plan_service 应已装配");
 
     let result = gold_plan_svc
         .open_custom_page("sub_mch_002")
@@ -380,7 +386,9 @@ async fn test_set_advertising_industry_filter() {
     })
     .await;
     let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
-    let gold_plan_svc = service.gold_plan_service().expect("gold_plan_service 应已装配");
+    let gold_plan_svc = service
+        .gold_plan_service()
+        .expect("gold_plan_service 应已装配");
 
     let filters = vec!["餐饮".to_string(), "零售".to_string()];
     gold_plan_svc
@@ -406,7 +414,9 @@ async fn test_open_advertising_show() {
     })
     .await;
     let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
-    let gold_plan_svc = service.gold_plan_service().expect("gold_plan_service 应已装配");
+    let gold_plan_svc = service
+        .gold_plan_service()
+        .expect("gold_plan_service 应已装配");
 
     let filters = vec!["教育".to_string()];
     gold_plan_svc
@@ -431,7 +441,9 @@ async fn test_close_advertising_show() {
     })
     .await;
     let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
-    let gold_plan_svc = service.gold_plan_service().expect("gold_plan_service 应已装配");
+    let gold_plan_svc = service
+        .gold_plan_service()
+        .expect("gold_plan_service 应已装配");
 
     gold_plan_svc
         .close_advertising_show("sub_mch_005")
@@ -452,7 +464,9 @@ async fn test_open_advertising_show_without_filters() {
     })
     .await;
     let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
-    let gold_plan_svc = service.gold_plan_service().expect("gold_plan_service 应已装配");
+    let gold_plan_svc = service
+        .gold_plan_service()
+        .expect("gold_plan_service 应已装配");
 
     gold_plan_svc
         .open_advertising_show("sub_mch_006", None)
