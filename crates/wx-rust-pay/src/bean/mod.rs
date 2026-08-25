@@ -547,6 +547,9 @@ pub use transfer::business_operation_transfer_query_result::BusinessOperationTra
 pub use transfer::business_operation_transfer_request::BusinessOperationTransferRequest;
 pub use transfer::business_operation_transfer_request::TransferSceneReportInfo;
 pub use transfer::business_operation_transfer_result::BusinessOperationTransferResult;
+pub use transfer::pre_transfer_with_authorization_request::AuthorizationInfo;
+pub use transfer::pre_transfer_with_authorization_request::PreTransferWithAuthorizationRequest;
+pub use transfer::pre_transfer_with_authorization_result::PreTransferWithAuthorizationResult;
 pub use transfer::query_transfer_batches_request::QueryTransferBatchesRequest;
 pub use transfer::query_transfer_batches_result::QueryTransferBatchesResult;
 pub use transfer::reservation_transfer_batch_get_result::ReservationTransferBatchGetResult;
@@ -557,13 +560,18 @@ pub use transfer::reservation_transfer_notify_result::TransferDetailNotify;
 pub use transfer::transfer_batch_detail_result::TransferBatchDetailResult;
 pub use transfer::transfer_batches_request::TransferBatchesRequest;
 pub use transfer::transfer_batches_result::TransferBatchesResult;
+pub use transfer::transfer_bills_after_authorization_request::TransferBillsAfterAuthorizationRequest;
+pub use transfer::transfer_bills_after_authorization_result::TransferBillsAfterAuthorizationResult;
 pub use transfer::transfer_bills_cancel_result::TransferBillsCancelResult;
 pub use transfer::transfer_bills_get_result::TransferBillsGetResult;
 pub use transfer::transfer_bills_notify_result::TransferBillsNotifyResult;
 pub use transfer::transfer_bills_request::TransferBillsRequest;
 pub use transfer::transfer_bills_result::TransferBillsResult;
 pub use transfer::transfer_notify_result::TransferNotifyResult;
+pub use transfer::user_authorization_notify_result::UserAuthorizationNotifyResult;
 pub use transfer::user_authorization_status_result::UserAuthorizationStatusResult;
+pub use transfer::user_confirm_authorization_request::UserConfirmAuthorizationRequest;
+pub use transfer::user_confirm_authorization_result::UserConfirmAuthorizationResult;
 pub use wx_pay_api_data::WxPayApiData;
 
 // TradeTypeEnum/GlobalTradeTypeEnum 在 Java 位于 bean/result/enums 包，

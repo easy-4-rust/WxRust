@@ -58,6 +58,22 @@ pub trait TransferService: Send + Sync {
         request: &TransferBillsRequest,
     ) -> Result<TransferBillsResult, WxErrorException>;
 
+    /// 发起转账并完成免确认收款授权API 请求方式：POST（HTTPS）
+    /// 对应 Java: `transferBillsWithAuthorization`
+    /// 文档地址：发起转账并完成免确认收款授权
+    async fn transfer_bills_with_authorization(
+        &self,
+        request: &PreTransferWithAuthorizationRequest,
+    ) -> Result<PreTransferWithAuthorizationResult, WxErrorException>;
+
+    /// 用户授权后转账API 请求方式：POST（HTTPS）
+    /// 对应 Java: `transferBillsAfterAuthorization`
+    /// 文档地址：用户授权后转账
+    async fn transfer_bills_after_authorization(
+        &self,
+        request: &TransferBillsAfterAuthorizationRequest,
+    ) -> Result<TransferBillsAfterAuthorizationResult, WxErrorException>;
+
     /// 2025.1.15 开始新接口 撤销转账API 请求方式：POST（HTTPS） 请求地址：请求地址 文档地址：商户撤销转账API
     async fn transform_bills_cancel(
         &self,
@@ -82,6 +98,40 @@ pub trait TransferService: Send + Sync {
         notify_data: &str,
         header: &SignatureHeader,
     ) -> Result<TransferBillsNotifyResult, WxErrorException>;
+
+    /// 发起免确认收款授权API 请求方式：POST（HTTPS）
+    /// 对应 Java: `userConfirmAuthorization`
+    /// 文档地址：发起免确认收款授权
+    async fn user_confirm_authorization(
+        &self,
+        request: &UserConfirmAuthorizationRequest,
+    ) -> Result<UserConfirmAuthorizationResult, WxErrorException>;
+
+    /// 商户单号查询免确认收款授权结果API 请求方式：GET（HTTPS）
+    /// 对应 Java: `getUserConfirmAuthorizationByOutAuthorizationNo`
+    /// 文档地址：商户单号查询授权结果
+    async fn get_user_confirm_authorization_by_out_authorization_no(
+        &self,
+        out_authorization_no: &str,
+        is_display_authorization: Option<bool>,
+    ) -> Result<UserConfirmAuthorizationResult, WxErrorException>;
+
+    /// 解除免确认收款授权API 请求方式：POST（HTTPS）
+    /// 对应 Java: `closeUserConfirmAuthorization`
+    /// 文档地址：解除免确认收款授权
+    async fn close_user_confirm_authorization(
+        &self,
+        out_authorization_no: &str,
+    ) -> Result<UserConfirmAuthorizationResult, WxErrorException>;
+
+    /// 解析免确认收款授权结果通知
+    /// 对应 Java: `parseUserAuthorizationNotifyResult`
+    /// 文档地址：免确认收款授权结果通知
+    async fn parse_user_authorization_notify_result(
+        &self,
+        notify_data: &str,
+        header: &SignatureHeader,
+    ) -> Result<UserAuthorizationNotifyResult, WxErrorException>;
 
     /// 商户查询用户授权信息接口 商户通过此接口可查询用户是否对商户的商家转账场景进行了授权。 请求方式：GET（HTTPS） 请求地址：请求地址 文档地址：商户查询用户授权信息
     async fn get_user_authorization_status(

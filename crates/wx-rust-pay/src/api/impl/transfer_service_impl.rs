@@ -184,6 +184,60 @@ impl TransferService for TransferServiceImpl {
         serde_json::from_str(&result).map_err(|e| impl_utils::runtime(e.to_string()))
     }
 
+    /// 对应 Java: `transferBillsWithAuthorization`
+    async fn transfer_bills_with_authorization(
+        &self,
+        request: &PreTransferWithAuthorizationRequest,
+    ) -> Result<PreTransferWithAuthorizationResult, WxErrorException> {
+        let svc = self.svc()?;
+        let config = svc.wx_pay_config();
+        let mut json =
+            serde_json::to_value(request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        // 对应 Java：user_name 非空时才加密
+        let user_name = json
+            .get("user_name")
+            .and_then(|v| v.as_str())
+            .unwrap_or_default();
+        if !user_name.trim().is_empty() {
+            let public_key = impl_utils::platform_public_key(config.as_ref())?;
+            impl_utils::encrypt_spec_fields_json(&mut json, &public_key, &["user_name"])?;
+        }
+        let url = format!(
+            "{}/v3/fund-app/mch-transfer/transfer-bills/pre-transfer-with-authorization",
+            svc.get_pay_base_url()
+        );
+        let body = serde_json::to_string(&json).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let result = svc.post_v3_with_wechatpay_serial(&url, &body).await?;
+        serde_json::from_str(&result).map_err(|e| impl_utils::runtime(e.to_string()))
+    }
+
+    /// 对应 Java: `transferBillsAfterAuthorization`
+    async fn transfer_bills_after_authorization(
+        &self,
+        request: &TransferBillsAfterAuthorizationRequest,
+    ) -> Result<TransferBillsAfterAuthorizationResult, WxErrorException> {
+        let svc = self.svc()?;
+        let config = svc.wx_pay_config();
+        let mut json =
+            serde_json::to_value(request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        // 对应 Java：user_name 非空时才加密
+        let user_name = json
+            .get("user_name")
+            .and_then(|v| v.as_str())
+            .unwrap_or_default();
+        if !user_name.trim().is_empty() {
+            let public_key = impl_utils::platform_public_key(config.as_ref())?;
+            impl_utils::encrypt_spec_fields_json(&mut json, &public_key, &["user_name"])?;
+        }
+        let url = format!(
+            "{}/v3/fund-app/mch-transfer/transfer-bills/transfer",
+            svc.get_pay_base_url()
+        );
+        let body = serde_json::to_string(&json).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let result = svc.post_v3_with_wechatpay_serial(&url, &body).await?;
+        serde_json::from_str(&result).map_err(|e| impl_utils::runtime(e.to_string()))
+    }
+
     async fn transform_bills_cancel(
         &self,
         out_bill_no: &str,
@@ -228,6 +282,83 @@ impl TransferService for TransferServiceImpl {
         notify_data: &str,
         header: &SignatureHeader,
     ) -> Result<TransferBillsNotifyResult, WxErrorException> {
+        let svc = self.svc()?;
+        let config = svc.wx_pay_config();
+        let public_key = impl_utils::platform_public_key(config.as_ref())?;
+        let api_v3_key = config.api_v3_key().unwrap_or_default();
+        let parsed = crate::util::wx_pay_notify_utils::parse_notify_v3_result(
+            notify_data,
+            Some(header),
+            api_v3_key,
+            move |_serial, message, signature| {
+                crate::util::crypto::wx_pay_v3_crypto_utils::verify_sha256_rsa(
+                    &public_key,
+                    message,
+                    signature,
+                )
+                .unwrap_or(false)
+            },
+        )
+        .map_err(|e| impl_utils::runtime(format!("解析报文异常！: {e}")))?;
+        Ok(parsed.result)
+    }
+
+    /// 对应 Java: `userConfirmAuthorization`
+    async fn user_confirm_authorization(
+        &self,
+        request: &UserConfirmAuthorizationRequest,
+    ) -> Result<UserConfirmAuthorizationResult, WxErrorException> {
+        let svc = self.svc()?;
+        let json = serde_json::to_value(request).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let url = format!(
+            "{}/v3/fund-app/mch-transfer/user-confirm-authorization",
+            svc.get_pay_base_url()
+        );
+        let body = serde_json::to_string(&json).map_err(|e| impl_utils::runtime(e.to_string()))?;
+        let result = svc.post_v3(&url, &body).await?;
+        serde_json::from_str(&result).map_err(|e| impl_utils::runtime(e.to_string()))
+    }
+
+    /// 对应 Java: `getUserConfirmAuthorizationByOutAuthorizationNo`
+    async fn get_user_confirm_authorization_by_out_authorization_no(
+        &self,
+        out_authorization_no: &str,
+        is_display_authorization: Option<bool>,
+    ) -> Result<UserConfirmAuthorizationResult, WxErrorException> {
+        let svc = self.svc()?;
+        let mut url = format!(
+            "{}/v3/fund-app/mch-transfer/user-confirm-authorization/out-authorization-no/{}",
+            svc.get_pay_base_url(),
+            out_authorization_no
+        );
+        if let Some(display) = is_display_authorization {
+            url.push_str(&format!("?is_display_authorization={display}"));
+        }
+        let result = svc.get_v3(&url).await?;
+        serde_json::from_str(&result).map_err(|e| impl_utils::runtime(e.to_string()))
+    }
+
+    /// 对应 Java: `closeUserConfirmAuthorization`
+    async fn close_user_confirm_authorization(
+        &self,
+        out_authorization_no: &str,
+    ) -> Result<UserConfirmAuthorizationResult, WxErrorException> {
+        let svc = self.svc()?;
+        let url = format!(
+            "{}/v3/fund-app/mch-transfer/user-confirm-authorization/out-authorization-no/{}/close",
+            svc.get_pay_base_url(),
+            out_authorization_no
+        );
+        let result = svc.post_v3(&url, "").await?;
+        serde_json::from_str(&result).map_err(|e| impl_utils::runtime(e.to_string()))
+    }
+
+    /// 对应 Java: `parseUserAuthorizationNotifyResult`
+    async fn parse_user_authorization_notify_result(
+        &self,
+        notify_data: &str,
+        header: &SignatureHeader,
+    ) -> Result<UserAuthorizationNotifyResult, WxErrorException> {
         let svc = self.svc()?;
         let config = svc.wx_pay_config();
         let public_key = impl_utils::platform_public_key(config.as_ref())?;
