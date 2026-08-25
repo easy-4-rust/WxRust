@@ -54,9 +54,10 @@ use crate::api::{
     CustomDeclarationService, EcommerceService, EntPayService, GoldPlanService,
     MarketingBusiFavorService, MarketingFavorService, MarketingMediaService,
     MerchantLimitationService, MerchantMediaService, MerchantTransferService, MiPayService,
-    PartnerPayScoreService, PartnerPayScoreSignPlanService, PartnerTransferService,
-    PayScoreService, PayrollService, ProfitSharingService, RealNameService, RedpackService,
-    SubscriptionBillingService, TransferService, WxDepositService, WxEntrustPapService,
+    PartnerInvoiceService, PartnerPayScoreService, PartnerPayScoreSignPlanService,
+    PartnerTransferService, PayScoreService, PayrollService, ProfitSharingService, RealNameService,
+    RedpackService, SubscriptionBillingService, TransferService, WxDepositService,
+    WxEntrustPapService,
 };
 use crate::bean::order::{
     WxPayAppOrderResult, WxPayMpOrderResult, WxPayMwebOrderResult, WxPayNativeOrderResult,
@@ -738,6 +739,11 @@ pub trait WxPayService: Send + Sync {
     fn partner_pay_score_sign_plan_service(
         &self,
     ) -> Option<Arc<dyn PartnerPayScoreSignPlanService>> {
+        None
+    }
+
+    /// 服务商电子发票服务（对应 Java `getPartnerInvoiceService`）。
+    fn partner_invoice_service(&self) -> Option<Arc<dyn PartnerInvoiceService>> {
         None
     }
 

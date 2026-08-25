@@ -32,6 +32,7 @@ pub struct SubServiceBundle {
     pub merchant_media: Option<Arc<dyn MerchantMediaService>>,
     pub merchant_transfer: Option<Arc<dyn MerchantTransferService>>,
     pub mi_pay: Option<Arc<dyn MiPayService>>,
+    pub partner_invoice: Option<Arc<dyn PartnerInvoiceService>>,
     pub partner_pay_score: Option<Arc<dyn PartnerPayScoreService>>,
     pub partner_pay_score_sign_plan: Option<Arc<dyn PartnerPayScoreSignPlanService>>,
     pub partner_transfer: Option<Arc<dyn PartnerTransferService>>,
@@ -118,6 +119,9 @@ impl SubServiceBundle {
             mi_pay: Some(Arc::new(mi_pay_service_impl::MiPayServiceImpl::new(
                 pay_service.clone(),
             ))),
+            partner_invoice: Some(Arc::new(
+                partner_invoice_service_impl::PartnerInvoiceServiceImpl::new(pay_service.clone()),
+            )),
             partner_pay_score: Some(Arc::new(
                 partner_pay_score_service_impl::PartnerPayScoreServiceImpl::new(
                     pay_service.clone(),

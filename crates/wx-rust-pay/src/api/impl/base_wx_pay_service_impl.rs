@@ -29,10 +29,10 @@ use crate::api::{
     CustomDeclarationService, EcommerceService, EntPayService, GoldPlanService,
     MarketingBusiFavorService, MarketingFavorService, MarketingMediaService,
     MerchantLimitationService, MerchantMediaService, MerchantTransferService, MiPayService,
-    PartnerPayScoreService, PartnerPayScoreSignPlanService, PartnerTransferService,
-    PayScoreService, PayrollService, ProfitSharingService, RealNameService, RedpackService,
-    SubscriptionBillingService, TransferService, WxDepositService, WxEntrustPapService,
-    WxPayService,
+    PartnerInvoiceService, PartnerPayScoreService, PartnerPayScoreSignPlanService,
+    PartnerTransferService, PayScoreService, PayrollService, ProfitSharingService, RealNameService,
+    RedpackService, SubscriptionBillingService, TransferService, WxDepositService,
+    WxEntrustPapService, WxPayService,
 };
 use crate::bean::WxPayApiData;
 use crate::config::WxPayConfig;
@@ -552,6 +552,12 @@ impl WxPayService for WxPayServiceImpl {
         self.sub_services
             .get()
             .and_then(|b| b.partner_pay_score_sign_plan.clone())
+    }
+
+    fn partner_invoice_service(&self) -> Option<Arc<dyn PartnerInvoiceService>> {
+        self.sub_services
+            .get()
+            .and_then(|b| b.partner_invoice.clone())
     }
 
     fn real_name_service(&self) -> Option<Arc<dyn RealNameService>> {

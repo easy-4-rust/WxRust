@@ -14,6 +14,7 @@ pub mod ecommerce;
 pub mod entpay;
 pub mod entwxpay;
 pub mod goldplan;
+pub mod invoice;
 pub mod marketing;
 pub mod media;
 pub mod merchantlimitation;

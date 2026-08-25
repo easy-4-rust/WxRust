@@ -23,6 +23,7 @@ pub mod merchant_limitation_service_impl;
 pub mod merchant_media_service_impl;
 pub mod merchant_transfer_service_impl;
 pub mod mi_pay_service_impl;
+pub mod partner_invoice_service_impl;
 pub mod partner_pay_score_service_impl;
 pub mod partner_pay_score_sign_plan_service_impl;
 pub mod partner_transfer_service_impl;
