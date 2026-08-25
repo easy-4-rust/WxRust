@@ -8,6 +8,7 @@
 //! 取 token/encodingAESKey/corpId）Wave 5 C5 补齐。
 
 pub mod wx_cp_crypt_utils;
+pub mod wx_cp_intelligent_robot_crypt_util;
 pub mod wx_cp_tp_crypt_util;
 
 pub use wx_cp_crypt_utils::WxCpCryptUtils;
@@ -16,4 +17,5 @@ pub use wx_cp_crypt_utils::decrypt_encrypt_chat_msg;
 pub use wx_cp_crypt_utils::decrypt_pri_key;
 pub use wx_cp_crypt_utils::decrypt_pri_key_by_pkcs1;
 pub use wx_cp_crypt_utils::decrypt_pri_key_by_pkcs8;
+pub use wx_cp_intelligent_robot_crypt_util::WxCpIntelligentRobotCryptUtil;
 pub use wx_cp_tp_crypt_util::WxCpTpCryptUtil;

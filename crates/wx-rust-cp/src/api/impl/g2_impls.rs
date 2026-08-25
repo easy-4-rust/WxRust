@@ -29,6 +29,8 @@ pub mod wx_cp_meeting_service_impl;
 pub mod wx_cp_msg_audit_service_impl;
 #[path = "wx_cp_oa_service_impl.rs"]
 pub mod wx_cp_oa_service_impl;
+#[path = "wx_cp_todo_service_impl.rs"]
+pub mod wx_cp_todo_service_impl;
 
 pub use wx_cp_corp_group_service_impl::WxCpCorpGroupServiceImpl;
 pub use wx_cp_export_service_impl::WxCpExportServiceImpl;
@@ -39,6 +41,7 @@ pub use wx_cp_kf_service_impl::WxCpKfServiceImpl;
 pub use wx_cp_meeting_service_impl::WxCpMeetingServiceImpl;
 pub use wx_cp_msg_audit_service_impl::WxCpMsgAuditServiceImpl;
 pub use wx_cp_oa_service_impl::WxCpOaServiceImpl;
+pub use wx_cp_todo_service_impl::WxCpTodoServiceImpl;
 
 // ---------------------------------------------------------------------------
 // 共享测试基础设施（仅测试编译）

@@ -53,10 +53,7 @@ fn event_builder_all_fields() {
 
 #[test]
 fn event_builder_partial_fields() {
-    let msg = EventBuilder::new()
-        .event("subscribe")
-        .user_id("u1")
-        .build();
+    let msg = EventBuilder::new().event("subscribe").user_id("u1").build();
     assert_eq!(msg.event.as_deref(), Some("subscribe"));
     assert_eq!(msg.user_id.as_deref(), Some("u1"));
     assert!(msg.chat_id.is_none());

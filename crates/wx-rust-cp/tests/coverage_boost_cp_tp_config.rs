@@ -239,7 +239,10 @@ fn auth_corp_js_api_ticket_initially_none() {
 fn auth_corp_js_api_ticket_update_and_expire() {
     let cfg = WxCpTpDefaultConfig::new();
     cfg.update_auth_corp_js_api_ticket("corp_a", "ticket_1", 7200);
-    assert_eq!(cfg.auth_corp_js_api_ticket("corp_a"), Some("ticket_1".into()));
+    assert_eq!(
+        cfg.auth_corp_js_api_ticket("corp_a"),
+        Some("ticket_1".into())
+    );
     assert!(!cfg.is_auth_corp_js_api_ticket_expired("corp_a"));
     cfg.expire_auth_corp_js_api_ticket("corp_a");
     assert!(cfg.is_auth_corp_js_api_ticket_expired("corp_a"));
@@ -258,7 +261,10 @@ fn auth_suite_js_api_ticket_initially_none() {
 fn auth_suite_js_api_ticket_update_and_expire() {
     let cfg = WxCpTpDefaultConfig::new();
     cfg.update_auth_suite_js_api_ticket("corp_a", "sticket_1", 7200);
-    assert_eq!(cfg.auth_suite_js_api_ticket("corp_a"), Some("sticket_1".into()));
+    assert_eq!(
+        cfg.auth_suite_js_api_ticket("corp_a"),
+        Some("sticket_1".into())
+    );
     assert!(!cfg.is_auth_suite_js_api_ticket_expired("corp_a"));
     cfg.expire_auth_suite_js_api_ticket("corp_a");
     assert!(cfg.is_auth_suite_js_api_ticket_expired("corp_a"));

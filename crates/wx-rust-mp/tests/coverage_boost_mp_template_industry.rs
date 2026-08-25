@@ -31,10 +31,22 @@ fn all_variants_have_first_class() {
 #[test]
 fn first_class_it_tech() {
     assert_eq!(WxMpTemplateIndustryEnum::ECommerce.first_class(), "IT科技");
-    assert_eq!(WxMpTemplateIndustryEnum::ItSoftwareAndServices.first_class(), "IT科技");
-    assert_eq!(WxMpTemplateIndustryEnum::ItHardwareAndEquipment.first_class(), "IT科技");
-    assert_eq!(WxMpTemplateIndustryEnum::ElectronicTechnique.first_class(), "IT科技");
-    assert_eq!(WxMpTemplateIndustryEnum::CommunicationAndOperator.first_class(), "IT科技");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::ItSoftwareAndServices.first_class(),
+        "IT科技"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::ItHardwareAndEquipment.first_class(),
+        "IT科技"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::ElectronicTechnique.first_class(),
+        "IT科技"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::CommunicationAndOperator.first_class(),
+        "IT科技"
+    );
     assert_eq!(WxMpTemplateIndustryEnum::OnlineGame.first_class(), "IT科技");
 }
 
@@ -47,9 +59,18 @@ fn first_class_finance() {
 
 #[test]
 fn first_class_transport() {
-    assert_eq!(WxMpTemplateIndustryEnum::Express.first_class(), "运输与仓储");
-    assert_eq!(WxMpTemplateIndustryEnum::Logistics.first_class(), "运输与仓储");
-    assert_eq!(WxMpTemplateIndustryEnum::Storage.first_class(), "运输与仓储");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::Express.first_class(),
+        "运输与仓储"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::Logistics.first_class(),
+        "运输与仓储"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::Storage.first_class(),
+        "运输与仓储"
+    );
 }
 
 #[test]
@@ -60,52 +81,109 @@ fn first_class_education() {
 
 #[test]
 fn first_class_gov() {
-    assert_eq!(WxMpTemplateIndustryEnum::AcademicResearch.first_class(), "政府与公共事业");
-    assert_eq!(WxMpTemplateIndustryEnum::TrafficPolice.first_class(), "政府与公共事业");
-    assert_eq!(WxMpTemplateIndustryEnum::Museum.first_class(), "政府与公共事业");
-    assert_eq!(WxMpTemplateIndustryEnum::PublicWorksNonprofit.first_class(), "政府与公共事业");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::AcademicResearch.first_class(),
+        "政府与公共事业"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::TrafficPolice.first_class(),
+        "政府与公共事业"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::Museum.first_class(),
+        "政府与公共事业"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::PublicWorksNonprofit.first_class(),
+        "政府与公共事业"
+    );
 }
 
 #[test]
 fn first_class_medical() {
-    assert_eq!(WxMpTemplateIndustryEnum::MedicalHealth.first_class(), "医药护理");
-    assert_eq!(WxMpTemplateIndustryEnum::CareAndBeauty.first_class(), "医药护理");
-    assert_eq!(WxMpTemplateIndustryEnum::HealthAndHygiene.first_class(), "医药护理");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::MedicalHealth.first_class(),
+        "医药护理"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::CareAndBeauty.first_class(),
+        "医药护理"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::HealthAndHygiene.first_class(),
+        "医药护理"
+    );
 }
 
 #[test]
 fn first_class_vehicle() {
-    assert_eq!(WxMpTemplateIndustryEnum::AutomotiveRelated.first_class(), "交通工具");
-    assert_eq!(WxMpTemplateIndustryEnum::MotorcycleCorrelation.first_class(), "交通工具");
-    assert_eq!(WxMpTemplateIndustryEnum::TheTrainRelated.first_class(), "交通工具");
-    assert_eq!(WxMpTemplateIndustryEnum::ThePlaneRelated.first_class(), "交通工具");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::AutomotiveRelated.first_class(),
+        "交通工具"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::MotorcycleCorrelation.first_class(),
+        "交通工具"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::TheTrainRelated.first_class(),
+        "交通工具"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::ThePlaneRelated.first_class(),
+        "交通工具"
+    );
 }
 
 #[test]
 fn first_class_real_estate() {
-    assert_eq!(WxMpTemplateIndustryEnum::Architecture.first_class(), "房地产");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::Architecture.first_class(),
+        "房地产"
+    );
     assert_eq!(WxMpTemplateIndustryEnum::RealEstate.first_class(), "房地产");
 }
 
 #[test]
 fn first_class_commercial() {
-    assert_eq!(WxMpTemplateIndustryEnum::Legislation.first_class(), "商业服务");
-    assert_eq!(WxMpTemplateIndustryEnum::ConventionAndExhibition.first_class(), "商业服务");
-    assert_eq!(WxMpTemplateIndustryEnum::IntermediaryServices.first_class(), "商业服务");
-    assert_eq!(WxMpTemplateIndustryEnum::Authentication.first_class(), "商业服务");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::Legislation.first_class(),
+        "商业服务"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::ConventionAndExhibition.first_class(),
+        "商业服务"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::IntermediaryServices.first_class(),
+        "商业服务"
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::Authentication.first_class(),
+        "商业服务"
+    );
     assert_eq!(WxMpTemplateIndustryEnum::Audit.first_class(), "商业服务");
 }
 
 #[test]
 fn first_class_entertainment() {
-    assert_eq!(WxMpTemplateIndustryEnum::MassMedia.first_class(), "文体娱乐");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::MassMedia.first_class(),
+        "文体娱乐"
+    );
     assert_eq!(WxMpTemplateIndustryEnum::Sports.first_class(), "文体娱乐");
-    assert_eq!(WxMpTemplateIndustryEnum::LeisureAndEntertainment.first_class(), "文体娱乐");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::LeisureAndEntertainment.first_class(),
+        "文体娱乐"
+    );
 }
 
 #[test]
 fn second_class_spot_checks() {
-    assert_eq!(WxMpTemplateIndustryEnum::ECommerce.second_class(), "互联网|电子商务");
+    assert_eq!(
+        WxMpTemplateIndustryEnum::ECommerce.second_class(),
+        "互联网|电子商务"
+    );
     assert_eq!(WxMpTemplateIndustryEnum::Bank.second_class(), "银行");
     assert_eq!(WxMpTemplateIndustryEnum::Repast.second_class(), "餐饮");
     assert_eq!(WxMpTemplateIndustryEnum::Hotel.second_class(), "酒店");
@@ -150,9 +228,18 @@ fn find_by_class_wrong_first() {
 /// find_by_code: exact and not found.
 #[test]
 fn find_by_code_exact() {
-    assert_eq!(WxMpTemplateIndustryEnum::find_by_code(7), Some(WxMpTemplateIndustryEnum::Bank));
-    assert_eq!(WxMpTemplateIndustryEnum::find_by_code(1), Some(WxMpTemplateIndustryEnum::ECommerce));
-    assert_eq!(WxMpTemplateIndustryEnum::find_by_code(41), Some(WxMpTemplateIndustryEnum::Other));
+    assert_eq!(
+        WxMpTemplateIndustryEnum::find_by_code(7),
+        Some(WxMpTemplateIndustryEnum::Bank)
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::find_by_code(1),
+        Some(WxMpTemplateIndustryEnum::ECommerce)
+    );
+    assert_eq!(
+        WxMpTemplateIndustryEnum::find_by_code(41),
+        Some(WxMpTemplateIndustryEnum::Other)
+    );
 }
 
 #[test]

@@ -1,5 +1,6 @@
 //! 对应 Java `com.github.binarywang.wxpay.bean.result` 包（生成）。
 
+pub mod base_wx_pay_result;
 pub mod combine_query_result;
 pub mod combine_transactions_result;
 pub mod wx_deposit_consume_result;
@@ -47,6 +48,8 @@ pub mod wx_withhold_notify_result;
 pub mod wx_withhold_order_query_result;
 pub mod wx_withhold_result;
 
+pub use base_wx_pay_result::BaseWxPayResult;
+pub use base_wx_pay_result::BaseWxPayResultExt;
 pub use combine_query_result::Amount;
 pub use combine_query_result::CombinePayerInfo;
 pub use combine_query_result::CombineQueryResult;

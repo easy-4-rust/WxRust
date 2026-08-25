@@ -1,5 +1,6 @@
 //! 对应 Java `com.github.binarywang.wxpay.bean.request` 包（生成）。
 
+pub mod base_wx_pay_request;
 pub mod combine_close_request;
 pub mod combine_transactions_request;
 pub mod wx_deposit_consume_request;
@@ -51,6 +52,8 @@ pub mod wx_terminated_contract_request;
 pub mod wx_withhold_order_query_request;
 pub mod wx_withhold_request;
 
+pub use base_wx_pay_request::BaseWxPayRequest;
+pub use base_wx_pay_request::BaseWxPayRequestExt;
 pub use combine_close_request::CombineCloseRequest;
 pub use combine_close_request::SubOrders;
 pub use combine_transactions_request::Amount;

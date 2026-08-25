@@ -40,6 +40,7 @@ pub mod wx_cp_school_user_service;
 pub mod wx_cp_service;
 pub mod wx_cp_tag_service;
 pub mod wx_cp_task_card_service;
+pub mod wx_cp_todo_service;
 pub mod wx_cp_user_service;
 
 pub use wx_cp_agent_service::WxCpAgentService;
@@ -74,4 +75,5 @@ pub use wx_cp_school_user_service::WxCpSchoolUserService;
 pub use wx_cp_service::WxCpService;
 pub use wx_cp_tag_service::WxCpTagService;
 pub use wx_cp_task_card_service::WxCpTaskCardService;
+pub use wx_cp_todo_service::WxCpTodoService;
 pub use wx_cp_user_service::WxCpUserService;

@@ -58,7 +58,10 @@ fn authorizer_access_token_lifecycle() {
     assert!(cfg.authorizer_access_token("auth_app_1").is_none());
     assert!(cfg.is_authorizer_access_token_expired("auth_app_1"));
     cfg.update_authorizer_access_token_with_expiry("auth_app_1", "at_123", 7200);
-    assert_eq!(cfg.authorizer_access_token("auth_app_1"), Some("at_123".into()));
+    assert_eq!(
+        cfg.authorizer_access_token("auth_app_1"),
+        Some("at_123".into())
+    );
     assert!(!cfg.is_authorizer_access_token_expired("auth_app_1"));
     cfg.expire_authorizer_access_token("auth_app_1");
     assert!(cfg.is_authorizer_access_token_expired("auth_app_1"));
@@ -69,7 +72,10 @@ fn authorizer_refresh_token() {
     let cfg = WxOpenDefaultConfig::new();
     assert!(cfg.authorizer_refresh_token("auth_app_1").is_none());
     cfg.update_authorizer_refresh_token("auth_app_1", "rt_123");
-    assert_eq!(cfg.authorizer_refresh_token("auth_app_1"), Some("rt_123".into()));
+    assert_eq!(
+        cfg.authorizer_refresh_token("auth_app_1"),
+        Some("rt_123".into())
+    );
 }
 
 #[test]
@@ -90,7 +96,10 @@ fn card_api_ticket_lifecycle() {
     assert!(cfg.card_api_ticket("auth_app_1").is_none());
     assert!(cfg.is_card_api_ticket_expired("auth_app_1"));
     cfg.update_card_api_ticket("auth_app_1", "card_ticket_1", 7200);
-    assert_eq!(cfg.card_api_ticket("auth_app_1"), Some("card_ticket_1".into()));
+    assert_eq!(
+        cfg.card_api_ticket("auth_app_1"),
+        Some("card_ticket_1".into())
+    );
     assert!(!cfg.is_card_api_ticket_expired("auth_app_1"));
     cfg.expire_card_api_ticket("auth_app_1");
     assert!(cfg.is_card_api_ticket_expired("auth_app_1"));
@@ -116,7 +125,10 @@ fn api_host_url_and_access_token_url() {
     assert_eq!(cfg.api_host_url(), Some("https://custom.api.com".into()));
     let _ = cfg.access_token_url();
     cfg.set_access_token_url("https://custom.token.com");
-    assert_eq!(cfg.access_token_url(), Some("https://custom.token.com".into()));
+    assert_eq!(
+        cfg.access_token_url(),
+        Some("https://custom.token.com".into())
+    );
 }
 
 #[test]

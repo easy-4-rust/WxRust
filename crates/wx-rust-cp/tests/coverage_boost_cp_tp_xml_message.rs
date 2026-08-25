@@ -58,7 +58,10 @@ fn from_xml_full_contact_change() {
     assert_eq!(msg.gender, Some(1));
     assert_eq!(msg.email.as_deref(), Some("test@example.com"));
     assert_eq!(msg.status.as_deref(), Some("1"));
-    assert_eq!(msg.avatar.as_deref(), Some("https://img.example.com/avatar.png"));
+    assert_eq!(
+        msg.avatar.as_deref(),
+        Some("https://img.example.com/avatar.png")
+    );
     assert_eq!(msg.alias.as_deref(), Some("alias1"));
     assert_eq!(msg.telephone.as_deref(), Some("010-12345678"));
     assert_eq!(msg.id.as_deref(), Some("42"));
@@ -186,7 +189,10 @@ fn from_xml_image_message() {
         <MediaId>media_id_1</MediaId>
     </xml>"#;
     let msg = WxCpTpXmlMessage::from_xml(xml).unwrap();
-    assert_eq!(msg.pic_url.as_deref(), Some("https://img.example.com/pic.jpg"));
+    assert_eq!(
+        msg.pic_url.as_deref(),
+        Some("https://img.example.com/pic.jpg")
+    );
     assert_eq!(msg.media_id.as_deref(), Some("media_id_1"));
 }
 

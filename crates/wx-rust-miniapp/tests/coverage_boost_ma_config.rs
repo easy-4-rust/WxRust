@@ -44,7 +44,10 @@ fn api_signature_setters() {
     cfg.set_api_signature_aes_key("aes_key");
     assert_eq!(cfg.api_signature_aes_key(), Some("aes_key".into()));
     cfg.set_api_signature_rsa_private_key_sn("rsa_sn");
-    assert_eq!(cfg.api_signature_rsa_private_key_sn(), Some("rsa_sn".into()));
+    assert_eq!(
+        cfg.api_signature_rsa_private_key_sn(),
+        Some("rsa_sn".into())
+    );
     cfg.set_api_signature_aes_key_sn("aes_sn");
     assert_eq!(cfg.api_signature_aes_key_sn(), Some("aes_sn".into()));
     cfg.set_wechat_mp_appid("wx_mp");

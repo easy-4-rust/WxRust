@@ -33,6 +33,7 @@ pub mod url_oauth2;
 pub mod url_school;
 pub mod url_tag;
 pub mod url_task_card;
+pub mod url_todo;
 pub mod url_tp;
 pub mod url_user;
 

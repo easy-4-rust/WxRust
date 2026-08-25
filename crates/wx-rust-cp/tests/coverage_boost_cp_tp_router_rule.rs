@@ -14,8 +14,8 @@ use std::sync::Arc;
 use wx_rust_cp::bean::message::WxCpTpXmlMessage;
 use wx_rust_cp::message::RouteContext;
 use wx_rust_cp::tp::message::{
-    WxCpTpMessageHandler, WxCpTpMessageInterceptor, WxCpTpMessageMatcher,
-    WxCpTpMessageRouter, WxCpTpMessageRouterRule,
+    WxCpTpMessageHandler, WxCpTpMessageInterceptor, WxCpTpMessageMatcher, WxCpTpMessageRouter,
+    WxCpTpMessageRouterRule,
 };
 
 fn sample_message() -> WxCpTpXmlMessage {
@@ -337,8 +337,10 @@ impl WxCpTpMessageHandler for TestHandler {
         _context: &mut RouteContext,
         _service: Option<&dyn wx_rust_cp::tp::service::WxCpTpService>,
         _session_manager: &dyn wx_rust_common::session::WxSessionManager,
-    ) -> Result<Option<wx_rust_cp::bean::message::WxCpXmlOutMessage>, wx_rust_common::error::WxErrorException>
-    {
+    ) -> Result<
+        Option<wx_rust_cp::bean::message::WxCpXmlOutMessage>,
+        wx_rust_common::error::WxErrorException,
+    > {
         self.called.store(true, std::sync::atomic::Ordering::SeqCst);
         Ok(None)
     }
@@ -552,7 +554,5 @@ fn router_setters() {
     router.set_session_manager(Arc::new(
         wx_rust_common::session::StandardSessionManager::new(),
     ));
-    router.set_exception_handler(Arc::new(
-        wx_rust_common::util::LogExceptionHandler,
-    ));
+    router.set_exception_handler(Arc::new(wx_rust_common::util::LogExceptionHandler));
 }
