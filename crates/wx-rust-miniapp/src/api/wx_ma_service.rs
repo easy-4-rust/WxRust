@@ -22,7 +22,6 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use base64::Engine as _;
 use hmac::{Hmac, KeyInit, Mac};
 use sha1::Digest as Sha1Digest;
 use sha2::Sha256;
@@ -1547,18 +1546,18 @@ pub trait WxMaService: Send + Sync {
 
     /// 获取用户加密 key（对应 Java `getUserEncryptKey(String, String)`）。
     ///
-    /// signature 为以 **Base64 解码后的 sessionKey** 为密钥对空串做
-    /// HmacSHA256 的十六进制大写结果（Java `sha256("", sessionKey)`；
-    /// 与 `SignUtils` 的原始 key 字节语义不同）。
+    /// signature 为以 sessionKey 原始 UTF-8 字节为密钥对空串做
+    /// HmacSHA256 的十六进制大写结果（Java `sha256("", sessionKey)`，
+    /// 修复 `3be78af`：不再 Base64 解码 sessionKey，直接用 UTF-8 字节）。
     async fn get_user_encrypt_key(
         &self,
         openid: &str,
         session_key: &str,
     ) -> Result<WxMaInternetResponse, WxErrorException> {
-        let key = base64::engine::general_purpose::STANDARD
-            .decode(session_key)
-            .map_err(|_| WxErrorException::from_code(-99, "签名错误"))?;
-        let mut mac = Hmac::<Sha256>::new_from_slice(&key)
+        // 修复：直接用 session_key 的 UTF-8 字节（对应 Java 修复
+        // `3be78af`：`sessionKey.getBytes(StandardCharsets.UTF_8)` 替代
+        // `Base64.decodeBase64(sessionKey)`）
+        let mut mac = Hmac::<Sha256>::new_from_slice(session_key.as_bytes())
             .map_err(|_| WxErrorException::from_code(-99, "签名错误"))?;
         mac.update(b"");
         let signature = hex::encode_upper(mac.finalize().into_bytes());

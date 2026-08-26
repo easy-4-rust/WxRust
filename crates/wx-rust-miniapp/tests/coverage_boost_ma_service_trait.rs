@@ -1128,12 +1128,13 @@ async fn msg_internet_and_link_facade_methods() {
             .contains("sig_method=hmac_sha256")
     );
 
-    // 非法 base64 sessionKey
-    let err = service
+    // 修复 3be78af 后：sessionKey 直接用 UTF-8 字节，不再 Base64 解码，
+    // 所以 "####" 不再报错（合法 UTF-8）
+    let response = service
         .get_user_encrypt_key("o1", "####")
         .await
-        .expect_err("非法 sessionKey 应报错");
-    assert_eq!(err.error_code(), Some(-99));
+        .expect("修复后非 base64 sessionKey 也可用");
+    assert_eq!(response.errcode, 0);
 
     // generateUrlLink
     let mut link_request = GenerateUrlLinkRequest::default();

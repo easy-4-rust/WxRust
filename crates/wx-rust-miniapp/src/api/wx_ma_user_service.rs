@@ -54,6 +54,19 @@ pub trait WxMaUserService: Send + Sync {
         code: &str,
     ) -> Result<Option<WxMaPhoneNumberInfo>, WxErrorException>;
 
+    /// 通过 code 获取手机号（带 openid，对应 Java default
+    /// `getPhoneNumber(String code, String openid)`）。
+    ///
+    /// Java 实现直接委托 `getPhoneNumber(code)`，openid 参数保留用于
+    /// 未来扩展。Rust 同一语义。
+    async fn get_phone_number_with_openid(
+        &self,
+        code: &str,
+        _openid: &str,
+    ) -> Result<Option<WxMaPhoneNumberInfo>, WxErrorException> {
+        self.get_phone_number(code).await
+    }
+
     /// 通过 code 获取手机号（对应 Java `getPhoneNoInfo(String)`，Java 已标记
     /// `@Deprecated`，委托 `getPhoneNumber`）。
     async fn get_phone_no_info_with_code(

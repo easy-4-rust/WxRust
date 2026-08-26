@@ -29,9 +29,9 @@ pub trait WxMaInternetService: Send + Sync {
     /// 获取用户 encryptKey（对应 Java
     /// `WxMaInternetService.getUserEncryptKey(String, String)`）。
     ///
-    /// signature 为以 **Base64 解码后的 sessionKey** 为密钥对空串做
-    /// HmacSHA256 的十六进制大写结果；会获取用户最近 3 次的 key，每个 key 的
-    /// 存活时间为 3600s。
+    /// signature 为以 sessionKey 原始 UTF-8 字节为密钥对空串做
+    /// HmacSHA256 的十六进制大写结果（修复 `3be78af`：不再 Base64 解码
+    /// sessionKey）；会获取用户最近 3 次的 key，每个 key 的存活时间为 3600s。
     async fn get_user_encrypt_key(
         &self,
         openid: &str,

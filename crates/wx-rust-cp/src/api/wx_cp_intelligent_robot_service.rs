@@ -67,4 +67,36 @@ pub trait WxCpIntelligentRobotService: Send + Sync {
         &self,
         callback_message_json: &str,
     ) -> Result<WxCpIntelligentRobotMessage, WxErrorException>;
+
+    /// 解析加密的回调消息（对应 Java
+    /// `WxCpIntelligentRobotService.parseEncryptedCallbackMessage(String,
+    /// String, String, String, String, String, String)`，default 方法）。
+    ///
+    /// 先验签解密，再解析为 [`WxCpIntelligentRobotMessage`]。
+    async fn parse_encrypted_callback_message(
+        &self,
+        msg_signature: &str,
+        timestamp: &str,
+        nonce: &str,
+        encrypted_json: &str,
+        token: &str,
+        encoding_aes_key: &str,
+        ai_bot_id: &str,
+    ) -> Result<WxCpIntelligentRobotMessage, WxErrorException>;
+
+    /// 回复智能机器人消息（对应 Java
+    /// `WxCpIntelligentRobotService.replyMessage(String, String, String,
+    /// String, String, String, String)`，default 方法）。
+    ///
+    /// 将明文 JSON 加密后 POST 到 `response_url`。
+    async fn reply_message(
+        &self,
+        response_url: &str,
+        plain_json: &str,
+        token: &str,
+        encoding_aes_key: &str,
+        ai_bot_id: &str,
+        timestamp: &str,
+        nonce: &str,
+    ) -> Result<String, WxErrorException>;
 }

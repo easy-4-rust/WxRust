@@ -12,7 +12,7 @@ pub struct WxCpAgent {
     #[serde(rename = "errmsg", default)]
     pub err_msg: String,
     #[serde(rename = "agentid", default)]
-    pub agent_id: i32,
+    pub agent_id: i64,
     #[serde(rename = "name", default)]
     pub name: String,
     #[serde(rename = "square_logo_url", default)]

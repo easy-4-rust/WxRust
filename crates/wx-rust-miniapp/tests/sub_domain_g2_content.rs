@@ -15,7 +15,6 @@
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use base64::Engine as _;
 use hmac::{Hmac, KeyInit, Mac};
 use sha1::Digest as _;
 use sha2::Sha256;
@@ -1053,11 +1052,8 @@ async fn internet_get_user_encrypt_key_signature_and_query() {
         }
     );
 
-    // 黄金签名重算（与 impl 同一算法）
-    let key = base64::engine::general_purpose::STANDARD
-        .decode(session_key)
-        .expect("session key base64 解码");
-    let mut mac = Hmac::<Sha256>::new_from_slice(&key).expect("HMAC key");
+    // 黄金签名重算（与 impl 同一算法，修复 3be78af 后直接用 UTF-8 字节）
+    let mut mac = Hmac::<Sha256>::new_from_slice(session_key.as_bytes()).expect("HMAC key");
     mac.update(b"");
     let expected_signature = hex::encode_upper(mac.finalize().into_bytes());
 

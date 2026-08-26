@@ -352,7 +352,7 @@ impl WxCryptUtil {
     }
 
     /// 生成 16 位随机字符串（对应 Java `genRandomStr`，基于 UUID）。
-    fn gen_random_str() -> String {
+    pub fn gen_random_str() -> String {
         const CHARS: &[u8] = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         (0..16)
             .map(|_| {

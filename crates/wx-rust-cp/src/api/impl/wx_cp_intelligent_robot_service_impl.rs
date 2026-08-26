@@ -10,7 +10,11 @@
 //! - `deleteRobot`/`getRobot`/`resetSession` 为固定 JSON 对象请求体
 //!   （`robot_id`/`userid`/`session_id`，对应 Java `JsonObject` 组装）；
 //! - `parseCallbackMessage` 仅解析不发起请求（对应 Java 直接
-//!   `fromJson(callbackMessageJson)`）。
+//!   `fromJson(callbackMessageJson)`）；
+//! - `parseEncryptedCallbackMessage` 先验签解密再解析（对应 Java default
+//!   方法，以 `WxCpIntelligentRobotCryptUtil` 完成加解密）；
+//! - `replyMessage` 加密后 POST 到 `responseUrl`（对应 Java default
+//!   方法，以 `postWithoutToken` 发起请求）。
 
 use std::sync::{Arc, Weak};
 
@@ -26,6 +30,7 @@ use crate::bean::{
     WxCpIntelligentRobotSendMessageResponse, WxCpIntelligentRobotUpdateRequest,
 };
 use crate::enums::url_intelligent_robot;
+use crate::util::crypto::WxCpIntelligentRobotCryptUtil;
 
 /// 序列化 JSON 对象为请求体字符串（`serde_json::Map` 无 `Display`，以
 /// `Value::Object` 包装后序列化，对应 Java `JsonObject.toString()`）。
@@ -180,6 +185,55 @@ impl WxCpIntelligentRobotService for WxCpIntelligentRobotServiceImpl {
         WxCpIntelligentRobotMessage::from_json(callback_message_json)
             .map_err(WxErrorException::Serde)
     }
+
+    /// 解析加密的回调消息（对应 Java default 方法
+    /// `parseEncryptedCallbackMessage`）。
+    ///
+    /// 先以 `WxCpIntelligentRobotCryptUtil` 验签解密，再调用
+    /// `parse_callback_message` 解析明文 JSON。
+    async fn parse_encrypted_callback_message(
+        &self,
+        msg_signature: &str,
+        timestamp: &str,
+        nonce: &str,
+        encrypted_json: &str,
+        token: &str,
+        encoding_aes_key: &str,
+        ai_bot_id: &str,
+    ) -> Result<WxCpIntelligentRobotMessage, WxErrorException> {
+        let crypt_util =
+            WxCpIntelligentRobotCryptUtil::from_params(token, encoding_aes_key, ai_bot_id)
+                .map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let plain_json = crypt_util
+            .decrypt(msg_signature, timestamp, nonce, encrypted_json)
+            .map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        WxCpIntelligentRobotMessage::from_json(&plain_json).map_err(WxErrorException::Serde)
+    }
+
+    /// 回复智能机器人消息（对应 Java default 方法 `replyMessage`）。
+    ///
+    /// 将明文 JSON 加密为 JSON 格式后 POST 到 `response_url`
+    /// （对应 Java `postWithoutToken(responseUrl, cryptUtil.encrypt(...))`）。
+    async fn reply_message(
+        &self,
+        response_url: &str,
+        plain_json: &str,
+        token: &str,
+        encoding_aes_key: &str,
+        ai_bot_id: &str,
+        timestamp: &str,
+        nonce: &str,
+    ) -> Result<String, WxErrorException> {
+        let crypt_util =
+            WxCpIntelligentRobotCryptUtil::from_params(token, encoding_aes_key, ai_bot_id)
+                .map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let encrypted_body = crypt_util
+            .encrypt_json(plain_json, timestamp, nonce)
+            .map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let svc = self.service()?;
+        // 对应 Java `postWithoutToken`：不注入 access_token，直接 POST
+        svc.post_without_token(response_url, &encrypted_body).await
+    }
 }
 
 #[cfg(test)]
@@ -271,5 +325,99 @@ mod tests {
         assert_eq!(msg.ai_bot_id, "ROBOT_1");
         assert_eq!(msg.from.userid, "zhangsan");
         assert_eq!(msg.msg_type, "text");
+    }
+
+    /// 镜像 Java `testParseEncryptedCallbackMessage`：加密回调消息的
+    /// 验签解密 + 解析。
+    #[tokio::test]
+    async fn test_robot_parse_encrypted_callback_message() {
+        use crate::util::crypto::WxCpIntelligentRobotCryptUtil;
+
+        let service = service_with_host("http://127.0.0.1:1");
+        let svc_impl = WxCpIntelligentRobotServiceImpl::new(weak_service(&service));
+
+        let token = "test_token";
+        let aes_key = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG"; // 43 chars
+        let ai_bot_id = "test_bot_id";
+
+        let crypt_util = WxCpIntelligentRobotCryptUtil::from_params(token, aes_key, ai_bot_id)
+            .expect("创建加密工具成功");
+
+        // 先加密一条消息
+        let plain_json = r#"{"msgid":"MSG_1","aibotid":"ROBOT_1","chatid":"CHAT_1","chattype":"single","from":{"userid":"zhangsan"},"msgtype":"text","text":{"content":"你好"}}"#;
+        let timestamp = "1700000000";
+        let nonce = "nonce_123";
+        let encrypted_json = crypt_util
+            .encrypt_json(plain_json, timestamp, nonce)
+            .expect("加密成功");
+
+        // 解析加密的 JSON 获取 encrypt 和 msg_signature
+        let parsed: serde_json::Value = serde_json::from_str(&encrypted_json).unwrap();
+        let encrypt = parsed["encrypt"].as_str().unwrap();
+        let msg_signature = parsed["msg_signature"].as_str().unwrap();
+
+        // 调用 parse_encrypted_callback_message
+        let msg = svc_impl
+            .parse_encrypted_callback_message(
+                msg_signature,
+                timestamp,
+                nonce,
+                encrypt,
+                token,
+                aes_key,
+                ai_bot_id,
+            )
+            .await
+            .expect("解析加密回调消息成功");
+        assert_eq!(msg.msg_id, "MSG_1");
+        assert_eq!(msg.ai_bot_id, "ROBOT_1");
+        assert_eq!(msg.from.userid, "zhangsan");
+        assert_eq!(msg.msg_type, "text");
+    }
+
+    /// 镜像 Java `testReplyMessage`：加密后 POST 到 responseUrl。
+    #[tokio::test]
+    async fn test_robot_reply_message() {
+        use crate::util::crypto::WxCpIntelligentRobotCryptUtil;
+
+        let server =
+            MockServer::start(dispatch(|_path| json(r#"{"errcode":0,"errmsg":"ok"}"#))).await;
+        let service = service_with_host(&server.url(""));
+        let svc_impl = WxCpIntelligentRobotServiceImpl::new(weak_service(&service));
+
+        let token = "test_token";
+        let aes_key = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+        let ai_bot_id = "test_bot_id";
+        let response_url = &server.url("/cgi-bin/intelligent_robot/reply");
+        let plain_json = r#"{"content":"hello"}"#;
+        let timestamp = "1700000000";
+        let nonce = "nonce_123";
+
+        let result = svc_impl
+            .reply_message(
+                response_url,
+                plain_json,
+                token,
+                aes_key,
+                ai_bot_id,
+                timestamp,
+                nonce,
+            )
+            .await
+            .expect("回复消息成功");
+        // 验证 POST 已发出
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/intelligent_robot/reply"),
+            "path: {}",
+            server.last_path()
+        );
+        // 验证请求体包含 encrypt/msg_signature/timestamp/nonce
+        let body = server.last_body();
+        assert!(body.contains(r#""encrypt""#), "body: {body}");
+        assert!(body.contains(r#""msg_signature""#), "body: {body}");
+        assert!(body.contains(r#""timestamp":"1700000000""#), "body: {body}");
+        assert!(body.contains(r#""nonce":"nonce_123""#), "body: {body}");
     }
 }
