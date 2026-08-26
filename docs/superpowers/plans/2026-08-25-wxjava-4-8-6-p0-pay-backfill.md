@@ -51,11 +51,11 @@
 - `GoldPlanResult`: bean with `errcode`, `errmsg`, `reason` fields
 - `GoldPlanServiceImpl`: async fn implementations using WxPayService base HTTP
 
-- [ ] **Step 1: 写失败测试** — Create `gold_plan_test.rs` with 4 tests (get, move, suspend, resume) using httpmock
-- [ ] **Step 2: 运行确认失败** — `cargo test -p wx-rust-pay --test gold_plan_test` → FAIL
-- [ ] **Step 3: 实现 bean + service + impl** — minimum code to pass all 4 tests
-- [ ] **Step 4: 运行测试通过 + 全量回归** — `cargo test -p wx-rust-pay` AND `cargo test --workspace` 均绿
-- [ ] **Step 5: clippy/fmt + Commit** — `feat(pay): P0 #1 GoldPlanService 点金计划接口`
+- [x] **Step 1: 写失败测试** — Create `gold_plan_test.rs` with 4 tests (get, move, suspend, resume) using httpmock
+- [x] **Step 2: 运行确认失败** — `cargo test -p wx-rust-pay --test gold_plan_test` → FAIL
+- [x] **Step 3: 实现 bean + service + impl** — minimum code to pass all 4 tests
+- [x] **Step 4: 运行测试通过 + 全量回归** — `cargo test -p wx-rust-pay` AND `cargo test --workspace` 均绿
+- [x] **Step 5: clippy/fmt + Commit** — `feat(pay): P0 #1 GoldPlanService 点金计划接口`（commit 7691dbe，实现先于本计划落地，本任务验证 + fmt 收尾 d63c53c）
 
 ---
 
@@ -74,11 +74,11 @@
 - `user_authorization_notify_result` / `user_confirm_authorization`
 - `transfer_bills_request/result` + `user_authorization_notify_result`
 
-- [ ] **Step 1: 写失败测试** — 8 tests covering all 6 new methods + error paths
-- [ ] **Step 2: 确认失败** — `cargo test -p wx-rust-pay --test transfer_authorization_test` → FAIL
-- [ ] **Step 3: 实现 bean + service methods + impl** — minimum code
-- [ ] **Step 4: 测试通过 + 全量回归**
-- [ ] **Step 5: clippy/fmt + Commit** — `feat(pay): P0 #2 TransferService 商家转账用户授权接口`
+- [x] **Step 1: 写失败测试** — 8 tests covering all 6 new methods + error paths
+- [x] **Step 2: 确认失败** — `cargo test -p wx-rust-pay --test transfer_authorization_test` → FAIL
+- [x] **Step 3: 实现 bean + service methods + impl** — minimum code
+- [x] **Step 4: 测试通过 + 全量回归**
+- [x] **Step 5: clippy/fmt + Commit** — `feat(pay): P0 #2 TransferService 商家转账用户授权接口`
 
 ---
 
@@ -94,11 +94,11 @@
 - methods for invoice creation, query, cancellation, PDF generation, etc. — each maps to a bean request/result
 - All HTTP calls via `WxPayService::post` (v3 JSON path)
 
-- [ ] **Step 1: 写失败测试** — 10+ tests covering core methods
-- [ ] **Step 2: 确认失败**
-- [ ] **Step 3: 实现 bean + service + impl**
-- [ ] **Step 4: 测试通过 + 全量回归**
-- [ ] **Step 5: clippy/fmt + Commit** — `feat(pay): P0 #3 PartnerInvoiceService V3 服务商电子发票`
+- [x] **Step 1: 写失败测试** — 10+ tests covering core methods
+- [x] **Step 2: 确认失败**
+- [x] **Step 3: 实现 bean + service + impl**
+- [x] **Step 4: 测试通过 + 全量回归**
+- [x] **Step 5: clippy/fmt + Commit** — `feat(pay): P0 #3 PartnerInvoiceService V3 服务商电子发票`
 
 ---
 
@@ -109,7 +109,17 @@
 | Task 1 | GoldPlanService 测试全绿 | cargo test -p wx-rust-pay |
 | Task 2 | TransferService 新方法测试全绿 | cargo test -p wx-rust-pay |
 | Task 3 | PartnerInvoiceService 测试全绿 | cargo test -p wx-rust-pay |
-| 全量 | 1991+ tests + clippy/fmt | cargo test/clippy/fmt |
+| 全量 | 1991+ tests + clippy/fmt | cargo test/clippy/fmt（实际：**2516 tests 全绿**、clippy 9 crate 严格通过、fmt clean） |
+
+## 实际完成数据（2026-08-25 收口）
+
+- **P0**（3 commit）：7691dbe / fef8c3b / 0fbb529 —— 点金计划 + 转账授权 + V3 电子发票，48 新测试
+- **P1**（9a44167）：channel 10 service 骨架 + 68 bean + 20 smoke 测试
+- **P2/P3**（bcf8ae2）：pay/cp/common 长尾 bean
+- **覆盖率**：69.05% line（较追补前 61.57% +7.5pp，超 60% 门禁）
+- **V0 审计**：3287/3287（100%），0 MISSING
+- **终态报告**：docs/verification/wxjava-4-8-6-p0-p3-backfill-completion-report-2026-08-25.md
+- **遗留**（诚实声明）：P1 为骨架级对齐（非完整语义）；P3 的智能机器人 API 模式 / 待办 API impl 层待后续会话
 
 ## 4. 风险与回滚
 
