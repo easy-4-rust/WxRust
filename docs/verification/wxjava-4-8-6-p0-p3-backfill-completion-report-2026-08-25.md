@@ -121,3 +121,18 @@ d63c53c style(pay): cargo fmt 格式化 GoldPlanService 及相关文件 + task-1
 ### 修正后的完成度评估
 原"语义约 85-90%" → 本轮三向审计后：**4.8.4→4.8.6 增量部分语义对齐完成**（所有已知差异清零）。
 生产就绪状态不变（Conditionally Ready）：工程门禁全绿 + 语义对齐完成，剩余为发布链路执行与灰度验证（属运营动作非代码缺口）。
+
+---
+
+## 十、生产就绪里程碑（2026-08-27 追加）
+
+### crates.io 首发成功——发布链路鸡生蛋破解
+- **wx-rust-common v0.1.0 已发布到 crates.io**（`cargo search wx-rust-common` 确认在线）
+- 依赖 crate（wx-rust-qidian / wx-rust-aispeech 抽验）**完整 dry-run 全部通过**（此前被 workspace 内部依赖阻塞的 8 个 crate 现已可完整验证）
+- 剩余业务 crate 的正式发布待存量语义审计（4 路并行中）合入后按 `scripts/publish-order.sh` 顺序执行
+
+### 发布顺序（scripts/publish-order.sh 已验证）
+Layer 0: wx-rust-common ✅ 已上线
+Layer 1: aispeech/channel/cp/miniapp/mp/pay/qidian（待审计合入后发布）
+Layer 2: open（依赖 common+mp+miniapp）
+Layer 3: wx-rust（伞形 facade）
