@@ -1161,3 +1161,65 @@ async fn v3_refund_query_and_partner_query() {
         server.last_path()
     );
 }
+
+/// 服务商退款 v3：sub_mchid 为空时从配置补齐（对应 Java `partnerRefundV3`
+/// 的 `StringUtils.isBlank(subMchid)` → `config.getSubMchId()`）。
+#[tokio::test]
+async fn partner_refund_v3_fills_sub_mchid_from_config() {
+    let server = MockServer::start(|path, _| {
+        assert!(path.starts_with("/v3/refund/domestic/refunds"));
+        signed_json_response(
+            r#"{"refund_id":"50000000382019052709732678859","out_refund_no":"REFUND_001","out_trade_no":"TRADE_001","channel":"ORIGINAL","status":"SUCCESS"}"#,
+        )
+    })
+    .await;
+    // 配置含 sub_mch_id
+    let mut config = WxPayDefaultConfig::new();
+    config
+        .set_app_id(APP_ID)
+        .set_mch_id(MCH_ID)
+        .set_mch_key(MCH_KEY)
+        .set_api_v3_key(API_V3_KEY)
+        .set_cert_serial_no(MERCHANT_SERIAL)
+        .set_private_key(MERCHANT_PRIVATE_KEY_PEM)
+        .set_public_key_id("PUB_KEY_ID_TEST")
+        .set_public_key_content(PLATFORM_PUBLIC_KEY_PEM.as_bytes().to_vec())
+        .set_refund_notify_url("https://example.com/pay/refund-notify")
+        .set_sub_mch_id("SUB_MCH_123")
+        .set_api_host_url(server.url(""));
+    let service = WxPayServiceImpl::new_arc(Arc::new(config));
+
+    let mut request = wx_rust_pay::bean::WxPayPartnerRefundV3Request::default();
+    request.out_trade_no = Some("TRADE_001".to_string());
+    request.out_refund_no = Some("REFUND_001".to_string());
+    request.reason = Some("测试退款".to_string());
+    // WxPayPartnerRefundV3Request.amount 使用 combine_transactions_request::Amount
+    // （use super::* 重导出），字段为 total_amount + currency
+    request.amount = Some(wx_rust_pay::bean::request::Amount {
+        total_amount: Some(888),
+        currency: Some("CNY".to_string()),
+    });
+    // sub_mchid 未设置 → 应从配置补齐
+    assert!(request.sub_mchid.is_none());
+
+    let result = service
+        .partner_refund_v3(&request)
+        .await
+        .expect("服务商 v3 退款成功");
+    assert_eq!(result.status.as_deref(), Some("SUCCESS"));
+
+    // 验证请求体包含从配置补齐的 sub_mchid
+    let body: serde_json::Value = serde_json::from_str(&server.last_body()).expect("请求体JSON");
+    assert_eq!(
+        body["sub_mchid"],
+        json!("SUB_MCH_123"),
+        "sub_mchid 应从配置补齐"
+    );
+    // sp_appid 也应从配置补齐
+    assert_eq!(body["sp_appid"], json!(APP_ID));
+    // notify_url 应从配置 refund_notify_url 补齐
+    assert_eq!(
+        body["notify_url"],
+        json!("https://example.com/pay/refund-notify")
+    );
+}

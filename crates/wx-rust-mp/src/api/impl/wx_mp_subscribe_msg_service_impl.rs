@@ -85,7 +85,7 @@ impl WxMpSubscribeMsgService for WxMpSubscribeMsgServiceImpl {
             query.push_str(&format!("&ids={id}"));
         }
         let response = svc
-            .post(
+            .get(
                 &subscribe_msg::get_pub_template_title_list(config.as_ref()),
                 &query,
             )
@@ -102,11 +102,11 @@ impl WxMpSubscribeMsgService for WxMpSubscribeMsgServiceImpl {
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
         let config = svc.wx_mp_config_storage();
-        let body = serde_json::json!({"tid": id});
+        let query = format!("tid={id}");
         let response = svc
-            .post(
+            .get(
                 &subscribe_msg::get_pub_template_key_words_by_id(config.as_ref()),
-                &body.to_string(),
+                &query,
             )
             .await?;
         let value: serde_json::Value =
@@ -152,7 +152,7 @@ impl WxMpSubscribeMsgService for WxMpSubscribeMsgServiceImpl {
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
         let config = svc.wx_mp_config_storage();
         let response = svc
-            .post(&subscribe_msg::template_list(config.as_ref()), "{}")
+            .get(&subscribe_msg::template_list(config.as_ref()), "")
             .await?;
         let value: serde_json::Value =
             serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))?;
@@ -185,7 +185,7 @@ impl WxMpSubscribeMsgService for WxMpSubscribeMsgServiceImpl {
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
         let config = svc.wx_mp_config_storage();
         let response = svc
-            .post(&subscribe_msg::get_category(config.as_ref()), "{}")
+            .get(&subscribe_msg::get_category(config.as_ref()), "")
             .await?;
         let value: serde_json::Value =
             serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))?;

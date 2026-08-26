@@ -1018,8 +1018,8 @@ fn oauth2_urls() {
         "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=wxappid2&grant_type=refresh_token&refresh_token=RT1"
     );
     assert_eq!(
-        oauth2::sns_userinfo(&cfg, "AT1", "zh_CN"),
-        "https://api.weixin.qq.com/sns/userinfo?access_token=AT1&lang=zh_CN"
+        oauth2::sns_userinfo(&cfg, "AT1", "oX1", "zh_CN"),
+        "https://api.weixin.qq.com/sns/userinfo?access_token=AT1&openid=oX1&lang=zh_CN"
     );
     assert_eq!(
         oauth2::sns_auth(&cfg, "AT1", "oX1"),

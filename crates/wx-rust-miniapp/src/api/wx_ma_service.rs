@@ -1495,14 +1495,17 @@ pub trait WxMaService: Send + Sync {
 
     /// 创建被分享动态消息的 activity_id（对应 Java
     /// `createUpdatableMessageActivityId()`，返回完整响应 JSON）。
+    ///
+    /// POST `/cgi-bin/message/wxopen/activityid/create`（Java
+    /// `SimplePostRequestExecutor`），请求体为空 JSON 对象 `{}`。
     async fn create_updatable_message_activity_id(
         &self,
     ) -> Result<serde_json::Value, WxErrorException> {
         let config = self.wx_ma_config();
         let response = self
-            .get(
+            .post(
                 &url_business::msg::activity_id_create_url(config.as_ref()),
-                "",
+                "{}",
             )
             .await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))

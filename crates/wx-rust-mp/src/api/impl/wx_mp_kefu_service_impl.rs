@@ -88,7 +88,7 @@ impl WxMpKefuService for WxMpKefuServiceImpl {
         let body =
             serde_json::to_string(request).map_err(|e| WxErrorException::Serde(e.to_string()))?;
         let response = svc
-            .post(&kefu_url::message_custom_send(config.as_ref()), &body)
+            .post(&kefu_url::kfaccount_add(config.as_ref()), &body)
             .await?;
         Self::err_code_is_zero(&response)
     }

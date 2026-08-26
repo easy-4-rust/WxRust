@@ -30,12 +30,13 @@ use wx_rust_miniapp::config::r#impl::WxMaDefaultConfig;
 use wx_rust_miniapp::message::WxMaKefuMessage;
 
 /// 极简 mock HTTP 服务器：按请求路径返回 (Content-Type, body)，记录
-/// 最近一次请求路径（含 query）与请求体、请求计数。
+/// 最近一次请求路径（含 query）与请求体、请求方法、请求计数。
 struct MockServer {
     addr: std::net::SocketAddr,
     requests: Arc<AtomicUsize>,
     last_path: Arc<std::sync::Mutex<String>>,
     last_body: Arc<std::sync::Mutex<String>>,
+    last_method: Arc<std::sync::Mutex<String>>,
     stop: Arc<std::sync::atomic::AtomicBool>,
 }
 
@@ -52,12 +53,14 @@ impl MockServer {
         let requests = Arc::new(AtomicUsize::new(0));
         let last_path = Arc::new(std::sync::Mutex::new(String::new()));
         let last_body = Arc::new(std::sync::Mutex::new(String::new()));
+        let last_method = Arc::new(std::sync::Mutex::new(String::new()));
         let stop = Arc::new(std::sync::atomic::AtomicBool::new(false));
         let handler = Arc::new(handler);
 
         let requests_clone = requests.clone();
         let last_path_clone = last_path.clone();
         let last_body_clone = last_body.clone();
+        let last_method_clone = last_method.clone();
         let stop_clone = stop.clone();
         tokio::spawn(async move {
             loop {
@@ -71,17 +74,19 @@ impl MockServer {
                 let handler = handler.clone();
                 let last_path_clone = last_path_clone.clone();
                 let last_body_clone = last_body_clone.clone();
+                let last_method_clone = last_method_clone.clone();
                 tokio::spawn(async move {
                     use tokio::io::{AsyncReadExt, AsyncWriteExt};
                     let mut buf = [0u8; 16384];
                     let n = socket.read(&mut buf).await.unwrap_or(0);
                     let request = String::from_utf8_lossy(&buf[..n]).to_string();
-                    // 记录请求路径（含 query）与请求体（POST 场景）
-                    if let Some(path) = request
-                        .lines()
-                        .next()
-                        .and_then(|l| l.split_whitespace().nth(1))
-                    {
+                    // 记录请求方法、路径（含 query）与请求体（POST 场景）
+                    let first_line = request.lines().next().unwrap_or("");
+                    let mut parts = first_line.split_whitespace();
+                    if let Some(method) = parts.next() {
+                        *last_method_clone.lock().unwrap() = method.to_string();
+                    }
+                    if let Some(path) = parts.next() {
                         *last_path_clone.lock().unwrap() = path.to_string();
                     }
                     if let Some(idx) = request.find("\r\n\r\n") {
@@ -109,6 +114,7 @@ impl MockServer {
             requests,
             last_path,
             last_body,
+            last_method,
             stop,
         }
     }
@@ -127,6 +133,10 @@ impl MockServer {
 
     fn last_body(&self) -> String {
         self.last_body.lock().unwrap().clone()
+    }
+
+    fn last_method(&self) -> String {
+        self.last_method.lock().unwrap().clone()
     }
 }
 
@@ -398,8 +408,10 @@ async fn msg_send_kefu_msg_and_uniform_msg() {
 
 #[tokio::test]
 async fn msg_create_updatable_message_activity_id() {
-    // 镜像 testCreateUpdatableMessageActivityId：GET
-    // /cgi-bin/message/wxopen/activityid/create，断言 activity_id/expiration_time。
+    // 镜像 testCreateUpdatableMessageActivityId：POST
+    // /cgi-bin/message/wxopen/activityid/create（Java
+    // SimplePostRequestExecutor），断言 HTTP 方法为 POST、
+    // activity_id/expiration_time。
     let server = MockServer::start(dispatch(|path| {
         if path.contains("/cgi-bin/message/wxopen/activityid/create") {
             json(
@@ -422,6 +434,17 @@ async fn msg_create_updatable_message_activity_id() {
         "1048_4f61uDloWPZl9pAs1dGx07vDiHKZ7FwJ0suohS1iMH5z8zhFktYk4nRqqBY~"
     );
     assert_eq!(result["expiration_time"], 1750000000);
+    // Java WxMaMsgServiceImpl 使用 SimplePostRequestExecutor（POST），非 GET
+    assert_eq!(
+        server.last_method(),
+        "POST",
+        "createUpdatableMessageActivityId 应使用 POST"
+    );
+    assert!(
+        server
+            .last_path()
+            .contains("/cgi-bin/message/wxopen/activityid/create")
+    );
 }
 
 // ---- 素材域（镜像 Java WxMaMediaServiceImplTest） ----

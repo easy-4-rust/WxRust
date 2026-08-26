@@ -1524,12 +1524,17 @@ pub mod oauth2 {
     }
 
     /// 拉取用户信息。
-    pub fn sns_userinfo(config: &dyn WxMpConfigStorage, access_token: &str, lang: &str) -> String {
+    pub fn sns_userinfo(
+        config: &dyn WxMpConfigStorage,
+        access_token: &str,
+        openid: &str,
+        lang: &str,
+    ) -> String {
         let h = config.host_config();
         url(
             config,
             &h.api_host,
-            &format!("/sns/userinfo?access_token={access_token}&lang={lang}"),
+            &format!("/sns/userinfo?access_token={access_token}&openid={openid}&lang={lang}"),
         )
     }
 

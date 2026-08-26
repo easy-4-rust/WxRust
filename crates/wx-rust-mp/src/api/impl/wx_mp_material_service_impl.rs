@@ -191,12 +191,9 @@ impl WxMpMaterialService for WxMpMaterialServiceImpl {
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
         let config = svc.wx_mp_config_storage();
-        let body = serde_json::json!({"media_id": media_id});
+        let query = format!("media_id={media_id}");
         let response = svc
-            .post(
-                &material_url::material_get(config.as_ref()),
-                &body.to_string(),
-            )
+            .get(&material_url::material_get(config.as_ref()), &query)
             .await?;
         WxMpMaterialVideoInfoResult::from_json(&response).map_err(WxErrorException::Serde)
     }
@@ -210,12 +207,9 @@ impl WxMpMaterialService for WxMpMaterialServiceImpl {
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
         let config = svc.wx_mp_config_storage();
-        let body = serde_json::json!({"media_id": media_id});
+        let query = format!("media_id={media_id}");
         let response = svc
-            .post(
-                &material_url::material_get(config.as_ref()),
-                &body.to_string(),
-            )
+            .get(&material_url::material_get(config.as_ref()), &query)
             .await?;
         WxMpMaterialNews::from_json(&response).map_err(WxErrorException::Serde)
     }
@@ -226,12 +220,9 @@ impl WxMpMaterialService for WxMpMaterialServiceImpl {
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "公众号服务已释放"))?;
         let config = svc.wx_mp_config_storage();
-        let body = serde_json::json!({"media_id": media_id});
+        let query = format!("media_id={media_id}");
         let response = svc
-            .post(
-                &material_url::material_del(config.as_ref()),
-                &body.to_string(),
-            )
+            .get(&material_url::material_del(config.as_ref()), &query)
             .await?;
         Self::err_code_is_zero(&response)
     }

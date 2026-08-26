@@ -92,7 +92,8 @@ impl WxOAuth2Service for WxMpOAuth2ServiceImpl {
         let config = svc.wx_mp_config_storage();
         // URL 已内嵌 access_token（Java OAuth2 走独立请求路径，不经 token 注入），
         // 直连 http_client 绕开门面执行器的 token 注入守卫
-        let url = oauth2_url::sns_userinfo(config.as_ref(), &token.access_token, lang);
+        let url =
+            oauth2_url::sns_userinfo(config.as_ref(), &token.access_token, &token.open_id, lang);
         let response = Self::get_raw(svc.as_ref(), &url).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }

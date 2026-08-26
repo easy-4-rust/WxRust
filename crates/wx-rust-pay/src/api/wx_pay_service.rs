@@ -1965,6 +1965,16 @@ pub trait WxPayService: Send + Sync {
         {
             request.notify_url = config.refund_notify_url().map(str::to_string);
         }
+        // 对应 Java `StringUtils.isBlank(subMchid)` → 从配置补齐
+        if request
+            .sub_mchid
+            .as_deref()
+            .map(str::trim)
+            .unwrap_or_default()
+            .is_empty()
+        {
+            request.sub_mchid = config.sub_mch_id().map(str::to_string);
+        }
         let url = format!("{}/v3/refund/domestic/refunds", self.get_pay_base_url());
         let body = serde_json::to_string(&request)
             .map_err(|e| impl_utils::runtime(format!("序列化失败: {e}")))?;
