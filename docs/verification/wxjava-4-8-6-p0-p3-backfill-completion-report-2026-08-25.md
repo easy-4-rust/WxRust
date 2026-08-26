@@ -90,3 +90,34 @@ d63c53c style(pay): cargo fmt 格式化 GoldPlanService 及相关文件 + task-1
 - 差异分析：`docs/verification/wxjava-4.8.4-to-4.8.6-diff-analysis-2026-08-25.md`
 - 任务报告：`.superpowers/sdd/2026-08-25-wxjava-4-8-6-p0-pay-backfill/{task-1-report, task-2-report, p1-channel-report, p2-longtail-report}.md`
 - Ledger：`.superpowers/sdd/2026-08-25-wxjava-4-8-6-p0-pay-backfill/progress.md`
+
+---
+
+## 九、语义审计补齐（2026-08-27 追加）
+
+第六节"诚实声明"中的 P1 骨架级对齐缺口，已通过三路并行语义审计补齐：
+
+### 审计范围与结果
+
+| 批次 | 范围 | 审计方法数 | 修复缺陷 | 新增测试 | Commit |
+|---|---|---|---|---|---|
+| A | channel: ewaybill/gift/supplier/qic/kf | 46 | **4**（Qic 3 方法 POST→GET、Gift 包装层、Kf multipart 从"暂未实现"补完） | 28 | `f6c1c27` |
+| B | channel: favorite/limited/assistant/stock/talent | 20 | **3**（product_stock 2 个 URL 错误 + 1 个字段名错误） | 20 | `032740c` |
+| C | cp/miniapp/open P3 8 项 | 8 项 | **4**（智能机器人回调+回复、agent_id i64、手机号 openid、getUserEncryptKey 签名算法） | 3 | `1664a02` |
+| 收尾 | getter/clippy | — | 5 个子服务 getter 补齐 + lint | — | `81f78e8` |
+
+### 三向核对标准（每方法）
+1. URL 与 Java `WxChannelApiUrlConstants` 逐字符一致
+2. 请求体字段名与 `@SerializedName` 一致
+3. 响应解析目标类型字段一致
+4. 特殊逻辑（签名/加密/方法语义）等价
+
+### 语义对齐最终判定
+- **P0（pay 三能力）**：逐方法实现 + HTTP mock 断言 ✅
+- **P1（channel 10 service，66 方法）**：逐方法三向审计完成，7 个真实缺陷修复 ✅
+- **P3（cp/miniapp/open 8 项）**：逐项处置，4 项修复补齐 ✅
+- **门禁终态**：`cargo test --workspace` **2567 全绿**（2516 → 2567，+51 语义测试）、clippy `-D warnings` 干净、fmt 干净
+
+### 修正后的完成度评估
+原"语义约 85-90%" → 本轮三向审计后：**4.8.4→4.8.6 增量部分语义对齐完成**（所有已知差异清零）。
+生产就绪状态不变（Conditionally Ready）：工程门禁全绿 + 语义对齐完成，剩余为发布链路执行与灰度验证（属运营动作非代码缺口）。
