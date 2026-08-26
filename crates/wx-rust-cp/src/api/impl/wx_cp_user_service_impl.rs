@@ -40,8 +40,12 @@ impl WxCpUserService for WxCpUserServiceImpl {
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "企业微信服务已释放"))?;
         // Java `authenticate`：GET `USER_AUTHENTICATE + userId`，忽略响应
+        // USER_AUTHENTICATE 已含 `?userid=`，userId 应直接拼接在 URL 末尾
+        // （而非作为独立 query 参数——否则管线会追加 `&userId`，产生
+        // `?userid=&testUser` 而非 `?userid=testUser`）。
         let config = svc.wx_cp_config_storage();
-        svc.get(&config.api_url(USER_AUTHENTICATE), user_id).await?;
+        let url = format!("{}{user_id}", config.api_url(USER_AUTHENTICATE));
+        svc.get(&url, "").await?;
         Ok(())
     }
 
@@ -443,4 +447,47 @@ fn parse_string_field(response_content: &str, field: &str) -> Result<String, WxE
         .and_then(serde_json::Value::as_str)
         .map(str::to_string)
         .ok_or_else(|| WxErrorException::from_code(-99, format!("{field} 字段缺失")))
+}
+
+#[cfg(test)]
+mod tests {
+    //! 内嵌测试：经 MockServer 验证用户服务请求路径（镜像 Java
+    //! `WxCpUserServiceImplTest` 的有效用例语义）。
+
+    use super::*;
+    use crate::api::r#impl::g2_impls::test_support::{
+        MockServer, dispatch, json, service_with_host, weak_service,
+    };
+
+    /// 镜像 Java `testAuthenticate`：GET `USER_AUTHENTICATE + userId`，
+    /// 验证 URL 中 `userid=` 后紧跟 userId（而非 `&userId` 拼接错误）。
+    #[tokio::test]
+    async fn test_authenticate_url_concatenation() {
+        let server = MockServer::start(dispatch(|path| {
+            if path.contains("/cgi-bin/user/authsucc") {
+                json(r#"{"errcode":0,"errmsg":"ok"}"#)
+            } else {
+                json(r#"{"errcode":0,"errmsg":"ok"}"#)
+            }
+        }))
+        .await;
+        let service = service_with_host(&server.url(""));
+        let svc_impl = WxCpUserServiceImpl::new(weak_service(&service));
+
+        svc_impl
+            .authenticate("testUser123")
+            .await
+            .expect("认证成功");
+        let path = server.last_path();
+        // 关键断言：URL 必须包含 `?userid=testUser123`（而非 `?userid=&testUser123`）
+        assert!(
+            path.contains("userid=testUser123"),
+            "URL 应包含 userid=testUser123，实际: {path}"
+        );
+        // 确保不出现错误的 `?userid=&` 模式
+        assert!(
+            !path.contains("userid=&"),
+            "URL 不应包含 userid=&，实际: {path}"
+        );
+    }
 }
