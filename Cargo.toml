@@ -11,7 +11,7 @@ authors = ["wandl <hiwepy@gmail.com>"]
 repository = "https://github.com/easy-4-rust/WxRust"
 homepage = "https://github.com/easy-4-rust/WxRust"
 readme = "README.md"
-keywords = ["wechat", "weixin", "wx", "sdk", "mp", "miniapp", "pay"]
+keywords = ["wechat", "weixin", "wx", "sdk", "miniapp"]
 categories = ["api-bindings", "web-programming"]
 
 [workspace.dependencies]
