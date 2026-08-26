@@ -738,18 +738,26 @@ impl WxOpenComponentServiceImpl {
         } else {
             component_login_page_url(&component_app_id, &pre_auth_code, &encoded_redirect)
         };
-        // Java `StringUtils.isNotEmpty(authType)` 才替换
+        // Java `StringUtils.isNotEmpty(authType)` 才替换，否则移除占位符
         if let Some(auth_type) = auth_type {
             if !auth_type.is_empty() {
                 pre_auth_url_str =
                     pre_auth_url_str.replace("&auth_type=xxx", &format!("&auth_type={auth_type}"));
+            } else {
+                pre_auth_url_str = pre_auth_url_str.replace("&auth_type=xxx", "");
             }
+        } else {
+            pre_auth_url_str = pre_auth_url_str.replace("&auth_type=xxx", "");
         }
         if let Some(biz_appid) = biz_appid {
             if !biz_appid.is_empty() {
                 pre_auth_url_str =
                     pre_auth_url_str.replace("&biz_appid=xxx", &format!("&biz_appid={biz_appid}"));
+            } else {
+                pre_auth_url_str = pre_auth_url_str.replace("&biz_appid=xxx", "");
             }
+        } else {
+            pre_auth_url_str = pre_auth_url_str.replace("&biz_appid=xxx", "");
         }
         Ok(pre_auth_url_str)
     }
