@@ -378,8 +378,6 @@ mod tests {
     /// 镜像 Java `testReplyMessage`：加密后 POST 到 responseUrl。
     #[tokio::test]
     async fn test_robot_reply_message() {
-        use crate::util::crypto::WxCpIntelligentRobotCryptUtil;
-
         let server =
             MockServer::start(dispatch(|_path| json(r#"{"errcode":0,"errmsg":"ok"}"#))).await;
         let service = service_with_host(&server.url(""));
@@ -393,7 +391,7 @@ mod tests {
         let timestamp = "1700000000";
         let nonce = "nonce_123";
 
-        let result = svc_impl
+        let _result = svc_impl
             .reply_message(
                 response_url,
                 plain_json,

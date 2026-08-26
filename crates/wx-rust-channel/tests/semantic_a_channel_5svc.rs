@@ -10,18 +10,14 @@
 //! - Kf: upload_media 通过 CommonUploadParam 实现 COS 上传
 //! - Ewaybill: 16 个方法 URL 与参数对齐
 //! - Supplier: 13 个方法 URL 与参数对齐
+// mock dispatcher 中多个端点有意返回相同的 canned 响应（if_same_then_else 为测试意图，文件级豁免）。
+#![allow(clippy::if_same_then_else)]
 #![allow(clippy::field_reassign_with_default)]
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 
-use wx_rust_channel::api::r#impl::{
-    WxChannelEwaybillServiceImpl, WxChannelGiftServiceImpl, WxChannelKfServiceImpl,
-    WxChannelQicServiceImpl, WxChannelServiceImpl, WxChannelSupplierServiceImpl,
-};
-use wx_rust_channel::api::{
-    WxChannelEwaybillService, WxChannelKfService, WxChannelQicService, WxChannelService,
-};
+use wx_rust_channel::api::WxChannelService;
 use wx_rust_channel::bean::product::{GiftActivityInfo, GiftProductInfo};
 use wx_rust_channel::config::WxChannelConfig;
 use wx_rust_channel::config::r#impl::WxChannelDefaultConfig;
@@ -156,7 +152,9 @@ fn config_with_host(host: &str) -> Arc<dyn WxChannelConfig> {
     Arc::new(config)
 }
 
-fn new_service(config: Arc<dyn WxChannelConfig>) -> Arc<impl WxChannelService> {
+fn new_service(
+    config: Arc<dyn WxChannelConfig>,
+) -> Arc<wx_rust_channel::api::r#impl::WxChannelServiceImpl> {
     wx_rust_channel::api::r#impl::WxChannelServiceImpl::new_arc(config)
 }
 
