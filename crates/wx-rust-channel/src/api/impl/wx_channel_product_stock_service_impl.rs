@@ -63,13 +63,7 @@ impl WxChannelProductStockService for WxChannelProductStockServiceImpl {
             "sku_id": sku_id
         })
         .to_string();
-        // 复用已有的 product service 的 get_sku_stock URL
-        let response = svc
-            .post(
-                "https://api.weixin.qq.com/channels/ec/product/sku/stock/get",
-                &body,
-            )
-            .await?;
+        let response = svc.post(url::GET_STOCK_URL, &body).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 
@@ -81,13 +75,9 @@ impl WxChannelProductStockService for WxChannelProductStockServiceImpl {
             .service
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
-        let body = serde_json::json!({"product_ids": product_ids}).to_string();
-        let response = svc
-            .post(
-                "https://api.weixin.qq.com/channels/ec/product/sku/stock/batch/get",
-                &body,
-            )
-            .await?;
+        // Java SkuStockBatchParam 使用 @JsonProperty("product_id") —— 单数形式
+        let body = serde_json::json!({"product_id": product_ids}).to_string();
+        let response = svc.post(url::GET_STOCK_BATCH_URL, &body).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 
