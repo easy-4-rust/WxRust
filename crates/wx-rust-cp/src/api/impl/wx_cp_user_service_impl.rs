@@ -463,12 +463,9 @@ mod tests {
     /// 验证 URL 中 `userid=` 后紧跟 userId（而非 `&userId` 拼接错误）。
     #[tokio::test]
     async fn test_authenticate_url_concatenation() {
-        let server = MockServer::start(dispatch(|path| {
-            if path.contains("/cgi-bin/user/authsucc") {
-                json(r#"{"errcode":0,"errmsg":"ok"}"#)
-            } else {
-                json(r#"{"errcode":0,"errmsg":"ok"}"#)
-            }
+        let server = MockServer::start(dispatch(|_path| {
+            // authsucc 与默认分支应答相同（Java 同构测试语义：认证成功即 ok）
+            json(r#"{"errcode":0,"errmsg":"ok"}"#)
         }))
         .await;
         let service = service_with_host(&server.url(""));
