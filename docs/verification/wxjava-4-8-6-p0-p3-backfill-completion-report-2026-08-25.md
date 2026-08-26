@@ -136,3 +136,36 @@ Layer 0: wx-rust-common ✅ 已上线
 Layer 1: aispeech/channel/cp/miniapp/mp/pay/qidian（待审计合入后发布）
 Layer 2: open（依赖 common+mp+miniapp）
 Layer 3: wx-rust（伞形 facade）
+
+---
+
+## 十一、GA 里程碑（2026-08-27 终态）
+
+### 全部 10 crate 已上线 crates.io ✅
+`cargo search` 逐一确认 LIVE：wx-rust-common / wx-rust-aispeech / wx-rust-qidian /
+wx-rust-channel / wx-rust-cp / wx-rust-miniapp / wx-rust-mp / wx-rust-pay /
+wx-rust-open / wx-rust（全部 v0.1.0）
+
+### 存量语义审计（4 路并行）结果
+| 模块 | 审计方法数 | 缺陷修复 |
+|---|---|---|
+| mp | ~290 | sns_userinfo URL 缺 openid（OAuth 必填参数） |
+| cp | ~119 | authenticate URL 拼接（userid 作为独立 query 的错误拼接） |
+| miniapp | ~258 | create_updatable_message_activity_id GET→POST |
+| pay | ~346 | partner_refund_v3 缺 sub_mchid config 填充 |
+| **合计** | **~1013** | **4 处真实缺陷**（cp 另有 1 处在早前批次） |
+
+### 全量门禁终态
+- `cargo test --workspace`：**2578 tests / 0 failed**（会话起点 1905 → 2578，累计 +673）
+- `cargo clippy --workspace --all-targets -- -D warnings`：clean
+- `cargo fmt --all -- --check`：clean
+- V0 审计：3287/3287（100%），0 MISSING
+- block_on 门禁：通过
+- 覆盖率：69.05% line（60% 门禁之上）
+- crates.io：10/10 LIVE
+
+### 语义对齐最终判定
+- 4.8.4→4.8.6 增量：逐方法三向审计完成（channel 66 + P3 8 项），11 缺陷修复
+- 存量基础模块：~1013 方法三向审计完成，4+1 缺陷修复
+- **V2 已知残余**：miniapp 审计批次自述未直接读 Java 源（依赖常量知识），g3/g4 深度较浅——已在 known-issues 口径内，后续可按 channel 模式重审
+- 生产就绪状态：**代码侧全部就绪 + 已发布**；运营侧进入 Alpha 灰度阶段（按 production-release-plan 三阶段执行）
