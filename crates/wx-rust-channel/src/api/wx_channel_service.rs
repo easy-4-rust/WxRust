@@ -32,12 +32,13 @@ use wx_rust_common::util::http::SimpleGetRequestExecutor;
 use crate::api::{
     WxAssistantService, WxChannelAddressService, WxChannelAfterSaleService, WxChannelBasicService,
     WxChannelBrandService, WxChannelCategoryService, WxChannelCompassFinderService,
-    WxChannelCompassShopService, WxChannelCouponService, WxChannelFreightTemplateService,
-    WxChannelFundService, WxChannelLiveDashboardService, WxChannelOrderService,
-    WxChannelProductService, WxChannelSharerService, WxChannelVipService,
-    WxChannelWarehouseService, WxFinderLiveService, WxLeadComponentService, WxLeagueProductService,
-    WxLeaguePromoterService, WxLeagueSupplierService, WxLeagueWindowService,
-    WxStoreCooperationService, WxStoreHomePageService,
+    WxChannelCompassShopService, WxChannelCouponService, WxChannelEwaybillService,
+    WxChannelFreightTemplateService, WxChannelFundService, WxChannelGiftService,
+    WxChannelKfService, WxChannelLiveDashboardService, WxChannelOrderService,
+    WxChannelProductService, WxChannelQicService, WxChannelSharerService, WxChannelSupplierService,
+    WxChannelVipService, WxChannelWarehouseService, WxFinderLiveService, WxLeadComponentService,
+    WxLeagueProductService, WxLeaguePromoterService, WxLeagueSupplierService,
+    WxLeagueWindowService, WxStoreCooperationService, WxStoreHomePageService,
 };
 use crate::config::WxChannelConfig;
 
@@ -418,6 +419,31 @@ pub trait WxChannelService: Send + Sync {
 
     /// 直播大屏数据服务（getLiveDashboardService）。
     fn live_dashboard_service(&self) -> Option<Arc<dyn WxChannelLiveDashboardService>> {
+        None
+    }
+
+    /// 电子面单服务（getEwaybillService）。
+    fn ewaybill_service(&self) -> Option<Arc<dyn WxChannelEwaybillService>> {
+        None
+    }
+
+    /// 赠品与买赠活动服务（getGiftService）。
+    fn gift_service(&self) -> Option<Arc<dyn WxChannelGiftService>> {
+        None
+    }
+
+    /// 代发管理服务（getSupplierService）。
+    fn supplier_service(&self) -> Option<Arc<dyn WxChannelSupplierService>> {
+        None
+    }
+
+    /// 质检管理服务（getQicService）。
+    fn qic_service(&self) -> Option<Arc<dyn WxChannelQicService>> {
+        None
+    }
+
+    /// 商家客服服务（getKfService）。
+    fn kf_service(&self) -> Option<Arc<dyn WxChannelKfService>> {
         None
     }
 

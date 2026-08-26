@@ -20,22 +20,25 @@ use crate::api::r#impl::{
     WxAssistantServiceImpl, WxChannelAddressServiceImpl, WxChannelAfterSaleServiceImpl,
     WxChannelBasicServiceImpl, WxChannelBrandServiceImpl, WxChannelCategoryServiceImpl,
     WxChannelCompassFinderServiceImpl, WxChannelCompassShopServiceImpl, WxChannelCouponServiceImpl,
-    WxChannelFreightTemplateServiceImpl, WxChannelFundServiceImpl,
-    WxChannelLiveDashboardServiceImpl, WxChannelOrderServiceImpl, WxChannelProductServiceImpl,
-    WxChannelSharerServiceImpl, WxChannelVipServiceImpl, WxChannelWarehouseServiceImpl,
-    WxFinderLiveServiceImpl, WxLeadComponentServiceImpl, WxLeagueProductServiceImpl,
-    WxLeaguePromoterServiceImpl, WxLeagueSupplierServiceImpl, WxLeagueWindowServiceImpl,
-    WxStoreCooperationServiceImpl, WxStoreHomePageServiceImpl,
+    WxChannelEwaybillServiceImpl, WxChannelFreightTemplateServiceImpl, WxChannelFundServiceImpl,
+    WxChannelGiftServiceImpl, WxChannelKfServiceImpl, WxChannelLiveDashboardServiceImpl,
+    WxChannelOrderServiceImpl, WxChannelProductServiceImpl, WxChannelQicServiceImpl,
+    WxChannelSharerServiceImpl, WxChannelSupplierServiceImpl, WxChannelVipServiceImpl,
+    WxChannelWarehouseServiceImpl, WxFinderLiveServiceImpl, WxLeadComponentServiceImpl,
+    WxLeagueProductServiceImpl, WxLeaguePromoterServiceImpl, WxLeagueSupplierServiceImpl,
+    WxLeagueWindowServiceImpl, WxStoreCooperationServiceImpl, WxStoreHomePageServiceImpl,
 };
 use crate::api::{
     WxAssistantService, WxChannelAddressService, WxChannelAfterSaleService, WxChannelBasicService,
     WxChannelBrandService, WxChannelCategoryService, WxChannelCompassFinderService,
-    WxChannelCompassShopService, WxChannelCouponService, WxChannelFreightTemplateService,
-    WxChannelFundService, WxChannelLiveDashboardService, WxChannelOrderService,
-    WxChannelProductService, WxChannelService, WxChannelSharerService, WxChannelVipService,
-    WxChannelWarehouseService, WxFinderLiveService, WxLeadComponentService, WxLeagueProductService,
-    WxLeaguePromoterService, WxLeagueSupplierService, WxLeagueWindowService,
-    WxStoreCooperationService, WxStoreHomePageService,
+    WxChannelCompassShopService, WxChannelCouponService, WxChannelEwaybillService,
+    WxChannelFreightTemplateService, WxChannelFundService, WxChannelGiftService,
+    WxChannelKfService, WxChannelLiveDashboardService, WxChannelOrderService,
+    WxChannelProductService, WxChannelQicService, WxChannelService, WxChannelSharerService,
+    WxChannelSupplierService, WxChannelVipService, WxChannelWarehouseService, WxFinderLiveService,
+    WxLeadComponentService, WxLeagueProductService, WxLeaguePromoterService,
+    WxLeagueSupplierService, WxLeagueWindowService, WxStoreCooperationService,
+    WxStoreHomePageService,
 };
 use crate::config::WxChannelConfig;
 
@@ -70,6 +73,11 @@ struct SubServices {
     vip: Arc<dyn WxChannelVipService>,
     compass_finder: Arc<dyn WxChannelCompassFinderService>,
     live_dashboard: Arc<dyn WxChannelLiveDashboardService>,
+    ewaybill: Arc<dyn WxChannelEwaybillService>,
+    gift: Arc<dyn WxChannelGiftService>,
+    supplier: Arc<dyn WxChannelSupplierService>,
+    qic: Arc<dyn WxChannelQicService>,
+    kf: Arc<dyn WxChannelKfService>,
 }
 
 /// 视频号小店服务实现（reqwest HTTP 后端）。
@@ -120,6 +128,11 @@ impl WxChannelServiceImpl {
             vip: Arc::new(WxChannelVipServiceImpl::new(weak.clone())),
             compass_finder: Arc::new(WxChannelCompassFinderServiceImpl::new(weak.clone())),
             live_dashboard: Arc::new(WxChannelLiveDashboardServiceImpl::new(weak.clone())),
+            ewaybill: Arc::new(WxChannelEwaybillServiceImpl::new(weak.clone())),
+            gift: Arc::new(WxChannelGiftServiceImpl::new(weak.clone())),
+            supplier: Arc::new(WxChannelSupplierServiceImpl::new(weak.clone())),
+            qic: Arc::new(WxChannelQicServiceImpl::new(weak.clone())),
+            kf: Arc::new(WxChannelKfServiceImpl::new(weak.clone())),
         });
         arc
     }
@@ -267,5 +280,30 @@ impl WxChannelService for WxChannelServiceImpl {
     /// 直播大屏数据服务（对应 Java `getLiveDashboardService()`，synchronized 懒加载）。
     fn live_dashboard_service(&self) -> Option<Arc<dyn WxChannelLiveDashboardService>> {
         Some(self.services().live_dashboard.clone())
+    }
+
+    /// 电子面单服务（对应 Java `getEwaybillService()`）。
+    fn ewaybill_service(&self) -> Option<Arc<dyn WxChannelEwaybillService>> {
+        Some(self.services().ewaybill.clone())
+    }
+
+    /// 赠品与买赠活动服务（对应 Java `getGiftService()`）。
+    fn gift_service(&self) -> Option<Arc<dyn WxChannelGiftService>> {
+        Some(self.services().gift.clone())
+    }
+
+    /// 代发管理服务（对应 Java `getSupplierService()`）。
+    fn supplier_service(&self) -> Option<Arc<dyn WxChannelSupplierService>> {
+        Some(self.services().supplier.clone())
+    }
+
+    /// 质检管理服务（对应 Java `getQicService()`）。
+    fn qic_service(&self) -> Option<Arc<dyn WxChannelQicService>> {
+        Some(self.services().qic.clone())
+    }
+
+    /// 商家客服服务（对应 Java `getKfService()`）。
+    fn kf_service(&self) -> Option<Arc<dyn WxChannelKfService>> {
+        Some(self.services().kf.clone())
     }
 }

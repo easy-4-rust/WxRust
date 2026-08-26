@@ -10,8 +10,8 @@ use crate::api::WxChannelService;
 use crate::api::wx_channel_gift_service::WxChannelGiftService;
 use crate::bean::base::WxChannelBaseResponse;
 use crate::bean::product::{
-    GiftActivityAddResponse, GiftActivityInfo, GiftProductAddResponse, GiftProductGetResponse,
-    GiftProductInfo, GiftProductListParam, GiftProductListResponse,
+    GiftActivityAddParam, GiftActivityAddResponse, GiftActivityInfo, GiftProductAddResponse,
+    GiftProductGetResponse, GiftProductInfo, GiftProductListParam, GiftProductListResponse,
 };
 use crate::enums::url_gift as url;
 
@@ -127,8 +127,9 @@ impl WxChannelGiftService for WxChannelGiftServiceImpl {
             .service
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = GiftActivityAddParam::new(info);
         let body =
-            serde_json::to_string(&info).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
         let response = svc.post(url::GIFT_ACTIVITY_ADD_URL, &body).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }

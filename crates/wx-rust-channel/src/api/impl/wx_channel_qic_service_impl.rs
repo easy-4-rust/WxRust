@@ -34,7 +34,7 @@ impl WxChannelQicService for WxChannelQicServiceImpl {
             .service
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
-        let response = svc.post(url::GET_INSPECT_CONFIG_URL, "{}").await?;
+        let response = svc.get(url::GET_INSPECT_CONFIG_URL, "").await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 
@@ -46,8 +46,12 @@ impl WxChannelQicService for WxChannelQicServiceImpl {
             .service
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
-        let body = serde_json::json!({"order_id": order_id}).to_string();
-        let response = svc.post(url::GET_SUBMIT_CONFIG_URL, &body).await?;
+        let query = if order_id.is_empty() {
+            String::new()
+        } else {
+            format!("order_id={order_id}")
+        };
+        let response = svc.get(url::GET_SUBMIT_CONFIG_URL, &query).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 
@@ -56,7 +60,7 @@ impl WxChannelQicService for WxChannelQicServiceImpl {
             .service
             .upgrade()
             .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
-        let response = svc.post(url::GET_SUBMIT_CONFIG_URL, "{}").await?;
+        let response = svc.get(url::GET_SUBMIT_CONFIG_URL, "").await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 
