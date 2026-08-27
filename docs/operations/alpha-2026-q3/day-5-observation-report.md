@@ -37,7 +37,7 @@
 | 1 | access_token 获取 | GET /cgi-bin/token | access_token (len 137) | ✅ OK，366-427ms，IP 白名单生效 |
 | 2 | 验签 | 本地 SHA1 校验 | valid=true / invalid=false | ✅ 正确签名通过、错误签名拒绝 |
 | 3 | 订阅消息 | POST /cgi-bin/message/subscribe/send | errcode=0 | ✅ **送达成功**（347ms）——用户微信已收到通知（openid 经 jscode2session 换取，模板字段按 gettemplate 实测 thing1/date2/thing3/thing4 构造） |
-| 4 | 客服消息 | POST /cgi-bin/message/custom/send | errcode=45015 | ⏸ 链路通（202ms）；48h 响应时限预期——需用户先给小程序发消息 |
+| 4 | 客服消息 | POST /cgi-bin/message/custom/send | errcode=0 | ✅ **送达成功**（893ms）——用户在客服会话发消息打开 48h 窗口后推送成功 |
 | 5 | 错误场景 | POST 缺 access_token | errcode=41001 access_token missing | ✅ 预期错误，错误码映射正确（128ms） |
 | 6 | 重试 | token 过期注入 → 自动刷新 | 刷新后发送 errcode=0 | ✅ **送达成功**（542ms）——过期检测 + 自动刷新 + 送达全链路 |
 
@@ -58,7 +58,7 @@
 | 1 | ~~订阅/客服送达依赖真实 openid~~——**已闭环**：用户提供 login code，经 jscode2session 换得真实 openid（oqrwR5ez-3zZSlX9orcLIDGm3ONE），订阅消息 errcode=0 送达成功 | 已解决 | 证据：`internal-pilot/miniapp-text-sender/metrics/delivery-closure-2026-08-27.txt` |
 | 2 | 订阅模板字段需按实际模板定义（首试 47003 data.thing1 为空） | 已解决 | 用 `wxaapi/newtmpl/gettemplate` 实测模板字段（thing1/date2/thing3/thing4）后按字段构造 |
 | 3 | 准出脚本 `alpha-exit-gate.sh` 检查 5 正则把 "0 failed" 通过行误判为失败 | P3 | 已修复（`test result:.*[1-9][0-9]* failed`），重跑通过 |
-| 4 | 客服消息送达需用户先发消息（48h 窗口） | P2 | 待用户在小程序中给客服发 1 条消息后补测 |
+| 4 | ~~客服消息送达需用户先发消息（48h 窗口）~~——**已闭环**：用户客服会话发消息后，kefu 推送 errcode=0 送达成功 | 已解决 | 893ms，WX_MA_KEFU_ONLY 模式 |
 | 5 | 观察期仅 1/7 天（真实流量 2026-08-27 起） | 结构性 | 需持续观察至 Day-7 方可准出 |
 
 ### 五、决策
@@ -74,7 +74,7 @@
 - WARN-1 覆盖率需人工确认（实测 70.13% ≥ 60% ✅）
 - WARN-2 Alpha 期间 crates/ 14 文件变更——均为 Phase A 测试文件（cov_*.rs），非 src 行为变更
 
-**送达闭环状态：✅ 订阅消息已真实送达**（errcode=0，用户微信已收到）；⏸ 客服消息待用户先发消息后补测
+**送达闭环状态：✅ 全部完成**——订阅消息（errcode=0 + 用户人工确认）＋ 客服消息（errcode=0，48h 窗口解锁后推送）均真实送达
 
 ### 六、签署
 

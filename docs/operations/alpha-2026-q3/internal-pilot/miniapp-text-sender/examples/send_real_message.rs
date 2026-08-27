@@ -68,6 +68,31 @@ async fn run(appid: String, secret: String, template_id: String, openid: String,
     let config_arc: Arc<WxMaDefaultConfig> = Arc::new(config);
     let service = WxMaServiceImpl::new_arc(config_arc.clone());
 
+    // ---- 客服消息单独验证模式：WX_MA_KEFU_ONLY=1（需用户先在客服会话发消息打开 48h 窗口）----
+    if std::env::var("WX_MA_KEFU_ONLY").is_ok() {
+        println!("\n=== 客服消息单独验证 ===");
+        let kmsg = build_kefu_text_msg(&openid, "WxRust 客服消息送达验证");
+        let t0 = Instant::now();
+        match service.send_kefu_msg(&kmsg).await {
+            Ok(_) => {
+                let ms = t0.elapsed().as_millis();
+                tracing::info!("api_call name=kefu_msg duration={} status=ok", ms);
+                println!("[SCENARIO] name=kefu_msg status=ok duration={}", ms);
+                println!("[NOTE] 客服消息已送达——请到小程序客服会话查看");
+            }
+            Err(e) => {
+                let ms = t0.elapsed().as_millis();
+                let err = format!("{e}");
+                tracing::info!("api_call name=kefu_msg duration={} status=error error={}", ms, err);
+                println!("[SCENARIO] name=kefu_msg status=error duration={} error={}", ms, err);
+                if err.contains("45015") {
+                    println!("[NOTE] 45015 = 48h 窗口未打开——请在客服会话里先发一条消息（如：你好）");
+                }
+            }
+        }
+        return;
+    }
+
     // ---- 场景 1：真实 access_token（IP 白名单 + token 端点验证）----
     println!("\n=== 场景 1: access_token 真实获取 ===");
     let t0 = Instant::now();
