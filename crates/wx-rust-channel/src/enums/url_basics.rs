@@ -20,3 +20,12 @@ pub const GET_IMG_URL: &str = "https://api.weixin.qq.com/channels/ec/basics/medi
 
 /// 获取地址编码（对应 Java `WxChannelApiUrlConstants` 常量 `GET_ADDRESS_CODE`）。
 pub const GET_ADDRESS_CODE: &str = "https://api.weixin.qq.com/channels/ec/basics/addresscode/get";
+
+/// 获取店铺 H5 链接（对应 Java `WxChannelApiUrlConstants` 常量 `GET_SHOP_H5URL`）。
+pub const GET_SHOP_H5URL: &str = "https://api.weixin.qq.com/channels/ec/basics/shop/h5url/get";
+
+/// 获取店铺二维码（对应 Java `WxChannelApiUrlConstants` 常量 `GET_SHOP_QRCODE`）。
+pub const GET_SHOP_QRCODE: &str = "https://api.weixin.qq.com/channels/ec/basics/shop/qrcode/get";
+
+/// 获取店铺口令（对应 Java `WxChannelApiUrlConstants` 常量 `GET_SHOP_TAGLINK`）。
+pub const GET_SHOP_TAGLINK: &str = "https://api.weixin.qq.com/channels/ec/basics/shop/taglink/get";

@@ -6,7 +6,7 @@ use async_trait::async_trait;
 
 use crate::bean::ocr::{
     WxOcrBankCardResult, WxOcrBizLicenseResult, WxOcrCommResult, WxOcrDrivingLicenseResult,
-    WxOcrDrivingResult, WxOcrIdCardResult,
+    WxOcrDrivingResult, WxOcrIdCardResult, WxOcrMenuResult,
 };
 use crate::error::WxErrorException;
 
@@ -56,4 +56,12 @@ pub trait WxOcrService: Send + Sync {
     /// # 参数
     /// - `img_url`：图片 URL
     async fn ocr_id_card(&self, img_url: &str) -> Result<WxOcrIdCardResult, WxErrorException>;
+
+    /// 菜单 OCR 识别。
+    ///
+    /// 对应 Java `WxOcrService.menu(String)`。
+    ///
+    /// # 参数
+    /// - `img_url`：图片 URL
+    async fn ocr_menu(&self, img_url: &str) -> Result<WxOcrMenuResult, WxErrorException>;
 }

@@ -5,8 +5,10 @@ use wx_rust_common::error::WxErrorException;
 use crate::bean::base::{AddressInfo, WxChannelBaseResponse};
 use crate::bean::delivery::{DeliveryCompanyResponse, DeliveryInfo, PackageAuditInfo};
 use crate::bean::order::{
-    ChangeOrderInfo, DecodeSensitiveInfoResponse, DeliveryUpdateParam, OrderInfoResponse,
-    OrderListParam, OrderListResponse, OrderSearchParam, VirtualTelNumberResponse,
+    ChangeOrderInfo, DecodeSensitiveInfoResponse, DeliveryUpdateParam,
+    OrderCompensationDeliveryParam, OrderInfoResponse, OrderListParam, OrderListResponse,
+    OrderSearchParam, PreShipmentChangeSkuResponse, PresentSubOrderResponse,
+    PrivateNumberGetPhoneResponse, RealNumberViewAuditResponse, VirtualTelNumberResponse,
 };
 
 /// 订单服务（对应 Java `WxChannelOrderService`）。
@@ -138,4 +140,88 @@ pub trait WxChannelOrderService: Send + Sync {
         &self,
         order_id: String,
     ) -> Result<DecodeSensitiveInfoResponse, WxErrorException>;
+
+    /// 礼物订单新增备注（对应 Java `WxChannelOrderService#addPresentNote(String, String)`）。
+    async fn add_present_note(
+        &self,
+        order_id: String,
+        note: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 获取礼物子单列表（对应 Java `WxChannelOrderService#getPresentSubOrders(String)`）。
+    async fn get_present_sub_orders(
+        &self,
+        order_id: String,
+    ) -> Result<PresentSubOrderResponse, WxErrorException>;
+
+    /// 获取待发货前更换 SKU 请求（对应 Java
+    /// `WxChannelOrderService#getPreShipmentChangeSku(String)`）。
+    async fn get_pre_shipment_change_sku(
+        &self,
+        order_id: String,
+    ) -> Result<PreShipmentChangeSkuResponse, WxErrorException>;
+
+    /// 同意待发货前更换 SKU（对应 Java
+    /// `WxChannelOrderService#approvePreShipmentChangeSku(String)`）。
+    async fn approve_pre_shipment_change_sku(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 拒绝待发货前更换 SKU（对应 Java
+    /// `WxChannelOrderService#rejectPreShipmentChangeSku(String, String)`）。
+    async fn reject_pre_shipment_change_sku(
+        &self,
+        order_id: String,
+        reject_reason: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 申请真实号（对应 Java `WxChannelOrderService#applyRealNumber(String)`）。
+    async fn apply_real_number(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 查看真实号审核状态（对应 Java
+    /// `WxChannelOrderService#getRealNumberViewAudit(String)`）。
+    async fn get_real_number_view_audit(
+        &self,
+        order_id: String,
+    ) -> Result<RealNumberViewAuditResponse, WxErrorException>;
+
+    /// 再次申请虚拟号（对应 Java
+    /// `WxChannelOrderService#applyVirtualNumberAgain(String)`）。
+    async fn apply_virtual_number_again(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 延长虚拟号有效期（对应 Java `WxChannelOrderService#delayVirtualNumber(String)`）。
+    async fn delay_virtual_number(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 添加待认证手机号（对应 Java `WxChannelOrderService#addPrivatePhone(String)`）。
+    async fn add_private_phone(
+        &self,
+        phone: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 获取短信验证码（对应 Java
+    /// `WxChannelOrderService#sendPrivatePhoneVerifyCode(String)`）。
+    async fn send_private_phone_verify_code(
+        &self,
+        phone: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 获取小店手机号认证状态（对应 Java `WxChannelOrderService#getPrivatePhone`）。
+    async fn get_private_phone(&self) -> Result<PrivateNumberGetPhoneResponse, WxErrorException>;
+
+    /// 订单补发货（对应 Java
+    /// `WxChannelOrderService#compensationDelivery(OrderCompensationDeliveryParam)`）。
+    async fn compensation_delivery(
+        &self,
+        param: OrderCompensationDeliveryParam,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
 }

@@ -242,7 +242,7 @@ async fn test_import_publish_and_query_async_task() {
         } else if path.contains("/v2/bot/publish") {
             r#"{"code":0,"request_id":"req-publish"}"#.to_string()
         } else if path.contains("/v2/async/fetch") {
-            r#"{"code":0,"data":{"state":2,"msg":"done","progress":100,"total_count":3,"success_count":3,"fail_count":0}}"#.to_string()
+            r#"{"code":0,"data":{"state":2,"msg":"done","progress":100,"totalCount":3,"successCount":3,"failCount":0}}"#.to_string()
         } else {
             "{}".to_string()
         }

@@ -6,7 +6,7 @@
 //! trait（本实现即 common trait 的首个实现者，mp 域实现的是自己的独立 trait）。
 //!
 //! 与 Java 逐方法对齐的语义：
-//! - 六个 URL 版方法（身份证/银行卡/行驶证/驾驶证/营业执照/通用印刷体）均为
+//! - 七个 URL 版方法（身份证/银行卡/行驶证/驾驶证/营业执照/通用印刷体/菜单）均为
 //!   **POST**：imgUrl 先经 `URLEncoder.encode(imgUrl, UTF_8)`（Rust 侧
 //!   `url::form_urlencoded::byte_serialize`，同语义：空格转 `+`、`~` 转
 //!   `%7E`、其余 `%XX` 大写）后经 `String.format(常量, imgUrl)` 填入
@@ -21,7 +21,7 @@ use async_trait::async_trait;
 
 use wx_rust_common::bean::ocr::{
     WxOcrBankCardResult, WxOcrBizLicenseResult, WxOcrCommResult, WxOcrDrivingLicenseResult,
-    WxOcrDrivingResult, WxOcrIdCardResult,
+    WxOcrDrivingResult, WxOcrIdCardResult, WxOcrMenuResult,
 };
 use wx_rust_common::error::WxErrorException;
 use wx_rust_common::service::WxOcrService;
@@ -153,6 +153,19 @@ impl WxOcrService for WxMaOcrServiceImpl {
         let encoded = Self::encode_img_url(img_url);
         let response =
             Self::post_img(svc.as_ref(), &ocr_url::comm_url(config.as_ref(), &encoded)).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 菜单识别（对应 Java `WxMaOcrServiceImpl.menu(String imgUrl)`）。
+    async fn ocr_menu(&self, img_url: &str) -> Result<WxOcrMenuResult, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let config = svc.wx_ma_config();
+        let encoded = Self::encode_img_url(img_url);
+        let response =
+            Self::post_img(svc.as_ref(), &ocr_url::menu_url(config.as_ref(), &encoded)).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 }

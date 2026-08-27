@@ -1,5 +1,7 @@
 //! 对应 Java `me.chanjar.weixin.channel.bean.product` 包（生成）。
 
+pub mod add_product_third_party_source_param;
+pub mod add_product_third_party_source_response;
 pub mod after_sale_info;
 pub mod assistant;
 pub mod description_info;
@@ -15,8 +17,16 @@ pub mod gift_product_list_param;
 pub mod gift_product_list_response;
 pub mod limit_info;
 pub mod link;
+pub mod product_audit_quota_response;
+pub mod product_audit_strategy_info;
+pub mod product_audit_strategy_response;
+pub mod product_audit_strategy_set_param;
+pub mod product_category_classify_param;
+pub mod product_category_classify_response;
 pub mod product_qua_info;
 pub mod product_sale_limit_info;
+pub mod product_scheme_param;
+pub mod product_scheme_response;
 pub mod sku_deliver_info;
 pub mod sku_fast_info;
 pub mod sku_info;
@@ -42,6 +52,8 @@ pub mod stock;
 pub mod timing_on_sale_info;
 pub mod warehouse_stock_info;
 
+pub use add_product_third_party_source_param::AddProductThirdPartySourceParam;
+pub use add_product_third_party_source_response::AddProductThirdPartySourceResponse;
 pub use after_sale_info::AfterSaleInfo;
 pub use description_info::DescriptionInfo;
 pub use express_info::ExpressInfo;
@@ -58,8 +70,18 @@ pub use limit_info::LimitInfo;
 pub use link::product_h5_url_response::ProductH5UrlResponse;
 pub use link::product_qr_code_response::ProductQrCodeResponse;
 pub use link::product_tag_link_response::ProductTagLinkResponse;
+pub use product_audit_quota_response::{AuditQuota, ProductAuditQuotaResponse};
+pub use product_audit_strategy_info::ProductAuditStrategyInfo;
+pub use product_audit_strategy_response::ProductAuditStrategyResponse;
+pub use product_audit_strategy_set_param::ProductAuditStrategySetParam;
+pub use product_category_classify_param::ProductCategoryClassifyParam;
+pub use product_category_classify_response::{
+    CategoryClassifyInfo, CategoryLevel, CategoryLevelInfo, ProductCategoryClassifyResponse,
+};
 pub use product_qua_info::ProductQuaInfo;
 pub use product_sale_limit_info::ProductSaleLimitInfo;
+pub use product_scheme_param::ProductSchemeParam;
+pub use product_scheme_response::ProductSchemeResponse;
 pub use sku_deliver_info::SkuDeliverInfo;
 pub use sku_fast_info::SkuFastInfo;
 pub use sku_fast_info::StockInfo;

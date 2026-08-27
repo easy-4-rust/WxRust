@@ -11,7 +11,9 @@ use crate::api::wx_channel_after_sale_service::WxChannelAfterSaleService;
 use crate::bean::after::{
     AfterSaleAcceptExchangeReshipParam, AfterSaleIdParam, AfterSaleInfoResponse,
     AfterSaleListParam, AfterSaleListResponse, AfterSaleMerchantUpdateParam,
-    AfterSaleReasonResponse, AfterSaleRejectReasonResponse, RefundEvidenceParam,
+    AfterSaleReasonResponse, AfterSaleRejectReasonResponse, GuaranteeModifyRequest,
+    GuaranteeOrderIdParam, GuaranteeOrderInfoResponse, GuaranteeOrderListParam,
+    GuaranteeOrderListResponse, GuaranteeProofRequest, GuaranteeRefuseRequest, RefundEvidenceParam,
 };
 use crate::bean::base::WxChannelBaseResponse;
 use crate::bean::complaint::{ComplaintOrderResponse, ComplaintParam};
@@ -404,6 +406,112 @@ impl WxChannelAfterSaleService for WxChannelAfterSaleServiceImpl {
             serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
         let response = svc
             .post(after_url::AFTER_SALE_MERCHANT_UPDATE_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelAfterSaleServiceImpl.listGuaranteeOrder`：
+    /// 序列化 `GuaranteeOrderListParam` 后 POST `GUARANTEE_ORDER_LIST_URL`。
+    async fn list_guarantee_order(
+        &self,
+        param: GuaranteeOrderListParam,
+    ) -> Result<GuaranteeOrderListResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(after_url::GUARANTEE_ORDER_LIST_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelAfterSaleServiceImpl.getGuaranteeOrder`：
+    /// 序列化 `GuaranteeOrderIdParam` 后 POST `GUARANTEE_ORDER_GET_URL`。
+    async fn get_guarantee_order(
+        &self,
+        guarantee_order_id: String,
+    ) -> Result<GuaranteeOrderInfoResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = GuaranteeOrderIdParam { guarantee_order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(after_url::GUARANTEE_ORDER_GET_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelAfterSaleServiceImpl.acceptGuarantee`：
+    /// 序列化 `GuaranteeOrderIdParam` 后 POST `GUARANTEE_ORDER_ACCEPT_URL`。
+    async fn accept_guarantee(
+        &self,
+        guarantee_order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = GuaranteeOrderIdParam { guarantee_order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(after_url::GUARANTEE_ORDER_ACCEPT_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelAfterSaleServiceImpl.modifyGuarantee`：
+    /// 序列化 `GuaranteeModifyRequest` 后 POST `GUARANTEE_ORDER_MODIFY_URL`。
+    async fn modify_guarantee(
+        &self,
+        request: GuaranteeModifyRequest,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(after_url::GUARANTEE_ORDER_MODIFY_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelAfterSaleServiceImpl.proofGuarantee`：
+    /// 序列化 `GuaranteeProofRequest` 后 POST `GUARANTEE_ORDER_PROOF_URL`。
+    async fn proof_guarantee(
+        &self,
+        request: GuaranteeProofRequest,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(after_url::GUARANTEE_ORDER_PROOF_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelAfterSaleServiceImpl.refuseGuarantee`：
+    /// 序列化 `GuaranteeRefuseRequest` 后 POST `GUARANTEE_ORDER_REFUSE_URL`。
+    async fn refuse_guarantee(
+        &self,
+        request: GuaranteeRefuseRequest,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&request).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(after_url::GUARANTEE_ORDER_REFUSE_URL, &body)
             .await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }

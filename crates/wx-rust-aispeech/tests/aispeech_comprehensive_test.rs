@@ -140,7 +140,7 @@ fn test_api_response_generic_types() {
 
 #[test]
 fn test_async_task_result_roundtrip() {
-    let json = r#"{"state":2,"msg":"completed","progress":100,"start":1700000000,"end":1700000100,"url":"https://result.example.com","total_count":50,"success_count":48,"fail_count":2}"#;
+    let json = r#"{"state":2,"msg":"completed","progress":100,"start":1700000000,"end":1700000100,"url":"https://result.example.com","totalCount":50,"successCount":48,"failCount":2}"#;
     let task: AsyncTaskResult = serde_json::from_str(json).unwrap();
     assert_eq!(task.state, Some(2));
     assert_eq!(task.progress, Some(100));
@@ -152,7 +152,7 @@ fn test_async_task_result_roundtrip() {
 
 #[test]
 fn test_async_task_result_with_skills() {
-    let json = r#"{"state":2,"progress":100,"success_skill_info_list":[{"id":1,"name":"skill1","intents":[{"id":10,"name":"intent1"}]}]}"#;
+    let json = r#"{"state":2,"progress":100,"successSkillInfoList":[{"id":1,"name":"skill1","intents":[{"id":10,"name":"intent1"}]}]}"#;
     let task: AsyncTaskResult = serde_json::from_str(json).unwrap();
     let skills = task.success_skill_info_list.unwrap();
     assert_eq!(skills.len(), 1);

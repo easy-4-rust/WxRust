@@ -4,10 +4,19 @@ use wx_rust_common::error::WxErrorException;
 
 use crate::bean::base::WxChannelBaseResponse;
 use crate::bean::limit::{LimitTaskAddResponse, LimitTaskListResponse, LimitTaskParam};
+use crate::bean::product::assistant::{
+    BeginTimingSaleParam, CategoryPreCheckParam, CategoryPreCheckResponse,
+    ExternalProductMappingNewParam, ExternalProductMappingNewResponse, ExternalProductMappingParam,
+    ExternalProductMappingResponse, ProductBrandRecommendParam, ProductBrandRecommendResponse,
+};
 use crate::bean::product::link::{
     ProductH5UrlResponse, ProductQrCodeResponse, ProductTagLinkResponse,
 };
+use crate::bean::product::stock::{StockFlowParam, StockFlowResponse};
 use crate::bean::product::{
+    AddProductThirdPartySourceParam, AddProductThirdPartySourceResponse, ProductAuditQuotaResponse,
+    ProductAuditStrategyResponse, ProductAuditStrategySetParam, ProductCategoryClassifyParam,
+    ProductCategoryClassifyResponse, ProductSchemeParam, ProductSchemeResponse,
     SkuStockBatchResponse, SkuStockResponse, SpuFastInfo, SpuGetResponse, SpuInfo, SpuListResponse,
     SpuUpdateInfo, SpuUpdateResponse,
 };
@@ -160,4 +169,89 @@ pub trait WxChannelProductService: Send + Sync {
         &self,
         task_id: String,
     ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 获取商品移动应用跳转 scheme 码（对应 Java
+    /// `WxChannelProductService#getProductScheme(ProductSchemeParam)`）。
+    async fn get_product_scheme(
+        &self,
+        param: ProductSchemeParam,
+    ) -> Result<ProductSchemeResponse, WxErrorException>;
+
+    /// 商品类目推荐（对应 Java
+    /// `WxChannelProductService#classifyProductCategory(ProductCategoryClassifyParam)`）。
+    async fn classify_product_category(
+        &self,
+        param: ProductCategoryClassifyParam,
+    ) -> Result<ProductCategoryClassifyResponse, WxErrorException>;
+
+    /// 商品定时开售（对应 Java
+    /// `WxChannelProductService#beginTimingSale(BeginTimingSaleParam)`）。
+    async fn begin_timing_sale(
+        &self,
+        param: BeginTimingSaleParam,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 取消商品定时开售（对应 Java
+    /// `WxChannelProductService#cancelTimingSale(String)`）。
+    async fn cancel_timing_sale(
+        &self,
+        product_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 外部商品映射（对应 Java
+    /// `WxChannelProductService#externalProductMapping(ExternalProductMappingParam)`）。
+    async fn external_product_mapping(
+        &self,
+        param: ExternalProductMappingParam,
+    ) -> Result<ExternalProductMappingResponse, WxErrorException>;
+
+    /// 类目预检（对应 Java
+    /// `WxChannelProductService#categoryPreCheck(CategoryPreCheckParam)`）。
+    async fn category_pre_check(
+        &self,
+        param: CategoryPreCheckParam,
+    ) -> Result<CategoryPreCheckResponse, WxErrorException>;
+
+    /// 获取商品上架策略（对应 Java `WxChannelProductService#getProductAuditStrategy`）。
+    async fn get_product_audit_strategy(
+        &self,
+    ) -> Result<ProductAuditStrategyResponse, WxErrorException>;
+
+    /// 设置商品上架策略（对应 Java
+    /// `WxChannelProductService#setProductAuditStrategy(ProductAuditStrategySetParam)`）。
+    async fn set_product_audit_strategy(
+        &self,
+        param: ProductAuditStrategySetParam,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 获取商品提审限额（对应 Java `WxChannelProductService#getProductAuditQuota`）。
+    async fn get_product_audit_quota(&self) -> Result<ProductAuditQuotaResponse, WxErrorException>;
+
+    /// 外部商品映射（新版）（对应 Java
+    /// `WxChannelProductService#externalProductMappingNew(ExternalProductMappingNewParam)`）。
+    async fn external_product_mapping_new(
+        &self,
+        param: ExternalProductMappingNewParam,
+    ) -> Result<ExternalProductMappingNewResponse, WxErrorException>;
+
+    /// 商品品牌推荐（对应 Java
+    /// `WxChannelProductService#productBrandRecommend(ProductBrandRecommendParam)`）。
+    async fn product_brand_recommend(
+        &self,
+        param: ProductBrandRecommendParam,
+    ) -> Result<ProductBrandRecommendResponse, WxErrorException>;
+
+    /// 新增第三方货源信息（对应 Java
+    /// `WxChannelProductService#addProductThirdPartySource(AddProductThirdPartySourceParam)`）。
+    async fn add_product_third_party_source(
+        &self,
+        param: AddProductThirdPartySourceParam,
+    ) -> Result<AddProductThirdPartySourceResponse, WxErrorException>;
+
+    /// 获取库存流水（对应 Java
+    /// `WxChannelProductService#getStockFlow(StockFlowParam)`）。
+    async fn get_stock_flow(
+        &self,
+        param: StockFlowParam,
+    ) -> Result<StockFlowResponse, WxErrorException>;
 }

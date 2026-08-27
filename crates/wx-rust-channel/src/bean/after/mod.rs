@@ -20,6 +20,13 @@ pub mod after_sale_reject_reason;
 pub mod after_sale_reject_reason_response;
 pub mod after_sale_return_param;
 pub mod after_sale_virtual_number_info;
+pub mod guarantee_modify_request;
+pub mod guarantee_order_id_param;
+pub mod guarantee_order_info_response;
+pub mod guarantee_order_list_param;
+pub mod guarantee_order_list_response;
+pub mod guarantee_proof_request;
+pub mod guarantee_refuse_request;
 pub mod merchant_upload_info;
 pub mod refund_evidence_param;
 pub mod refund_info;
@@ -46,6 +53,17 @@ pub use after_sale_reject_reason::AfterSaleRejectReason;
 pub use after_sale_reject_reason_response::AfterSaleRejectReasonResponse;
 pub use after_sale_return_param::AfterSaleReturnParam;
 pub use after_sale_virtual_number_info::AfterSaleVirtualNumberInfo;
+pub use guarantee_modify_request::GuaranteeModifyRequest;
+pub use guarantee_order_id_param::GuaranteeOrderIdParam;
+pub use guarantee_order_info_response::{
+    GuaranteeOrderDetail, GuaranteeOrderInfoResponse, GuaranteeProductInfo,
+};
+pub use guarantee_order_list_param::GuaranteeOrderListParam;
+pub use guarantee_order_list_response::{
+    GuaranteeListItemProductInfo, GuaranteeOrderListItem, GuaranteeOrderListResponse,
+};
+pub use guarantee_proof_request::GuaranteeProofRequest;
+pub use guarantee_refuse_request::GuaranteeRefuseRequest;
 pub use merchant_upload_info::MerchantUploadInfo;
 pub use refund_evidence_param::RefundEvidenceParam;
 pub use refund_info::RefundInfo;

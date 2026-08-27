@@ -47,3 +47,55 @@ pub const VIRTUAL_TEL_NUMBER_URL: &str =
 /// 解码订单包含的敏感数据（对应 Java `WxChannelApiUrlConstants` 常量 `DECODE_SENSITIVE_INFO_URL`）。
 pub const DECODE_SENSITIVE_INFO_URL: &str =
     "https://api.weixin.qq.com/channels/ec/order/sensitiveinfo/decode";
+
+/// 礼物订单新增备注（对应 Java `WxChannelApiUrlConstants` 常量 `PRESENT_NOTE_ADD_URL`）。
+pub const PRESENT_NOTE_ADD_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/presentnote/add";
+
+/// 获取礼物子单列表（对应 Java `WxChannelApiUrlConstants` 常量 `PRESENT_SUB_ORDER_GET_URL`）。
+pub const PRESENT_SUB_ORDER_GET_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/presentsuborder/get";
+
+/// 获取待发货前更换 SKU 请求（对应 Java `WxChannelApiUrlConstants` 常量 `PRE_SHIPMENT_CHANGE_SKU_GET_URL`）。
+pub const PRE_SHIPMENT_CHANGE_SKU_GET_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/preshipmentchangesku/get";
+
+/// 同意待发货前更换 SKU（对应 Java `WxChannelApiUrlConstants` 常量 `PRE_SHIPMENT_CHANGE_SKU_APPROVE_URL`）。
+pub const PRE_SHIPMENT_CHANGE_SKU_APPROVE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/preshipmentchangesku/approve";
+
+/// 拒绝待发货前更换 SKU（对应 Java `WxChannelApiUrlConstants` 常量 `PRE_SHIPMENT_CHANGE_SKU_REJECT_URL`）。
+pub const PRE_SHIPMENT_CHANGE_SKU_REJECT_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/preshipmentchangesku/reject";
+
+/// 申请真实号（对应 Java `WxChannelApiUrlConstants` 常量 `REAL_NUMBER_APPLY_URL`）。
+pub const REAL_NUMBER_APPLY_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/realnumber/apply";
+
+/// 查看真实号审核状态（对应 Java `WxChannelApiUrlConstants` 常量 `REAL_NUMBER_VIEW_AUDIT_GET_URL`）。
+pub const REAL_NUMBER_VIEW_AUDIT_GET_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/realnumberviewaudit/get";
+
+/// 再次申请虚拟号（对应 Java `WxChannelApiUrlConstants` 常量 `VIRTUAL_NUMBER_APPLY_AGAIN_URL`）。
+pub const VIRTUAL_NUMBER_APPLY_AGAIN_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/virtualnumber/applyagain";
+
+/// 延长虚拟号有效期（对应 Java `WxChannelApiUrlConstants` 常量 `VIRTUAL_NUMBER_DELAY_URL`）。
+pub const VIRTUAL_NUMBER_DELAY_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/virtualnumber/delay";
+
+/// 添加待认证手机号（对应 Java `WxChannelApiUrlConstants` 常量 `ADD_PHONE_URL`）。
+pub const ADD_PHONE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/merchant/privatenumber/addphone";
+
+/// 获取短信验证码（对应 Java `WxChannelApiUrlConstants` 常量 `SEND_VERIFY_CODE_URL`）。
+pub const SEND_VERIFY_CODE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/merchant/privatenumber/sendverifycode";
+
+/// 获取小店手机号认证状态（对应 Java `WxChannelApiUrlConstants` 常量 `GET_PHONE_URL`）。
+pub const GET_PHONE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/merchant/privatenumber/getphone";
+
+/// 订单补发货（对应 Java `WxChannelApiUrlConstants` 常量 `DELIVERY_COMPENSATION_URL`）。
+pub const DELIVERY_COMPENSATION_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/order/delivery/compensation";

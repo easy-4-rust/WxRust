@@ -895,6 +895,56 @@ pub mod instant_delivery {
             "/cgi-bin/express/local/business/order/confirm_return",
         )
     }
+
+    /// 获取已支持的配送公司列表（对应 Java `InstantDelivery.PlaceAnOrder.GET_ALL_IMME_DELIVERY`）。
+    pub fn get_all_imme_delivery_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/cgi-bin/express/local/business/delivery/getall",
+        )
+    }
+
+    /// 预下配送单（对应 Java `InstantDelivery.PlaceAnOrder.PRE_ADD_ORDER`）。
+    pub fn pre_add_order_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/cgi-bin/express/local/business/order/pre_add",
+        )
+    }
+
+    /// 重新下单（对应 Java `InstantDelivery.PlaceAnOrder.RE_ORDER`）。
+    pub fn re_order_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/cgi-bin/express/local/business/order/readd",
+        )
+    }
+
+    /// 增加小费（对应 Java `InstantDelivery.PlaceAnOrder.ADD_TIP`）。
+    pub fn add_tip_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/cgi-bin/express/local/business/order/addtips",
+        )
+    }
+
+    /// 预取消配送单（对应 Java `InstantDelivery.Cancel.PRE_CANCEL_ORDER`）。
+    pub fn pre_cancel_order_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/cgi-bin/express/local/business/order/precancel",
+        )
+    }
 }
 
 /// 小程序用工关系接口地址（对应 Java `WxMaApiUrlConstants.Employee`）。

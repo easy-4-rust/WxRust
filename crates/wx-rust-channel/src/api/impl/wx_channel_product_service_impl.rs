@@ -10,12 +10,21 @@ use crate::api::WxChannelService;
 use crate::api::wx_channel_product_service::WxChannelProductService;
 use crate::bean::base::WxChannelBaseResponse;
 use crate::bean::limit::{LimitTaskAddResponse, LimitTaskListResponse, LimitTaskParam};
+use crate::bean::product::assistant::{
+    BeginTimingSaleParam, CategoryPreCheckParam, CategoryPreCheckResponse,
+    ExternalProductMappingNewParam, ExternalProductMappingNewResponse, ExternalProductMappingParam,
+    ExternalProductMappingResponse, ProductBrandRecommendParam, ProductBrandRecommendResponse,
+};
 use crate::bean::product::link::{
     ProductH5UrlResponse, ProductQrCodeResponse, ProductTagLinkResponse,
 };
+use crate::bean::product::stock::{StockFlowParam, StockFlowResponse};
 use crate::bean::product::{
-    SkuStockBatchParam, SkuStockBatchResponse, SkuStockResponse, SpuFastInfo, SpuGetResponse,
-    SpuInfo, SpuListResponse, SpuUpdateInfo, SpuUpdateResponse,
+    AddProductThirdPartySourceParam, AddProductThirdPartySourceResponse, ProductAuditQuotaResponse,
+    ProductAuditStrategyResponse, ProductAuditStrategySetParam, ProductCategoryClassifyParam,
+    ProductCategoryClassifyResponse, ProductSchemeParam, ProductSchemeResponse, SkuStockBatchParam,
+    SkuStockBatchResponse, SkuStockResponse, SpuFastInfo, SpuGetResponse, SpuInfo, SpuListResponse,
+    SpuUpdateInfo, SpuUpdateResponse,
 };
 use crate::enums::url_product as url;
 
@@ -463,6 +472,215 @@ impl WxChannelProductService for WxChannelProductServiceImpl {
             .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
         let body = build_json(&[("task_id", serde_json::Value::String(task_id))]);
         let response = svc.post(url::DELETE_LIMIT_TASK_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.getProductScheme`：
+    /// 序列化 `ProductSchemeParam` 后 POST `SPU_SCHEME_URL`。
+    async fn get_product_scheme(
+        &self,
+        param: ProductSchemeParam,
+    ) -> Result<ProductSchemeResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::SPU_SCHEME_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.classifyProductCategory`：
+    /// 序列化 `ProductCategoryClassifyParam` 后 POST `SPU_CATEGORY_CLASSIFY_URL`。
+    async fn classify_product_category(
+        &self,
+        param: ProductCategoryClassifyParam,
+    ) -> Result<ProductCategoryClassifyResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::SPU_CATEGORY_CLASSIFY_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.beginTimingSale`：
+    /// 序列化 `BeginTimingSaleParam` 后 POST `SPU_BEGIN_TIMING_SALE_URL`。
+    async fn begin_timing_sale(
+        &self,
+        param: BeginTimingSaleParam,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::SPU_BEGIN_TIMING_SALE_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.cancelTimingSale`：
+    /// `{"product_id":".."}` 后 POST `SPU_CANCEL_TIMING_SALE_URL`。
+    async fn cancel_timing_sale(
+        &self,
+        product_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body = build_json(&[("product_id", serde_json::Value::String(product_id))]);
+        let response = svc.post(url::SPU_CANCEL_TIMING_SALE_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.externalProductMapping`：
+    /// 序列化 `ExternalProductMappingParam` 后 POST `SPU_EXTERNAL_PRODUCT_MAPPING_URL`。
+    async fn external_product_mapping(
+        &self,
+        param: ExternalProductMappingParam,
+    ) -> Result<ExternalProductMappingResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(url::SPU_EXTERNAL_PRODUCT_MAPPING_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.categoryPreCheck`：
+    /// 序列化 `CategoryPreCheckParam` 后 POST `SPU_CATEGORY_PRE_CHECK_URL`。
+    async fn category_pre_check(
+        &self,
+        param: CategoryPreCheckParam,
+    ) -> Result<CategoryPreCheckResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::SPU_CATEGORY_PRE_CHECK_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.getProductAuditStrategy`：
+    /// POST `"{}"` 到 `SPU_AUDIT_STRATEGY_GET_URL`。
+    async fn get_product_audit_strategy(
+        &self,
+    ) -> Result<ProductAuditStrategyResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let response = svc.post(url::SPU_AUDIT_STRATEGY_GET_URL, "{}").await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.setProductAuditStrategy`：
+    /// 序列化 `ProductAuditStrategySetParam` 后 POST `SPU_AUDIT_STRATEGY_SET_URL`。
+    async fn set_product_audit_strategy(
+        &self,
+        param: ProductAuditStrategySetParam,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::SPU_AUDIT_STRATEGY_SET_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.getProductAuditQuota`：
+    /// POST `"{}"` 到 `SPU_GET_AUDIT_QUOTA_URL`。
+    async fn get_product_audit_quota(&self) -> Result<ProductAuditQuotaResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let response = svc.post(url::SPU_GET_AUDIT_QUOTA_URL, "{}").await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.externalProductMappingNew`：
+    /// 序列化 `ExternalProductMappingNewParam` 后 POST
+    /// `SPU_EXTERNAL_PRODUCT_MAPPING_NEW_URL`。
+    async fn external_product_mapping_new(
+        &self,
+        param: ExternalProductMappingNewParam,
+    ) -> Result<ExternalProductMappingNewResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(url::SPU_EXTERNAL_PRODUCT_MAPPING_NEW_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.productBrandRecommend`：
+    /// 序列化 `ProductBrandRecommendParam` 后 POST `SPU_PRODUCT_BRAND_RECOMMEND_URL`。
+    async fn product_brand_recommend(
+        &self,
+        param: ProductBrandRecommendParam,
+    ) -> Result<ProductBrandRecommendResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(url::SPU_PRODUCT_BRAND_RECOMMEND_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.addProductThirdPartySource`：
+    /// 序列化 `AddProductThirdPartySourceParam` 后 POST
+    /// `SPU_ADD_PRODUCT_THIRD_PARTY_SOURCE_URL`。
+    async fn add_product_third_party_source(
+        &self,
+        param: AddProductThirdPartySourceParam,
+    ) -> Result<AddProductThirdPartySourceResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(url::SPU_ADD_PRODUCT_THIRD_PARTY_SOURCE_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelProductServiceImpl.getStockFlow`：
+    /// 序列化 `StockFlowParam` 后 POST `SPU_GET_STOCK_FLOW_URL`。
+    async fn get_stock_flow(
+        &self,
+        param: StockFlowParam,
+    ) -> Result<StockFlowResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::SPU_GET_STOCK_FLOW_URL, &body).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 }

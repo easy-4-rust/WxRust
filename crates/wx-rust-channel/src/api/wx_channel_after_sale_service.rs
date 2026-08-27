@@ -4,7 +4,9 @@ use wx_rust_common::error::WxErrorException;
 
 use crate::bean::after::{
     AfterSaleInfoResponse, AfterSaleListParam, AfterSaleListResponse, AfterSaleMerchantUpdateParam,
-    AfterSaleReasonResponse, AfterSaleRejectReasonResponse,
+    AfterSaleReasonResponse, AfterSaleRejectReasonResponse, GuaranteeModifyRequest,
+    GuaranteeOrderInfoResponse, GuaranteeOrderListParam, GuaranteeOrderListResponse,
+    GuaranteeProofRequest, GuaranteeRefuseRequest,
 };
 use crate::bean::base::WxChannelBaseResponse;
 use crate::bean::complaint::ComplaintOrderResponse;
@@ -143,5 +145,47 @@ pub trait WxChannelAfterSaleService: Send + Sync {
     async fn merchant_update_after_sale(
         &self,
         param: AfterSaleMerchantUpdateParam,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 查询保障单列表（对应 Java
+    /// `WxChannelAfterSaleService#listGuaranteeOrder(GuaranteeOrderListParam)`）。
+    async fn list_guarantee_order(
+        &self,
+        param: GuaranteeOrderListParam,
+    ) -> Result<GuaranteeOrderListResponse, WxErrorException>;
+
+    /// 获取保障单详情（对应 Java
+    /// `WxChannelAfterSaleService#getGuaranteeOrder(String)`）。
+    async fn get_guarantee_order(
+        &self,
+        guarantee_order_id: String,
+    ) -> Result<GuaranteeOrderInfoResponse, WxErrorException>;
+
+    /// 商家同意保障单（对应 Java
+    /// `WxChannelAfterSaleService#acceptGuarantee(String)`）。
+    async fn accept_guarantee(
+        &self,
+        guarantee_order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 商家协商保障单（对应 Java
+    /// `WxChannelAfterSaleService#modifyGuarantee(GuaranteeModifyRequest)`）。
+    async fn modify_guarantee(
+        &self,
+        request: GuaranteeModifyRequest,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 商家举证保障单（对应 Java
+    /// `WxChannelAfterSaleService#proofGuarantee(GuaranteeProofRequest)`）。
+    async fn proof_guarantee(
+        &self,
+        request: GuaranteeProofRequest,
+    ) -> Result<WxChannelBaseResponse, WxErrorException>;
+
+    /// 商家拒绝保障单（对应 Java
+    /// `WxChannelAfterSaleService#refuseGuarantee(GuaranteeRefuseRequest)`）。
+    async fn refuse_guarantee(
+        &self,
+        request: GuaranteeRefuseRequest,
     ) -> Result<WxChannelBaseResponse, WxErrorException>;
 }

@@ -44,3 +44,27 @@ pub const AFTER_SALE_REJECT_EXCHANGE_RESHIP_URL: &str =
 /// 商家协商（对应 Java `WxChannelApiUrlConstants` 常量 `AFTER_SALE_MERCHANT_UPDATE_URL`）。
 pub const AFTER_SALE_MERCHANT_UPDATE_URL: &str =
     "https://api.weixin.qq.com/channels/ec/aftersale/merchantupdateaftersale";
+
+/// 查询保障单列表（对应 Java `WxChannelApiUrlConstants` 常量 `GUARANTEE_ORDER_LIST_URL`）。
+pub const GUARANTEE_ORDER_LIST_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/aftersale/searchguaranteeorder";
+
+/// 获取保障单详情（对应 Java `WxChannelApiUrlConstants` 常量 `GUARANTEE_ORDER_GET_URL`）。
+pub const GUARANTEE_ORDER_GET_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/aftersale/getguaranteeorder";
+
+/// 商家同意保障单（对应 Java `WxChannelApiUrlConstants` 常量 `GUARANTEE_ORDER_ACCEPT_URL`）。
+pub const GUARANTEE_ORDER_ACCEPT_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/aftersale/merchantacceptguarantee";
+
+/// 商家协商保障单（对应 Java `WxChannelApiUrlConstants` 常量 `GUARANTEE_ORDER_MODIFY_URL`）。
+pub const GUARANTEE_ORDER_MODIFY_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/aftersale/merchantmodifyguarantee";
+
+/// 商家举证保障单（对应 Java `WxChannelApiUrlConstants` 常量 `GUARANTEE_ORDER_PROOF_URL`）。
+pub const GUARANTEE_ORDER_PROOF_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/aftersale/merchantproofguarantee";
+
+/// 商家拒绝保障单（对应 Java `WxChannelApiUrlConstants` 常量 `GUARANTEE_ORDER_REFUSE_URL`）。
+pub const GUARANTEE_ORDER_REFUSE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/aftersale/merchantrefuseguarantee";

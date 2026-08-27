@@ -27,20 +27,23 @@ pub struct AsyncTaskResult {
     /// 结果下载地址
     #[serde(default)]
     pub url: Option<String>,
-    /// 总条数（对应 Java `totalCount`）
-    #[serde(rename = "total_count", default)]
+    /// 总条数（对应 Java `totalCount`；Gson 无 `@SerializedName`，
+    /// JSON 键为 camelCase `totalCount`）
+    #[serde(rename = "totalCount", default)]
     pub total_count: Option<i32>,
-    /// 成功条数（对应 Java `successCount`）
-    #[serde(rename = "success_count", default)]
+    /// 成功条数（对应 Java `successCount`；JSON 键为 camelCase）
+    #[serde(rename = "successCount", default)]
     pub success_count: Option<i32>,
-    /// 失败条数（对应 Java `failCount`）
-    #[serde(rename = "fail_count", default)]
+    /// 失败条数（对应 Java `failCount`；JSON 键为 camelCase）
+    #[serde(rename = "failCount", default)]
     pub fail_count: Option<i32>,
-    /// 成功技能信息（原始 JSON，对应 Java `JsonElement successSkillInfo`）
-    #[serde(default)]
+    /// 成功技能信息（原始 JSON，对应 Java `JsonElement successSkillInfo`；
+    /// JSON 键为 camelCase）
+    #[serde(rename = "successSkillInfo", default)]
     pub success_skill_info: Option<serde_json::Value>,
-    /// 成功技能信息列表（对应 Java `successSkillInfoList`）
-    #[serde(rename = "success_skill_info_list", default)]
+    /// 成功技能信息列表（对应 Java `successSkillInfoList`；JSON 键为
+    /// camelCase）
+    #[serde(rename = "successSkillInfoList", default)]
     pub success_skill_info_list: Option<Vec<SkillInfo>>,
 }
 

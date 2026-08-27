@@ -1188,7 +1188,7 @@ pub mod xpay {
 
 /// OCR 识别接口地址（对应 Java `WxMaApiUrlConstants.Ocr`）。
 ///
-/// 六个 `%s` 占位均为 **URLEncoder 编码后的** imgUrl：Java 服务内先
+/// 七个 `%s` 占位均为 **URLEncoder 编码后的** imgUrl：Java 服务内先
 /// `URLEncoder.encode(imgUrl, UTF_8)` 再 `String.format` 填入；Rust 侧由
 /// `WxMaOcrServiceImpl` 以 `url::form_urlencoded::byte_serialize`（与 Java
 /// `URLEncoder` 同语义：空格转 `+`、`~` 转 `%7E`、其余 `%XX` 大写）编码后传入，
@@ -1254,6 +1254,22 @@ pub mod ocr {
             &h.api_host,
             &format!("/cv/ocr/comm?img_url={img_url}"),
         )
+    }
+
+    /// 菜单识别（对应 Java `Ocr.MENU`）。
+    pub fn menu_url(config: &dyn WxMaConfig, img_url: &str) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            &format!("/cv/ocr/menu?img_url={img_url}"),
+        )
+    }
+
+    /// 菜单识别文件上传地址（对应 Java `Ocr.FILE_MENU`）。
+    pub fn file_menu_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(config, &h.api_host, "/cv/ocr/menu")
     }
 }
 

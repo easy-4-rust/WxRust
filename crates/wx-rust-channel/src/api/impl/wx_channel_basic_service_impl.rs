@@ -13,7 +13,9 @@ use crate::bean::address::AddressCodeResponse;
 use crate::bean::image::{
     ChannelImageInfo, ChannelImageResponse, QualificationFileResponse, UploadImageResponse,
 };
-use crate::bean::shop::ShopInfoResponse;
+use crate::bean::shop::{
+    ShopH5UrlResponse, ShopInfoResponse, ShopQrCodeResponse, ShopTagLinkResponse,
+};
 use crate::enums::url_basics as url;
 
 /// 构建 JSON 对象（跳过空值，对应 Java Jackson `JsonInclude.Include.NON_NULL`）。
@@ -194,6 +196,43 @@ impl WxChannelBasicService for WxChannelBasicServiceImpl {
             None => r#"{"addr_code": null}"#.to_string(),
         };
         let response = svc.post(url::GET_ADDRESS_CODE, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelBasicServiceImpl.getShopH5Url`：
+    /// POST `"{}"` 到 `GET_SHOP_H5URL`。
+    async fn get_shop_h5_url(&self) -> Result<ShopH5UrlResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let response = svc.post(url::GET_SHOP_H5URL, "{}").await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelBasicServiceImpl.getShopQrCode`：
+    /// `{"qrcode_type":<qrcodeType>` 后 POST `GET_SHOP_QRCODE`。
+    async fn get_shop_qr_code(
+        &self,
+        qrcode_type: i32,
+    ) -> Result<ShopQrCodeResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body = format!(r#"{{"qrcode_type":{qrcode_type}}}"#);
+        let response = svc.post(url::GET_SHOP_QRCODE, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelBasicServiceImpl.getShopTagLink`：
+    /// POST `"{}"` 到 `GET_SHOP_TAGLINK`。
+    async fn get_shop_tag_link(&self) -> Result<ShopTagLinkResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let response = svc.post(url::GET_SHOP_TAGLINK, "{}").await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 }

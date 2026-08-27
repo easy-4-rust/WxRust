@@ -4,7 +4,9 @@ use wx_rust_common::error::WxErrorException;
 
 use crate::bean::address::AddressCodeResponse;
 use crate::bean::image::{ChannelImageInfo, ChannelImageResponse, QualificationFileResponse};
-use crate::bean::shop::ShopInfoResponse;
+use crate::bean::shop::{
+    ShopH5UrlResponse, ShopInfoResponse, ShopQrCodeResponse, ShopTagLinkResponse,
+};
 
 /// 基础接口服务（对应 Java `WxChannelBasicService`）。
 ///
@@ -60,4 +62,19 @@ pub trait WxChannelBasicService: Send + Sync {
         &self,
         code: Option<i32>,
     ) -> Result<AddressCodeResponse, WxErrorException>;
+
+    /// 获取店铺 H5 链接（对应 Java `WxChannelBasicService#getShopH5Url`）。
+    async fn get_shop_h5_url(&self) -> Result<ShopH5UrlResponse, WxErrorException>;
+
+    /// 获取店铺二维码（对应 Java `WxChannelBasicService#getShopQrCode(int)`）。
+    ///
+    /// # 参数
+    /// - `qrcode_type`：二维码类型
+    async fn get_shop_qr_code(
+        &self,
+        qrcode_type: i32,
+    ) -> Result<ShopQrCodeResponse, WxErrorException>;
+
+    /// 获取店铺口令（对应 Java `WxChannelBasicService#getShopTagLink`）。
+    async fn get_shop_tag_link(&self) -> Result<ShopTagLinkResponse, WxErrorException>;
 }

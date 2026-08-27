@@ -67,3 +67,54 @@ pub const STOP_LIMIT_TASK_URL: &str =
 /// 删除限时抢购任务（对应 Java `WxChannelApiUrlConstants` 常量 `DELETE_LIMIT_TASK_URL`）。
 pub const DELETE_LIMIT_TASK_URL: &str =
     "https://api.weixin.qq.com/channels/ec/product/limiteddiscounttask/delete";
+
+/// 获取商品移动应用跳转 scheme 码（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_SCHEME_URL`）。
+pub const SPU_SCHEME_URL: &str = "https://api.weixin.qq.com/channels/ec/product/scheme/get";
+
+/// 商品类目推荐（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_CATEGORY_CLASSIFY_URL`）。
+pub const SPU_CATEGORY_CLASSIFY_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/category/classify";
+
+/// 商品定时开售（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_BEGIN_TIMING_SALE_URL`）。
+pub const SPU_BEGIN_TIMING_SALE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/begintimingsale";
+
+/// 取消商品定时开售（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_CANCEL_TIMING_SALE_URL`）。
+pub const SPU_CANCEL_TIMING_SALE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/canceltimingsale";
+
+/// 外部商品映射（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_EXTERNAL_PRODUCT_MAPPING_URL`）。
+pub const SPU_EXTERNAL_PRODUCT_MAPPING_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/externalproductmapping";
+
+/// 类目预检（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_CATEGORY_PRE_CHECK_URL`）。
+pub const SPU_CATEGORY_PRE_CHECK_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/categoryprecheck";
+
+/// 获取商品上架策略（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_AUDIT_STRATEGY_GET_URL`）。
+pub const SPU_AUDIT_STRATEGY_GET_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/auditstrategy/get";
+
+/// 设置商品上架策略（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_AUDIT_STRATEGY_SET_URL`）。
+pub const SPU_AUDIT_STRATEGY_SET_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/auditstrategy/set";
+
+/// 获取商品提审限额（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_GET_AUDIT_QUOTA_URL`）。
+pub const SPU_GET_AUDIT_QUOTA_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/getauditquota";
+
+/// 外部商品映射（新版）（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_EXTERNAL_PRODUCT_MAPPING_NEW_URL`）。
+pub const SPU_EXTERNAL_PRODUCT_MAPPING_NEW_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/externalproductmappingnew";
+
+/// 商品品牌推荐（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_PRODUCT_BRAND_RECOMMEND_URL`）。
+pub const SPU_PRODUCT_BRAND_RECOMMEND_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/productbrandrecommend";
+
+/// 新增第三方货源信息（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_ADD_PRODUCT_THIRD_PARTY_SOURCE_URL`）。
+pub const SPU_ADD_PRODUCT_THIRD_PARTY_SOURCE_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/addproductthirdpartysource";
+
+/// 获取库存流水（对应 Java `WxChannelApiUrlConstants` 常量 `SPU_GET_STOCK_FLOW_URL`）。
+pub const SPU_GET_STOCK_FLOW_URL: &str =
+    "https://api.weixin.qq.com/channels/ec/product/stock/getflow";

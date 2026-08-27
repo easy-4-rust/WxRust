@@ -14,8 +14,11 @@ use crate::bean::delivery::{
 };
 use crate::bean::order::{
     ChangeOrderInfo, DecodeSensitiveInfoResponse, DeliveryUpdateParam, OrderAddressParam,
-    OrderIdParam, OrderInfoResponse, OrderListParam, OrderListResponse, OrderRemarkParam,
-    OrderSearchParam, VirtualTelNumberResponse,
+    OrderCompensationDeliveryParam, OrderIdParam, OrderInfoResponse, OrderListParam,
+    OrderListResponse, OrderRemarkParam, OrderSearchParam, PreShipmentChangeSkuRejectParam,
+    PreShipmentChangeSkuResponse, PresentNoteAddParam, PresentSubOrderResponse,
+    PrivateNumberAddPhoneParam, PrivateNumberGetPhoneResponse, PrivateNumberSendVerifyCodeParam,
+    RealNumberViewAuditResponse, VirtualTelNumberResponse,
 };
 use crate::enums::url_delivery as delivery_url;
 use crate::enums::url_order as url;
@@ -357,6 +360,232 @@ impl WxChannelOrderService for WxChannelOrderServiceImpl {
             .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
         let body = build_json(&[("order_id", serde_json::Value::String(order_id))]);
         let response = svc.post(url::DECODE_SENSITIVE_INFO_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.addPresentNote`：
+    /// 序列化 `PresentNoteAddParam` 后 POST `PRESENT_NOTE_ADD_URL`。
+    async fn add_present_note(
+        &self,
+        order_id: String,
+        note: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = PresentNoteAddParam { order_id, note };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::PRESENT_NOTE_ADD_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.getPresentSubOrders`：
+    /// 序列化 `OrderIdParam` 后 POST `PRESENT_SUB_ORDER_GET_URL`。
+    async fn get_present_sub_orders(
+        &self,
+        order_id: String,
+    ) -> Result<PresentSubOrderResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = OrderIdParam { order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::PRESENT_SUB_ORDER_GET_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.getPreShipmentChangeSku`：
+    /// 序列化 `OrderIdParam` 后 POST `PRE_SHIPMENT_CHANGE_SKU_GET_URL`。
+    async fn get_pre_shipment_change_sku(
+        &self,
+        order_id: String,
+    ) -> Result<PreShipmentChangeSkuResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = OrderIdParam { order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(url::PRE_SHIPMENT_CHANGE_SKU_GET_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.approvePreShipmentChangeSku`：
+    /// 序列化 `OrderIdParam` 后 POST `PRE_SHIPMENT_CHANGE_SKU_APPROVE_URL`。
+    async fn approve_pre_shipment_change_sku(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = OrderIdParam { order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(url::PRE_SHIPMENT_CHANGE_SKU_APPROVE_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.rejectPreShipmentChangeSku`：
+    /// 序列化 `PreShipmentChangeSkuRejectParam` 后 POST
+    /// `PRE_SHIPMENT_CHANGE_SKU_REJECT_URL`。
+    async fn reject_pre_shipment_change_sku(
+        &self,
+        order_id: String,
+        reject_reason: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = PreShipmentChangeSkuRejectParam {
+            order_id,
+            reject_reason,
+        };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc
+            .post(url::PRE_SHIPMENT_CHANGE_SKU_REJECT_URL, &body)
+            .await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.applyRealNumber`：
+    /// 序列化 `OrderIdParam` 后 POST `REAL_NUMBER_APPLY_URL`。
+    async fn apply_real_number(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = OrderIdParam { order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::REAL_NUMBER_APPLY_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.getRealNumberViewAudit`：
+    /// 序列化 `OrderIdParam` 后 POST `REAL_NUMBER_VIEW_AUDIT_GET_URL`。
+    async fn get_real_number_view_audit(
+        &self,
+        order_id: String,
+    ) -> Result<RealNumberViewAuditResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = OrderIdParam { order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::REAL_NUMBER_VIEW_AUDIT_GET_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.applyVirtualNumberAgain`：
+    /// 序列化 `OrderIdParam` 后 POST `VIRTUAL_NUMBER_APPLY_AGAIN_URL`。
+    async fn apply_virtual_number_again(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = OrderIdParam { order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::VIRTUAL_NUMBER_APPLY_AGAIN_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.delayVirtualNumber`：
+    /// 序列化 `OrderIdParam` 后 POST `VIRTUAL_NUMBER_DELAY_URL`。
+    async fn delay_virtual_number(
+        &self,
+        order_id: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = OrderIdParam { order_id };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::VIRTUAL_NUMBER_DELAY_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.addPrivatePhone`：
+    /// 序列化 `PrivateNumberAddPhoneParam` 后 POST `ADD_PHONE_URL`。
+    async fn add_private_phone(
+        &self,
+        phone: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = PrivateNumberAddPhoneParam { phone };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::ADD_PHONE_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.sendPrivatePhoneVerifyCode`：
+    /// 序列化 `PrivateNumberSendVerifyCodeParam` 后 POST `SEND_VERIFY_CODE_URL`。
+    async fn send_private_phone_verify_code(
+        &self,
+        phone: String,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let param = PrivateNumberSendVerifyCodeParam { phone };
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::SEND_VERIFY_CODE_URL, &body).await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.getPrivatePhone`：
+    /// POST `"{}"` 到 `GET_PHONE_URL`。
+    async fn get_private_phone(&self) -> Result<PrivateNumberGetPhoneResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let response = svc.post(url::GET_PHONE_URL, "{}").await?;
+        serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
+    }
+
+    /// 对应 Java `WxChannelOrderServiceImpl.compensationDelivery`：
+    /// 序列化 `OrderCompensationDeliveryParam` 后 POST `DELIVERY_COMPENSATION_URL`。
+    async fn compensation_delivery(
+        &self,
+        param: OrderCompensationDeliveryParam,
+    ) -> Result<WxChannelBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "视频号小店服务已释放"))?;
+        let body =
+            serde_json::to_string(&param).map_err(|e| WxErrorException::Serde(e.to_string()))?;
+        let response = svc.post(url::DELIVERY_COMPENSATION_URL, &body).await?;
         serde_json::from_str(&response).map_err(|e| WxErrorException::Serde(e.to_string()))
     }
 }
