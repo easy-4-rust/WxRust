@@ -53,7 +53,7 @@ x509-cert = "0.2.5"
 # PKCS#12 容器解析：Java KeyStore.getInstance("PKCS12") 的 Rust 等价（纯 Rust；见 WxPayConfig.p12ToPem）
 p12 = "0.6.3"
 # rsa 0.9 的 RNG（rand_core 0.6 系；workspace 的 rand 0.10 与其不兼容），OsRng 用于 RSA 签名盲化/OAEP 加密
-rand_core = { version = "0.6.4", features = ["getrandom"] }
+rand_core = { version = "0.10.1", features = ["getrandom"] }
 # RSA-OAEP 敏感信息加密使用 SHA-1（Java RsaCryptoUtil：RSA/ECB/OAEPWithSHA-1AndMGF1Padding；rsa 0.9 内部 digest 为 0.10 系，workspace sha1 0.11 不适用）
 sha1 = "0.10.6"
 
