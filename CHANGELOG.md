@@ -1,6 +1,26 @@
 # Changelog
 
-本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.1`（workspace 统一版本）。
+本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.2`（workspace 统一版本）。
+
+## [0.1.2] - 2026-08-28
+
+### CI/CD（仓库元数据对齐 easyexcel-rust）
+
+- **toolchain 固定为 1.97.1**（5 个 workflows `RUST_TOOLCHAIN` env + `dtolnay/rust-toolchain@stable` + `toolchain` 参数）：消除 latest stable 漂移——根因：8/26 新版 clippy 1.97 `io_other_error` lint 命中既有测试导致 CI 红，本地固定 1.97.1
+- **concurrency group**（5 个 workflows）：ci/coverage/security/sync-feature=`cancel-in-progress: true`（PR 重复触发自动取消）；release=`false`（发布期不能取消）
+- **ci.yml 新增 msrv job**：固定 Rust 1.85，对应 Cargo.toml `rust-version = "1.85"`
+- **CODEOWNERS**：默认 `@wandl`；pay/deny/Cargo.lock/workflows 关键路径单独标注
+- **PULL_REQUEST_TEMPLATE.md**：关联 issue / 改动类型 / 测试清单 / 发布影响 / 风险评估 5 段
+- **dependabot 限流**：cargo PR `10 → 3` + cooldown（major 30天/其他 7天）+ `commit prefix: "deps"`；actions PR `10 → 2`
+
+### 依赖升级（issue #15 决策）
+
+- **本次 0/6 实际升级**：在 workspace `rust-version = "1.85"` 与 rsa 0.9.x 锁链双重约束下，`cargo update` 拒绝 6 个依赖（md-5 0.11、quick-xml 0.42、rand_core 0.10、x509-cert 0.3、redis 1.6、criterion 0.8）——原因是它们的传递依赖 MSRV > 1.85，或会与 rsa 0.9 锁链产生 workspace 双版本（rand_core 0.6+0.10）
+- **v0.1.2 不强行突破**：详见 issue #15 与已知问题（cargo.toml 注释）
+- **下一周期处理方向**（待用户决策）：
+  1. 上调 workspace MSRV（如 1.85 → 1.89）解锁 md-5/quick-xml/x509-cert 等传递依赖
+  2. rand_core 与 rsa 0.10 stable 合并升级（已跟踪 Phase D）
+  3. redis 1.6、criterion 0.8 单独特性分支验证
 
 ## [0.1.1] - 2026-08-28
 
