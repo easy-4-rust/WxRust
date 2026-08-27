@@ -1,6 +1,29 @@
 # Changelog
 
-本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.2`（workspace 统一版本）。
+本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.3`（workspace 统一版本）。
+
+## [0.1.3] - 2026-08-28
+
+### 依赖升级（issue #15，本轮实际升级 5/6）
+
+- **MSRV：`rust-version` 1.85 → 1.89**——解锁此前被传递依赖 MSRV 卡住的升级路径
+- **quick-xml 0.41 → 0.42**：API 适配（`QName::as_ref()` 返回 `&str`、`BytesText::decode()` → `xml_content(XmlVersion::Implicit1_0)`），波及 common/mp/cp/miniapp/pay 5 个 XML 解析文件
+- **x509-cert 0.2 → 0.3**：`tbs_certificate`/`serial_number`/`validity` 字段转 getter，`wx_pay_cert_utils` 适配
+- **md-5 0.10 → 0.11**（pay 声明放宽）
+- **redis 0.29 → 1.6**（common，源码编译兼容，零改动）
+- **criterion 0.5 → 0.8**：`criterion::black_box` → `std::hint::black_box`
+- **chacha20 0.10.1 → 0.10.2**（修复 yanked 传递依赖）
+- clippy 1.89 新 lint 适配：`collapsible_if`/`manual_is_multiple_of` 加入 workspace allow（保持 Java 镜像代码风格）
+
+### 关键修复
+
+- **pipeline/mod.rs**：折叠嵌套 if 时误把 `break Err` 移入 `on_token_invalid` 块，导致 errcode≠0 且无 token 失效回调时不再上抛（channel post 路径回归）——已还原正确结构
+
+### 验证
+
+- workspace tests：**3589 passed / 0 failed**
+- clippy 0 error、fmt clean、audit/deny 干净
+- CI validation full profile：除 msrv job（1.85→1.89 后同步更新）外全绿
 
 ## [0.1.2] - 2026-08-28
 

@@ -13,7 +13,7 @@ env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
   # 工具链固定为 1.97.1（与本地验证一致），消除 latest stable 的规则漂移。
-  # 同时满足 Cargo.toml `rust-version = "1.85"` 的 MSRV（见 msrv job）。
+  # 同时满足 Cargo.toml `rust-version = "1.89"` 的 MSRV（见 msrv job）。
   RUST_TOOLCHAIN: "1.97.1"
 
 concurrency:
@@ -127,16 +127,16 @@ jobs:
         run: cargo test -p wx-rust-common --features redis --test redis_integration_test
 
   msrv:
-    # MSRV 门禁：Cargo.toml `rust-version = "1.85"`，仅 cargo check（避免构建产物不一致）
-    name: MSRV check (Rust 1.85)
+    # MSRV 门禁：Cargo.toml `rust-version = "1.89"`，仅 cargo check（避免构建产物不一致）
+    name: MSRV check (Rust 1.89)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust 1.85
+      - name: Install Rust 1.89
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.85
+          toolchain: 1.89
 
       - name: cargo check at MSRV
         run: cargo check --workspace --all-features

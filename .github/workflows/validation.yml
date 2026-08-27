@@ -137,12 +137,12 @@ jobs:
         shell: bash
         run: cargo bench -p wx-rust-miniapp --bench token_single_flight_bench -- --test
 
-      - name: msrv check (Rust 1.85)
+      - name: msrv check (Rust 1.89)
         if: ${{ inputs.profile == 'full' }}
         shell: bash
         run: |
-          rustup toolchain install 1.85 --profile minimal
-          cargo +1.85 check --workspace --all-features
+          rustup toolchain install 1.89 --profile minimal
+          cargo +1.89 check --workspace --all-features
 
       - name: Install cargo-llvm-cov
         if: ${{ inputs.profile == 'full' }}
