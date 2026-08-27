@@ -40,7 +40,7 @@ jobs:
         run: cargo llvm-cov --workspace --lcov --output-path lcov.info
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           files: lcov.info
           # CODECOV_TOKEN 未配置时上传失败不阻断（配置 secret 后可改回 true）
