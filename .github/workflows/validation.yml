@@ -1,0 +1,189 @@
+name: Validation
+
+# 专门验证 workflow（不发布、不打 tag）：
+# - 用 GitHub Actions 作为单一真相源（消除本地环境漂移）
+# - 任何人可手动触发：在 Actions 页面选 Validation → Run workflow
+# - 适合"v0.1.x → v0.1.y 升级前先在 CI 跑通再 push tag"的安全门
+
+on:
+  workflow_dispatch:
+    inputs:
+      upgrade_target:
+        description: "依赖升级目标（对应 issue #15 的 6 个 crate），逗号分隔。留空=仅跑当前锁。"
+        type: string
+        required: false
+        default: ""
+        # 例如: md-5@0.11.0,quick-xml@0.42.0
+      profile:
+        description: "验证级别"
+        type: choice
+        options: [full, fast, upgrade-only]
+        default: full
+        # full: 全量门禁 + 测试 + 覆盖率
+        # fast: 仅 check + test + clippy（快速冒烟）
+        # upgrade-only: cargo update + 全量验证
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUST_TOOLCHAIN: "1.97.1"
+
+concurrency:
+  group: validation-${{ github.ref }}-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  decide:
+    name: Decide Profile
+    runs-on: ubuntu-latest
+    outputs:
+      profile: ${{ steps.pick.outputs.profile }}
+      upgrade_list: ${{ steps.pick.outputs.upgrade_list }}
+    steps:
+      - name: Pick profile + upgrade list
+        id: pick
+        run: |
+          echo "profile=${{ inputs.profile }}" >> "$GITHUB_OUTPUT"
+          echo "upgrade_list=${{ inputs.upgrade_target }}" >> "$GITHUB_OUTPUT"
+
+  validate:
+    name: Validate (${{ inputs.profile }})
+    needs: decide
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust 1.97.1
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      # ============ upgrade-only / full：尝试 cargo update（不 commit） ============
+      - name: Show pre-update lock summary
+        if: ${{ inputs.profile == 'upgrade-only' || inputs.profile == 'full' }}
+        run: |
+          echo "### Pre-update Cargo.lock summary"
+          for pkg in md-5 rand_core x509-cert quick-xml redis criterion; do
+            v=$(grep -A1 "^name = \"$pkg\"" Cargo.lock | grep "^version" | head -1 | awk -F'"' '{print $2}')
+            echo "$pkg: $v"
+          done
+
+      - name: cargo update (specified targets)
+        if: ${{ inputs.profile == 'upgrade-only' && inputs.upgrade_target != '' }}
+        shell: bash
+        run: |
+          set -e
+          IFS=',' read -ra TARGETS <<< "${{ inputs.upgrade_target }}"
+          for t in "${TARGETS[@]}"; do
+            pkg="${t%@*}"
+            ver="${t#*@}"
+            echo "### cargo update -p $pkg --precise $ver"
+            if ! cargo update -p "$pkg" --precise "$ver" 2>&1; then
+              echo "::warning::cargo update 拒绝升级 $pkg@$ver（见上文原因）"
+              continue
+            fi
+          done
+
+      - name: cargo update (workspace-wide)
+        if: ${{ inputs.profile == 'full' }}
+        shell: bash
+        run: |
+          cargo update --workspace 2>&1 | tee /tmp/workspace-update.log
+          echo "### Post-update Cargo.lock summary"
+          for pkg in md-5 rand_core x509-cert quick-xml redis criterion; do
+            v=$(grep -A1 "^name = \"$pkg\"" Cargo.lock | grep "^version" | head -1 | awk -F'"' '{print $2}')
+            echo "$pkg: $v"
+          done
+
+      # ============ 三阶段门禁（按 profile 裁剪） ============
+      - name: cargo fmt --check
+        shell: bash
+        run: cargo fmt --all -- --check
+
+      - name: cargo check --workspace
+        shell: bash
+        run: cargo check --workspace --all-features
+
+      - name: cargo clippy --workspace
+        if: ${{ inputs.profile == 'full' || inputs.profile == 'fast' }}
+        shell: bash
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: cargo test --workspace
+        if: ${{ inputs.profile == 'full' || inputs.profile == 'fast' }}
+        shell: bash
+        run: cargo test --workspace
+
+      - name: block_on gate
+        if: ${{ inputs.profile == 'full' || inputs.profile == 'fast' }}
+        shell: bash
+        run: scripts/check_block_on.sh
+
+      - name: concurrency bench (common)
+        if: ${{ inputs.profile == 'full' }}
+        shell: bash
+        run: cargo bench -p wx-rust-common --bench pipeline_concurrency_bench -- --test
+
+      - name: concurrency bench (miniapp)
+        if: ${{ inputs.profile == 'full' }}
+        shell: bash
+        run: cargo bench -p wx-rust-miniapp --bench token_single_flight_bench -- --test
+
+      - name: msrv check (Rust 1.85)
+        if: ${{ inputs.profile == 'full' }}
+        shell: bash
+        run: |
+          rustup toolchain install 1.85 --profile minimal
+          cargo +1.85 check --workspace --all-features
+
+      - name: Install cargo-llvm-cov
+        if: ${{ inputs.profile == 'full' }}
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Coverage gate (≥60%)
+        if: ${{ inputs.profile == 'full' }}
+        shell: bash
+        run: cargo llvm-cov --workspace --fail-under-lines 60 --summary-only
+
+      - name: Generate HTML coverage
+        if: ${{ inputs.profile == 'full' }}
+        shell: bash
+        run: cargo llvm-cov --workspace --html --output-dir coverage-html
+
+      - name: Upload HTML coverage
+        if: ${{ inputs.profile == 'full' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-coverage-html-${{ github.run_id }}
+          path: coverage-html/
+          retention-days: 30
+
+      # ============ 安全门禁（任何 profile 必跑） ============
+      - uses: taiki-e/install-action@cargo-audit
+      - uses: taiki-e/install-action@cargo-deny
+      - name: cargo audit
+        shell: bash
+        run: cargo audit --ignore RUSTSEC-2023-0071
+      - name: cargo deny check
+        shell: bash
+        run: cargo deny check
+
+      # ============ 汇总 ============
+      - name: Final summary
+        if: always()
+        shell: bash
+        run: |
+          echo "### Validation Summary"
+          echo "- Profile: ${{ inputs.profile }}"
+          echo "- Run: ${{ github.run_id }}"
+          echo "- Commit: ${{ github.sha }}"
+          echo "- Toolchain: 1.97.1"
+          echo "- Target cargo update list: ${{ inputs.upgrade_target }} (empty = no-op)"
