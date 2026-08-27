@@ -38,7 +38,7 @@ hex = { workspace = true }
 sha2 = { workspace = true }
 hmac = { workspace = true }
 # MD5（v2 签名 SignType.MD5，对应 Java commons-codec DigestUtils.md5Hex）
-md-5 = "0.10.6"
+md-5 = "0.11.0"
 # AES-256-ECB（v2 退款通知 req_info 解密，对应 Java AES/ECB/PKCS5Padding）
 aes = { workspace = true }
 # GZIP 对账单解压（对应 Java ZipUtils.unGzip）
