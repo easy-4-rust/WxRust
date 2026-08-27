@@ -1,0 +1,38 @@
+{
+  "date": "2026-08-27",
+  "collected_at": "2026-08-27T15:00:44Z",
+  "source_log": "/tmp/app-tracing.log",
+  "requests": {
+    "total": 5,
+    "errors": 4,
+    "success_rate": 20.00
+  },
+  "latency": {
+    "p99_ms": 359,
+    "avg_ms": 312
+  },
+  "token": {
+    "refreshes": 2,
+    "errors": 0
+  },
+  "stability": {
+    "panic_count": 0,
+    "unwrap_failures": 0,
+    "abort_count": 0
+  },
+  "memory": {
+    "current_mb": 0
+  },
+  "circuit_breaker": {
+    "state": "unknown"
+  },
+  "wx_error_codes": {
+    "40001_invalid_credential": 0,
+    "40002_expired_credential": 0,
+    "40003_invalid_openid": 3,
+    "40014_invalid_sign": 0,
+    "40029_invalid_ticket": 0,
+    "42001_timeout": 0,
+    "45009_rate_limit": 0
+  }
+}

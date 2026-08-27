@@ -305,7 +305,8 @@ check_stability() {
     # 同时检查 cargo test 日志
     if [ -n "$CARGO_TEST_LOG" ] && [ -f "$CARGO_TEST_LOG" ]; then
         local test_failed
-        test_failed=$(grep -c 'FAILED\|test result:.*failed' "$CARGO_TEST_LOG" 2>/dev/null || echo 0)
+        # 只匹配真实失败行；"test result: ok. N passed; 0 failed" 不应命中
+        test_failed=$(grep -cE 'test result: FAILED|test result:.*[1-9][0-9]* failed' "$CARGO_TEST_LOG" 2>/dev/null || true)
         if [ "$test_failed" -gt 0 ]; then
             log_fail "cargo test 存在失败用例"
         else

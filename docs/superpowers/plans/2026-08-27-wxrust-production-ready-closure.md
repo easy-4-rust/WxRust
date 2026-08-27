@@ -140,25 +140,30 @@ git commit -m "test(pay): 深度覆盖——order/refund/bill/xml 分支（A1）
 
 ---
 
-## Phase C：Alpha Day-5 Step 5/6 真实流量（PENDING 用户凭证）
+## Phase C：Alpha Day-5 Step 5/6 真实流量（凭证已到位，2026-08-27 已执行）
 
-> **PENDING 声明：本阶段无法由助手独立完成。需用户提供 test appid + appsecret（最小集合）。**
-> 凭证到位前：本阶段冻结，禁止伪造数据。到位后：按以下手册执行。
+> **执行结果（2026-08-27）**：用户提供 PartMe.AI 小程序凭证后，真实流量已执行：
+> access_token 真实获取 ✅ / 验签 ✅ / 错误探针（41001）✅ / token 过期自动刷新 ✅；
+> 订阅、客服链路通但送达被占位 openid 拦截（40003，预期，需真实 openid）。
+> No-Go 闸门 GO（0 阻塞）；`alpha-exit-gate.sh` 判定 DELAY（观察期 1/7 天 + 成功率口径）。
+> 凭证仅经环境变量使用，未入库。
 
 ### Task C1: 真实环境执行
 
 **Files:**
-- Modify: `docs/operations/alpha-2026-q3/day-5-observation-report.md`（填真实数字）
+- Modify: `docs/operations/alpha-2026-q3/day-5-observation-report.md`（已填真实数字）
+- Create: `docs/operations/alpha-2026-q3/internal-pilot/miniapp-text-sender/examples/send_real_message.rs`（真实流量 demo）
 
 **Interfaces:**
 - Consumes: `scripts/alpha/collect-metrics.sh`、miniapp-text-sender demo（`4e177e7`）
+- Produces: `metrics/metrics-2026-08-27.json`
 
-- [ ] **Step 1:** 用户置入凭证（env 或私密渠道）：`WX_MA_APPID` / `WX_MA_APPSECRET`
-- [ ] **Step 2:** 真实流量调用 demo examples（subscribe/custom/signature 三场景各 ≥1 次）
-- [ ] **Step 3:** `bash scripts/alpha/collect-metrics.sh > metrics/metrics-day5.json` 采数
-- [ ] **Step 4:** `bash scripts/alpha/check-no-go.sh`——任何 No-Go 即回滚评估
-- [ ] **Step 5:** 用真实数字填 day-5 报告表 I/II/III，`git commit -m "docs: Day-5 真实流量观察报告"`
-- [ ] **Step 6:** 若 7 日观察通过 → `alpha-exit-gate.sh` GO → Beta/Stable 判定
+- [x] **Step 1:** 用户置入凭证（env 或私密渠道）：`WX_MA_APPID` / `WX_MA_APPSECRET`（2026-08-27 用户提供 PartMe.AI）
+- [x] **Step 2:** 真实流量调用 demo examples（subscribe/custom/signature 三场景各 ≥1 次）——实际 6 场景：token/验签/订阅/客服/错误探针/过期重试，3 轮共 15 次真实调用
+- [x] **Step 3:** `bash scripts/alpha/collect-metrics.sh` 采数 → `metrics/metrics-2026-08-27.json`（5 请求 / P99 359ms / panic 0）
+- [x] **Step 4:** `bash scripts/alpha/check-no-go.sh` → **GO**（0 NO-GO / 0 WARN；3588 tests 全绿、覆盖率 70.13%、镜像率 100.8%）
+- [x] **Step 5:** 用真实数字填 day-5 报告表 I/II/III，`git commit -m "docs: Day-5 真实流量观察报告"`（本次提交）
+- [ ] **Step 6:** 若 7 日观察通过 → `alpha-exit-gate.sh` GO → Beta/Stable 判定——**当前 DELAY**：观察期 1/7 天（真实流量首日不可准出）+ 订阅/客服送达需真实 openid；修复点：`alpha-exit-gate.sh` 检查 5 正则 bug 已修
 
 ---
 
@@ -178,7 +183,7 @@ git commit -m "test(pay): 深度覆盖——order/refund/bill/xml 分支（A1）
 |---|---|---|
 | A | A1-A4 | A1-A3 完成（287 新测试）；A4 实测 70.20%，≥90% 判定不可达成，门禁维持 60——见执行实录 |
 | B | B1 | 可选 ≥95% |
-| C | C1 | PENDING 用户凭证；到位后 24h 内可完成 |
+| C | C1 | ✅ 真实流量已执行（2026-08-27）；准出 DELAY——观察期 1/7 + 需真实 openid 送达验证 |
 | D | D1 | 等 rsa 0.10 stable |
 
 ## 3. 全局风险

@@ -15,6 +15,10 @@ description = "WxRust Alpha 内部接入示例：通过 wx-rust-miniapp 发送�
 wx-rust-miniapp = { path = "../../../../../crates/wx-rust-miniapp" }
 wx-rust-common = { path = "../../../../../crates/wx-rust-common" }
 
+# 真实流量示例（send_real_message）直接使用 SDK 的 ReqwestTransport，
+# 需要与 workspace 相同版本的 reqwest 以保证类型一致
+reqwest = { version = "=0.13.4", default-features = false, features = ["json", "rustls"] }
+
 # 核心运行时
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
@@ -33,3 +37,7 @@ tokio = { version = "1", features = ["full", "test-util"] }
 [[example]]
 name = "send_subscribe_msg"
 path = "examples/send_subscribe_msg.rs"
+
+[[example]]
+name = "send_real_message"
+path = "examples/send_real_message.rs"
