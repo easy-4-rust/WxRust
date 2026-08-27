@@ -383,7 +383,7 @@ fn wx_error_exception_from_code() {
 #[test]
 /// 对应 Java: WxErrorException — error_code 对非业务变体返回 None
 fn wx_error_exception_io_no_code() {
-    let exc: WxErrorException = std::io::Error::new(std::io::ErrorKind::Other, "io fail").into();
+    let exc: WxErrorException = std::io::Error::other("io fail").into();
     assert!(exc.error_code().is_none());
 }
 

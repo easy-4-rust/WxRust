@@ -432,8 +432,9 @@ fn rsa_oaep_roundtrip_marvin_mitigation_evidence() {
     let plain = rsa_oaep_decrypt(&key, &cipher_b64).expect("OAEP 解密");
     assert_eq!(plain, msg, "解密应恢复原明文");
 
-    let mut tampered =
-        base64::engine::general_purpose::STANDARD.decode(&cipher_b64).expect("base64 解码");
+    let mut tampered = base64::engine::general_purpose::STANDARD
+        .decode(&cipher_b64)
+        .expect("base64 解码");
     if let Some(b) = tampered.last_mut() {
         *b ^= 0x01;
     }
