@@ -163,7 +163,7 @@ git commit -m "test(pay): 深度覆盖——order/refund/bill/xml 分支（A1）
 - [x] **Step 3:** `bash scripts/alpha/collect-metrics.sh` 采数 → `metrics/metrics-2026-08-27.json`（5 请求 / P99 359ms / panic 0）
 - [x] **Step 4:** `bash scripts/alpha/check-no-go.sh` → **GO**（0 NO-GO / 0 WARN；3588 tests 全绿、覆盖率 70.13%、镜像率 100.8%）
 - [x] **Step 5:** 用真实数字填 day-5 报告表 I/II/III，`git commit -m "docs: Day-5 真实流量观察报告"`（本次提交）
-- [ ] **Step 6:** 若 7 日观察通过 → `alpha-exit-gate.sh` GO → Beta/Stable 判定——**当前 DELAY**：观察期 1/7 天（真实流量首日不可准出）+ 订阅/客服送达需真实 openid；修复点：`alpha-exit-gate.sh` 检查 5 正则 bug 已修
+- [ ] **Step 6:** 若 7 日观察通过 → `alpha-exit-gate.sh` GO → Beta/Stable 判定——**当前 DELAY**：观察期 1/7 天（真实流量首日不可准出）。**送达闭环已达成**（2026-08-27 用户 login code → jscode2session 换真实 openid → 订阅消息 errcode=0 送达，证据 `delivery-closure-2026-08-27.txt`）；剩余：客服消息送达（需用户先发消息）+ 7 日观察。修复点：`alpha-exit-gate.sh` 检查 5 正则 bug 已修
 
 ---
 

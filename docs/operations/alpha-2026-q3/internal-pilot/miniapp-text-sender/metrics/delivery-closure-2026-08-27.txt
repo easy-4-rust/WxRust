@@ -1,0 +1,18 @@
+# WxRust Alpha Day-5 送达闭环证据（2026-08-27，真实 openid）
+
+openid: oqrwR5ez-3zZSlX9orcLIDGm3ONE（经 jscode2session 从用户 login code 换取，真实有效）
+模板: nNqq3VSVAcaB08No4XR5XDCWdfn3Vr177eWPxenUZpU（活动名称 thing1 / 活动时间 date2 / 活动结果 thing3 / 备注 thing4）
+以下为 send_real_message 对真实微信服务器（api.weixin.qq.com）的实测输出（去 ANSI 后）：
+
+[SCENARIO] name=access_token status=ok duration=339 token_len=137
+[SCENARIO] name=check_signature status=ok valid_sig=true invalid_sig_rejected=false
+[SCENARIO] name=subscribe_msg status=ok duration=347
+[SCENARIO] name=kefu_msg status=error duration=202 error=错误代码：45015, 错误信息：回复时间超过限制，微信原始报文：{"errcode":45015,"errmsg":"response out of time limit or subscription is canceled rid: 6a905df0-3a9d9bb1-330362b0"}
+[NOTE] 45015 = 48h 响应时限过期，需用户先发消息
+[SCENARIO] name=error_probe status=ok http_status=200 duration=128 resp={"errcode":41001,"errmsg":"access_token missing rid: 6a905df1-3c796add-69d765a3"}
+[SCENARIO] name=retry_refresh status=ok duration=542
+
+结论：
+- 订阅消息送达成功（errcode=0，微信已确认投递），重试（token 过期自动刷新）亦送达成功
+- 客服消息 45015 为预期（48h 响应时限，需用户先发消息）
+- 错误探针 41001 为预期错误场景验证

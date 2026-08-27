@@ -20,11 +20,12 @@
 use std::sync::Arc;
 use std::time::Instant;
 
-use miniapp_text_sender::{build_kefu_text_msg, build_order_notify_msg};
+use miniapp_text_sender::build_kefu_text_msg;
 use wx_rust_common::config::WxConfigStorage;
 use wx_rust_common::http::{HttpTransport, ReqwestTransport, TransportBody, TransportMethod, TransportRequest};
 use wx_rust_miniapp::api::r#impl::WxMaServiceImpl;
 use wx_rust_miniapp::api::WxMaService;
+use wx_rust_miniapp::bean::{MsgData, WxMaSubscribeMessage};
 use wx_rust_miniapp::config::r#impl::WxMaDefaultConfig;
 use wx_rust_miniapp::config::WxMaConfig;
 
@@ -117,7 +118,15 @@ async fn run(appid: String, secret: String, template_id: String, openid: String,
 
     // ---- 场景 3：订阅消息真实发送 ----
     println!("\n=== 场景 3: 订阅消息真实发送 ===");
-    let msg = build_order_notify_msg(&openid, &template_id, "ORD-20260827-REAL-001", "已发货");
+    // 按 PartMe.AI 模板（nNqq…ZpU）真实字段构造：
+    //   活动名称 thing1 / 活动时间 date2 / 活动结果 thing3 / 备注 thing4
+    let mut msg = WxMaSubscribeMessage::new();
+    msg.to_user = Some(openid.clone());
+    msg.template_id = Some(template_id.clone());
+    msg.add_data(MsgData { name: "thing1".to_string(), value: "PartMe活动".to_string() });
+    msg.add_data(MsgData { name: "date2".to_string(), value: "2026-08-27 15:30".to_string() });
+    msg.add_data(MsgData { name: "thing3".to_string(), value: "已成功".to_string() });
+    msg.add_data(MsgData { name: "thing4".to_string(), value: "WxRust送达验证".to_string() });
     let t0 = Instant::now();
     match service.send_subscribe_msg(&msg).await {
         Ok(()) => {
