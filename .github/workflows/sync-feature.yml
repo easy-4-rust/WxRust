@@ -12,6 +12,11 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  RUST_TOOLCHAIN: "1.97.1"
+
+concurrency:
+  group: sync-feature-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   sync-feature:
@@ -22,6 +27,8 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2

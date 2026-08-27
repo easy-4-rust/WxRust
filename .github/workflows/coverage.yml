@@ -12,6 +12,11 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  RUST_TOOLCHAIN: "1.97.1"
+
+concurrency:
+  group: coverage-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   coverage:
@@ -23,6 +28,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: llvm-tools-preview
 
       - name: Cache cargo

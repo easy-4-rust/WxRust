@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to release (e.g. v0.1.0)"
+        description: Version to release (e.g. v0.1.0)
         required: true
         type: string
 
@@ -17,6 +17,12 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  # 与 ci.yml 一致：固定 1.97.1，避免 stable 漂移
+  RUST_TOOLCHAIN: "1.97.1"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   validate-tag:
@@ -50,6 +56,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: clippy, rustfmt
 
       - name: Cache cargo
@@ -92,6 +99,8 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
@@ -118,6 +127,8 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2

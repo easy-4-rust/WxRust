@@ -1,0 +1,13 @@
+# CODEOWNERS — 自动审查分派
+# 路径 → owner（GitHub 用户名/team）
+# 匹配规则：自上而下第一个匹配生效；* 通配；/ 表示目录边界。
+# 任一文件至少有一个 owner 即视为有审查者。
+
+# 默认 owner（仓库当前维护者）
+*       @wandl
+
+# 关键路径双 owner 暗示
+/crates/wx-rust-pay/  @wandl   # 微信支付涉及真实商户凭证
+/deny.toml             @wandl   # 供应链例外（RSA/已知风险）
+/Cargo.lock            @wandl   # 依赖快照
+/.github/workflows/    @wandl   # CI/CD

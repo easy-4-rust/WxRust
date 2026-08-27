@@ -12,6 +12,13 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  # 工具链固定为 1.97.1（与本地验证一致），消除 latest stable 的规则漂移。
+  # 同时满足 Cargo.toml `rust-version = "1.85"` 的 MSRV（见 msrv job）。
+  RUST_TOOLCHAIN: "1.97.1"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   fmt:
@@ -23,6 +30,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: rustfmt
 
       - name: Check formatting
@@ -37,6 +45,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: clippy
 
       - name: Cache cargo
@@ -55,6 +64,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: clippy
 
       - name: Cache cargo
@@ -72,6 +82,8 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
@@ -102,6 +114,8 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
@@ -111,3 +125,18 @@ jobs:
 
       - name: Run Redis integration tests
         run: cargo test -p wx-rust-common --features redis --test redis_integration_test
+
+  msrv:
+    # MSRV 门禁：Cargo.toml `rust-version = "1.85"`，仅 cargo check（避免构建产物不一致）
+    name: MSRV check (Rust 1.85)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust 1.85
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.85
+
+      - name: cargo check at MSRV
+        run: cargo check --workspace --all-features

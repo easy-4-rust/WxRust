@@ -5,30 +5,46 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    # 一次只开 3 个 PR（避免 v0.1.0 → v0.1.1 一次性推 6 个 PR 的混乱）
+    # 每周一批，逐步合并；合并后 dependabot 自动继续扫下一个过期版本
+    open-pull-requests-limit: 3
     groups:
       rust-deps:
         patterns:
           - "*"
+        # 同时包含 minor + patch（major 默认独立 PR 不分组，便于人工审查）
         update-types:
           - minor
           - patch
-    open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "rust"
+    # 防止依赖 PR 一次性推过多：节流到每周一
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+    # 优先 commit message 风格
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include-scope: true
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
       day: monday
+    # actions PR 也限流，避免一次跨多个 major
+    open-pull-requests-limit: 2
     groups:
       github-actions:
         patterns:
           - "*"
+        # 仅 patch（major 不自动合并，由人工事后处理）
         update-types:
           - patch
-    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "ci"
+    cooldown:
+      default-days: 7
