@@ -4,7 +4,7 @@
 
 **From:** `docs/migration/weixin-java-channel/`、`docs/migration/weixin-java-aispeech/`、`docs/migration/weixin-java-qidian/`
 **创建日期：** 2026-08-01
-**状态：** 进行中（核对日期：2026-08-12，依据：crates 源文件计数 + 测试文件计数）
+**状态：** 已完成（核对日期：2026-08-27，依据：channel/aispeech/qidian 三模块 0 MISSING；V0 审计 3287/3287 100% 处置）
 
 **Goal:** 完成第三批三个模块（channel / aispeech / qidian）的 Java→Rust 迁移。
 

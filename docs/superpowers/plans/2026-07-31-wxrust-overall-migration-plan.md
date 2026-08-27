@@ -4,7 +4,7 @@
 
 **From:** `docs/PLAN.md`
 **创建日期：** 2026-07-31
-**状态：** 进行中（核对日期：2026-08-12，依据：crates/ 下 10 个 crate 已创建并有实质实现）
+**状态：** 已完成（核对日期：2026-08-27，依据：10/10 crate 已发布 crates.io v0.1.0；V0 审计 3287/3287 0 MISSING；workspace 3588 tests 全绿）
 
 **Goal:** 基于 WxJava（4.8.4.B）创建 Rust 实现 WxRust，提供微信后端开发全场景 SDK（公众号、小程序、微信支付、企业微信、开放平台、视频号/小店、AI 语音），托管于 easy-4-rust/WxRust。
 

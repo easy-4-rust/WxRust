@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**状态：** 已完成（核对日期：2026-08-27，依据：T1-T13 全部落库，checkbox 收口 commit 202c2c3）
+
 **Goal:** 在不改变任何对外行为的前提下，把 WxRust 的并发模型从「直译 Java」收敛为 Rust 原生：传输可注入、管线单实现、过载有熔断、大文件可流式、时间可注入、同步用户有门面，并以并发基准与 block_on 门禁证明高并发正确性；同时清零 V0 迁移缺口。
 
 **Architecture:** 新增件全部落在 wx-rust-common（HttpTransport trait + execute_pipeline + CircuitBreaker + WxClock），六个模块的 base impl 改为调用统一管线；`feature = "sync"` 提供专用 runtime 的 Blocking 门面。星型拓扑与全部对外 trait 签名不变。

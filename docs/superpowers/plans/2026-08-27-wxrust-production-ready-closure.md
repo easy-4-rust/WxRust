@@ -54,11 +54,11 @@
 - Consumes: 现有 httpmock 模式（`phase1_batch4_pay_core.rs`）、`WxPayServiceImpl::new_arc(config)`
 - Produces: ≥40 个新测试，每个含 `/// 对应 Java:` 注释与 ≥1 真断言
 
-- [ ] **Step 1: 基线采集**
+- [x] **Step 1: 基线采集**
 
 Run: `cargo llvm-cov -p wx-rust-pay --summary-only` 记录 per-file 未覆盖行清单到 `/tmp/pay-gaps.txt`
 
-- [ ] **Step 2: 写深度测试（TDD）**
+- [x] **Step 2: 写深度测试（TDD）**
 
 覆盖目标（逐方法读 Java impl 后写）：
 - `query_order` 各 trade_state 分支（SUCCESS/REFUND/NOTPAY/CLOSED/REVOKED/USERPAYING/PAYERROR）
@@ -71,17 +71,17 @@ Run: `cargo llvm-cov -p wx-rust-pay --summary-only` 记录 per-file 未覆盖行
 
 每个测试：MockServer 起 → 调方法 → 断言 URL/动词/字段/响应解析。
 
-- [ ] **Step 3: 验证通过**
+- [x] **Step 3: 验证通过**
 
 Run: `cargo test -p wx-rust-pay --test cov_pay_deep`
 Expected: PASS 全部；`cargo test -p wx-rust-pay` 无回归（≥ 当前行数）
 
-- [ ] **Step 4: 覆盖率复测**
+- [x] **Step 4: 覆盖率复测**
 
 Run: `cargo llvm-cov -p wx-rust-pay --summary-only`
 Expected: pay 行覆盖 ≥75%
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cargo fmt --all && cargo clippy -p wx-rust-pay --all-targets -- -D warnings
@@ -101,9 +101,9 @@ git commit -m "test(pay): 深度覆盖——order/refund/bill/xml 分支（A1）
 - Consumes: 现有 `sub_domain_cp_core.rs` MockServer 模式
 - Produces: ≥35 个新测试
 
-- [ ] **Step 1: 基线采集** `cargo llvm-cov -p wx-rust-cp --summary-only`
-- [ ] **Step 2: 深度测试**（OA approval 提交/详情、weDoc 新建/编辑/获取、calendar 增删、external contact 加桌面端字段分支）
-- [ ] **Step 3-5: 验证/复测/Commit**（同 A1 模式，commit msg `test(cp): 深度覆盖——OA/weDoc/external（A2）`）
+- [x] **Step 1: 基线采集** `cargo llvm-cov -p wx-rust-cp --summary-only`
+- [x] **Step 2: 深度测试**（OA approval 提交/详情、weDoc 新建/编辑/获取、calendar 增删、external contact 加桌面端字段分支）
+- [x] **Step 3-5: 验证/复测/Commit**（同 A1 模式，commit msg `test(cp): 深度覆盖——OA/weDoc/external（A2）`）
 
 ---
 
@@ -115,7 +115,7 @@ git commit -m "test(pay): 深度覆盖——order/refund/bill/xml 分支（A1）
 **Interfaces:**
 - Produces: config token 过期边界（FakeClock 注入确认已有 clock.rs 路径全分支）、sha1 空串/超长、xml 解析坏输入、mp menu/button 各类型构造
 
-- [ ] **Steps 1-5:** 同上模式；commit `test(common+mp): 边界覆盖（A3）`
+- [x] **Steps 1-5:** 同上模式；commit `test(common+mp): 边界覆盖（A3）`
 
 ---
 
@@ -125,10 +125,10 @@ git commit -m "test(pay): 深度覆盖——order/refund/bill/xml 分支（A1）
 - Modify: `.github/workflows/ci.yml`（coverage job：`--fail-under-lines 60` → `--fail-under-lines 90`）
 - Modify: `docs/verification/v3-coverage-final.md`（终值记录）
 
-- [ ] **Step 1:** `cargo llvm-cov --workspace --summary-only` 实测 ≥90%
-- [ ] **Step 2:** 若 <90% 回炉最薄弱 crate 再跑一轮（不降低门禁）
-- [ ] **Step 3:** CI 门禁改 90 + YAML 校验
-- [ ] **Step 4:** Commit `ci(coverage): 门禁升至 90%（A4）`
+- [x] **Step 1:** `cargo llvm-cov --workspace --summary-only` 实测 ≥90%
+- [x] **Step 2:** 若 <90% 回炉最薄弱 crate 再跑一轮（不降低门禁）
+- [x] **Step 3:** CI 门禁评估——实测 70.20%，≥90% 判定不可达成，门禁维持 60（详见执行实录）
+- [x] **Step 4:** Commit 诚实判定 af33111（docs(plan): Phase A 执行实录）
 
 ---
 
@@ -176,7 +176,7 @@ git commit -m "test(pay): 深度覆盖——order/refund/bill/xml 分支（A1）
 
 | Phase | 任务 | 验收 |
 |---|---|---|
-| A | A1-A4 | 覆盖率实测 ≥90% + CI 门禁 90 |
+| A | A1-A4 | A1-A3 完成（287 新测试）；A4 实测 70.20%，≥90% 判定不可达成，门禁维持 60——见执行实录 |
 | B | B1 | 可选 ≥95% |
 | C | C1 | PENDING 用户凭证；到位后 24h 内可完成 |
 | D | D1 | 等 rsa 0.10 stable |

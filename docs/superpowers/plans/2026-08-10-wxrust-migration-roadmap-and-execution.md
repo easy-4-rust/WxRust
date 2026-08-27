@@ -114,7 +114,7 @@
 |---|---|---|
 | B0 | 已完成 | inventory CSV + 9 模块对照表 |
 | B1 | 已完成 | ARCHITECTURE.md LOCKED |
-| B2 | 进行中 | crates/ 源文件计数 |
+| B2 | ✅ 已完成 | 9 批次全部落库；V0 审计 3287/3287 0 MISSING |
 | V0 | ✅ 已完成 | audit_migration_layout.py + 报告（97.8% 已处置） |
 | V1 | ✅ 已完成 | fmt/check/test/clippy 四门禁全绿（约 1370 tests） |
 | V2 | ✅ 已完成 | 40.5% 镜像 + 5/5 golden 差分一致 |

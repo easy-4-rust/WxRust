@@ -4,7 +4,7 @@
 
 **From:** `docs/migration/weixin-java-common/`、`docs/migration/weixin-java-mp/`、`docs/migration/weixin-java-miniapp/`（迁移路线图.md + 对象级对照表.md + 语义迁移对照表.md + 对象名称一致性检查.md）
 **创建日期：** 2026-08-01
-**状态：** 进行中（核对日期：2026-08-12，依据：crates 源文件计数 + 测试文件计数）
+**状态：** 已完成（核对日期：2026-08-27，依据：common/mp/miniapp 三模块 0 MISSING；V0 审计 3287/3287 100% 处置）
 
 **Goal:** 完成第一批三个模块（common / mp / miniapp）的 Java→Rust 迁移，包括基础层 trait 定义、公众号全场景 SDK、小程序全场景 SDK。
 

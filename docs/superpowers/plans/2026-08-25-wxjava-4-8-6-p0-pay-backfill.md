@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**状态：** 已完成（核对日期：2026-08-27，依据：P0 三 commit 7691dbe/fef8c3b/0fbb529 + P1/P2/P3 收口；终态报告 docs/verification/wxjava-4-8-6-p0-p3-backfill-completion-report-2026-08-25.md）
+
 **Goal:** 把 WxJava 4.8.5/4.8.6 中新增的 P0 商业能力（微信支付点金计划 + 商家转账用户授权免确认 + V3 服务商电子发票）补齐至 WxRust，使其与 WxJava 4.8.6 的支付模块保持功能对齐，并通过编译/测试/审计门禁。
 
 **Architecture:** 支付模块的新增以 `WxPayService` trait 新增默认方法 + 子服务 bean（serde derive）为骨架，所有新接口保持 `async fn -> Result<T, WxErrorException>`；bean 字段遵循 Java `@SerializedName` 名称直接映射至 `serde(rename = "...")`。HTTP mock 使用现有 `httpmock` dev-dep；测试遵循三层规范（SOURCE_PARITY / RUST_OBLIGATION / VALUE_ADD）。
