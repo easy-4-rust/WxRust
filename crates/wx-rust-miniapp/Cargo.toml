@@ -42,7 +42,7 @@ hmac = { workspace = true }
 # 并发验收基准（G7）专用 dev 依赖：criterion 与 common 侧同一版本；
 # futures-util 供 join_all 驱动并发批次（均为 workspace 既有依赖）
 [dev-dependencies]
-criterion = "0.5"
+criterion = "0.8"
 futures-util = { workspace = true }
 
 # token 单飞验收基准：--test 模式进 CI（cargo bench -- --test），
