@@ -1,0 +1,35 @@
+[package]
+name = "miniapp-text-sender"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+authors = ["wandl <hiwepy@gmail.com>"]
+description = "WxRust Alpha 内部接入示例：通过 wx-rust-miniapp 发送小程序订阅消息"
+
+# 独立 workspace，不嵌套到父级 WxRust workspace
+[workspace]
+
+[dependencies]
+# 方式 A：本地 workspace 内引用（开发验证用）
+wx-rust-miniapp = { path = "../../../../../crates/wx-rust-miniapp" }
+wx-rust-common = { path = "../../../../../crates/wx-rust-common" }
+
+# 核心运行时
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+
+# 序列化
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# 日志
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full", "test-util"] }
+
+[[example]]
+name = "send_subscribe_msg"
+path = "examples/send_subscribe_msg.rs"
