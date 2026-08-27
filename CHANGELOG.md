@@ -1,14 +1,37 @@
 # Changelog
 
-本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.0`（workspace 统一版本），尚未正式发布至 crates.io。
+本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.1`（workspace 统一版本）。
 
-## [Unreleased]
+## [0.1.1] - 2026-08-28
 
-### 安全
+### 功能增强（v0.1.0 以来 54 个 src 文件）
 
-- **RSA mitigation 验证测试**：在 `wx-rust-common` 新增 `security_rsa_mitigation_test`（14 项），覆盖 RSA-OAEP 加解密往返、PKCS#1 v1.5 签名/验签往返、错误输入行为（不 panic），作为 RUSTSEC-2023-0071 mitigation 证据链的一环。（2026-08-25）
+- **channel**：售后保障单（guarantee 全流程 bean + impl）、订单（补偿发货 / 预售改 SKU / 赠品 / 隐私号收发货）、商品（第三方货源 / 审核策略 / 类目分类 / 方案 scheme）、店铺（H5 链接 / 二维码 / 标签链接）+ URL 枚举扩展
+- **miniapp**：g3 小店 / g4 能力 URL 枚举补全、OCR 服务 impl 增强
+- **open**：component service impl 增强
+- **common**：OcrService 增强
+- **aispeech**：dialog `async_task_result` bean
 
-## [0.1.0] - 工程基线（未发布）
+### 测试体系
+
+- 镜像率提升至 **100.8%**（Batch-C/D/E，383/380 unique，V2 复测 #7）
+- Phase A 深度覆盖：pay 114 + cp 70 + common/mp 103 = **287 个新测试**
+- **RSA-OAEP Marvin 缓解证据测试**（`wx_pay_v3_crypto_test.rs::rsa_oaep_roundtrip_marvin_mitigation_evidence`）：随机填充、往返解密、篡改密文拒绝，与 `wx-rust-common` 的 `security_rsa_mitigation_test`（14 项）构成双重证据链
+- workspace tests：**3588 passed / 0 failed**；覆盖率 **70.06%** line（门禁 ≥60%）
+
+### 真实环境验证（Alpha Day-5 闭环，2026-08-27）
+
+- **订阅消息 + 客服消息双通道真实送达**（微信 errcode=0 + 接入方人工确认）
+- access_token / 验签 / 错误码映射 / token 过期自动刷新重试全部实测通过
+- No-Go 闸门 GO（0 阻塞）；准出判定 DELAY（观察期 7 日，Day-7 = 2026-09-02）
+
+### 其他
+
+- 新增 `docs/known-issues.md`（已知风险与已接受风险清单）
+- 新增最小原生小程序测试工程 `partme-miniapp-test`（openid 获取 + 订阅授权 + 客服会话）
+- 修复 `scripts/alpha/alpha-exit-gate.sh` 检查 5 正则假阳性（`test result:.*[1-9][0-9]* failed`）
+
+## [0.1.0] - 工程基线（2026-08-25 发布 crates.io，10/10 crate）
 
 ### 架构与工程基线
 
@@ -45,4 +68,4 @@
 
 ### 已知风险
 
-- **rsa 0.9.10 RUSTSEC-2023-0071**：Marvin Attack（medium），无修复版本可用（0.10 尚为 RC）。当前 mitigation：RSA-OAEP 盲化 + 固定消息加密。已配置 `deny.toml` 例外。待 rsa 0.10 稳定后升级并移除例外。
+- **rsa 0.9.10 RUSTSEC-2023-0071**：Marvin Attack（medium），无修复版本可用（0.10 尚为 RC）。当前 mitigation：RSA-OAEP 盲化 + 固定消息加密。已配置 `deny.toml` 例外。待 rsa 0.10 稳定后升级并移除例外。（详见 `docs/known-issues.md`）

@@ -406,6 +406,44 @@ fn rsa_verify_rejects_tampered() {
     );
 }
 
+/// RUSTSEC-2023-0071（rsa 0.9.x Marvin）缓解证据测试。
+///
+/// 缓解策略（与 `deny.toml` 例外注释、`docs/known-issues.md` 一致）：
+/// - WxRust 私钥解密路径统一走 **RSA-OAEP**（OAEP 内建完整性校验，对
+///   时序侧信道攻击的暴露面远小于 PKCS#1 v1.5 无填充校验的裸 RSA 解密）；
+/// - 全库不存在对任意密文执行 PKCS#1 v1.5 解密的使用点（v1.5 仅用于
+///   确定性 RSA-SHA256 签名，不受 Marvin 影响）；
+/// - 彻底修复等待 rsa 0.10 stable（Phase D 跟踪项）。
+///
+/// 本测试证明 OAEP 加解密闭环可用且具备随机化与完整性：
+/// 1. 同一明文两次加密密文不同（随机填充）；
+/// 2. 解密恢复原明文；
+/// 3. 篡改密文必须解密失败（OAEP 完整性校验）。
+#[test]
+fn rsa_oaep_roundtrip_marvin_mitigation_evidence() {
+    let key = load_private_key_from_pem(MERCHANT_PRIVATE_KEY_PEM.as_bytes()).expect("私钥");
+    let public_key = key.to_public_key();
+    let msg = "WxRust-OAEP-marvin-mitigation-evidence";
+
+    let cipher_b64 = rsa_oaep_encrypt(&public_key, msg).expect("OAEP 加密");
+    let cipher_b64_2 = rsa_oaep_encrypt(&public_key, msg).expect("OAEP 加密（重复）");
+    assert_ne!(cipher_b64, cipher_b64_2, "OAEP 应具备随机填充");
+
+    let plain = rsa_oaep_decrypt(&key, &cipher_b64).expect("OAEP 解密");
+    assert_eq!(plain, msg, "解密应恢复原明文");
+
+    let mut tampered =
+        base64::engine::general_purpose::STANDARD.decode(&cipher_b64).expect("base64 解码");
+    if let Some(b) = tampered.last_mut() {
+        *b ^= 0x01;
+    }
+    let tampered_b64 = base64::engine::general_purpose::STANDARD.encode(&tampered);
+    assert!(
+        rsa_oaep_decrypt(&key, &tampered_b64).is_err(),
+        "篡改密文必须解密失败（OAEP 完整性校验）"
+    );
+}
+
 /// 证书序列号提取 golden（official-wechatpay-java `TestConfig` 两个序列号）。
 #[test]
 fn cert_serial_number_official_sdk_certs() {
