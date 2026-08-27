@@ -92,8 +92,8 @@ impl WxPayCertificate {
     pub fn public_key(&self) -> Result<RsaPublicKey, WxPayCertError> {
         let spki_der = self
             .cert
-            .tbs_certificate
-            .subject_public_key_info
+            .tbs_certificate()
+            .subject_public_key_info()
             .to_der()
             .map_err(|e| WxPayCertError::InvalidCertificate(e.to_string()))?;
         RsaPublicKey::from_public_key_der(&spki_der)
@@ -249,7 +249,7 @@ fn strip_pem_markers(pem: &[u8], begin: &str, end: &str) -> String {
 /// `BigInteger.toString(16)` 为无前导零的最小表示；DER INTEGER 对最高位为 1
 /// 的正数会前置 `0x00`，故先跳过前导零字节。
 fn serial_no_hex_upper(cert: &Certificate) -> String {
-    let bytes = cert.tbs_certificate.serial_number.as_bytes();
+    let bytes = cert.tbs_certificate().serial_number().as_bytes();
     let trimmed = bytes
         .iter()
         .skip_while(|&&b| b == 0)
@@ -269,14 +269,14 @@ fn check_validity(cert: &Certificate) -> Result<(), WxPayCertError> {
         .unwrap_or_default();
     // x509-cert 的 Time::to_unix_duration（der UtcTime/GeneralizedTime 均支持）
     let not_before = cert
-        .tbs_certificate
-        .validity
+        .tbs_certificate()
+        .validity()
         .not_before
         .to_unix_duration()
         .as_secs();
     let not_after = cert
-        .tbs_certificate
-        .validity
+        .tbs_certificate()
+        .validity()
         .not_after
         .to_unix_duration()
         .as_secs();

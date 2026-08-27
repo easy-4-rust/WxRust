@@ -6,6 +6,7 @@
 use std::collections::HashMap;
 
 use quick_xml::Reader;
+use quick_xml::XmlVersion;
 use quick_xml::events::Event;
 
 /// XML 转换工具。
@@ -36,19 +37,19 @@ impl XmlUtils {
                 Ok(Event::Start(e)) => {
                     depth += 1;
                     if depth == 2 {
-                        current_tag = Some(String::from_utf8_lossy(e.name().as_ref()).to_string());
+                        current_tag = Some(e.name().as_ref().to_string());
                     }
                 }
                 Ok(Event::Text(t)) => {
                     if let Some(tag) = &current_tag {
-                        let text = t.decode().map_err(|e| e.to_string())?;
-                        map.insert(tag.clone(), text.to_string());
+                        let text = t.xml_content(XmlVersion::Implicit1_0).to_string();
+                        map.insert(tag.clone(), text);
                     }
                 }
                 Ok(Event::CData(t)) => {
                     if let Some(tag) = &current_tag {
-                        let text = t.decode().map_err(|e| e.to_string())?;
-                        map.insert(tag.clone(), text.to_string());
+                        let text = t.xml_content(XmlVersion::Implicit1_0).to_string();
+                        map.insert(tag.clone(), text);
                     }
                 }
                 Ok(Event::End(_)) => {

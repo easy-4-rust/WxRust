@@ -50,13 +50,13 @@ impl WxMpUserBlacklistGetResult {
                 .unwrap_or_default()
                 .to_string(),
         };
-        if let Some(data) = value.get("data").and_then(|v| v.as_object()) {
-            if let Some(openids) = data.get("openid").and_then(|v| v.as_array()) {
-                result.openid_list = openids
-                    .iter()
-                    .filter_map(|v| v.as_str().map(String::from))
-                    .collect();
-            }
+        if let Some(data) = value.get("data").and_then(|v| v.as_object())
+            && let Some(openids) = data.get("openid").and_then(|v| v.as_array())
+        {
+            result.openid_list = openids
+                .iter()
+                .filter_map(|v| v.as_str().map(String::from))
+                .collect();
         }
         Ok(result)
     }

@@ -76,10 +76,10 @@ impl WxMessageDuplicateChecker for WxMessageInMemoryDuplicateChecker {
         self.clear_expired();
         let now = Instant::now();
         let mut map = self.msg_id_2_timestamp.lock().unwrap();
-        if let Some(ts) = map.get(message_id) {
-            if now.duration_since(*ts) < self.time_to_live {
-                return true;
-            }
+        if let Some(ts) = map.get(message_id)
+            && now.duration_since(*ts) < self.time_to_live
+        {
+            return true;
         }
         map.insert(message_id.to_string(), now);
         false

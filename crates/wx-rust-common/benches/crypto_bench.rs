@@ -5,7 +5,8 @@
 //! - `Sha1::digest_with_amp` (SHA1 message signing)
 //! - `SignUtils::create_hmac_sha256_sign` (HMAC-SHA256)
 
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
+use std::hint::black_box;
 
 use wx_rust_common::util::SignUtils;
 use wx_rust_common::util::crypto::{Sha1, WxCryptUtil};

@@ -5,7 +5,7 @@ members = ["crates/*"]
 [workspace.package]
 version = "0.1.2"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.89"
 license = "Apache-2.0"
 authors = ["wandl <hiwepy@gmail.com>"]
 repository = "https://github.com/easy-4-rust/WxRust"
@@ -30,7 +30,7 @@ tokio = { version = "1.52.4", features = ["io-util", "macros", "net", "rt", "syn
 reqwest = { version = "0.13.4", default-features = false, features = ["json", "rustls", "stream", "multipart"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = { version = "1.0.150", features = ["preserve_order"] }
-quick-xml = "0.41.0"
+quick-xml = "0.42.0"
 thiserror = "2.0.18"
 tracing = "0.1.44"
 chrono = { version = "0.4.45", default-features = false, features = ["clock", "std"] }
@@ -47,7 +47,7 @@ percent-encoding = "2.3.2"
 rand = "0.10.2"
 dashmap = "6.1.0"
 once_cell = "1.21.0"
-redis = "0.29.0"
+redis = "1.6.0"
 tempfile = "3.27.0"
 mime = "0.3.17"
 bytes = "1.10.0"
@@ -66,3 +66,7 @@ too_many_arguments = "allow"
 module_inception = "allow"
 # - 生成代码的请求构造惯用法：let mut req = T::default(); req.field = ...
 field_reassign_with_default = "allow"
+# - Java 迁移代码保持嵌套 if 的原始结构（Java 无 let-chains；折叠改变可读性）
+collapsible_if = "allow"
+# - 手写 `% N == 0` 为 Java 迁移惯用法；is_multiple_of 为 1.89 新 lint，非语义改进
+manual_is_multiple_of = "allow"

@@ -38,7 +38,7 @@ hex = { workspace = true }
 sha2 = { workspace = true }
 hmac = { workspace = true }
 # MD5（v2 签名 SignType.MD5，对应 Java commons-codec DigestUtils.md5Hex）
-md-5 = "0.10.6"
+md-5 = "0.11.0"
 # AES-256-ECB（v2 退款通知 req_info 解密，对应 Java AES/ECB/PKCS5Padding）
 aes = { workspace = true }
 # GZIP 对账单解压（对应 Java ZipUtils.unGzip）
@@ -49,7 +49,7 @@ rsa = { workspace = true }
 # AES-256-GCM：通知回调 ciphertext 解密/退款回调加密（Java v3/util/AesUtils：AEAD_AES_256_GCM，apiV3Key）
 aes-gcm = { version = "0.11.0", default-features = false, features = ["aes", "alloc"] }
 # X.509 证书解析：PemUtils.loadCertificate 的序列号/公钥提取（der 0.7/spki 0.7 体系，与 rsa 0.9.10 同代）
-x509-cert = "0.2.5"
+x509-cert = "0.3.0"
 # PKCS#12 容器解析：Java KeyStore.getInstance("PKCS12") 的 Rust 等价（纯 Rust；见 WxPayConfig.p12ToPem）
 p12 = "0.6.3"
 # rsa 0.9 的 RNG（rand_core 0.6 系；workspace 的 rand 0.10 与其不兼容），OsRng 用于 RSA 签名盲化/OAEP 加密

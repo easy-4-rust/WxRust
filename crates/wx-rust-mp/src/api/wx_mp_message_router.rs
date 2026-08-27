@@ -186,11 +186,11 @@ impl WxMpMessageRouter {
             ));
         }
 
-        if let Some(code) = wx_message.user_card_code.as_deref() {
-            if !code.is_empty() {
-                message_id.push('-');
-                message_id.push_str(code);
-            }
+        if let Some(code) = wx_message.user_card_code.as_deref()
+            && !code.is_empty()
+        {
+            message_id.push('-');
+            message_id.push_str(code);
         }
 
         self.message_duplicate_checker.is_duplicate(&message_id)

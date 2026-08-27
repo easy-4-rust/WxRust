@@ -4,6 +4,7 @@
 use std::collections::HashMap;
 
 use quick_xml::Reader;
+use quick_xml::XmlVersion;
 use quick_xml::events::Event;
 
 /// 解析 XML 根元素（`<xml>`）的全部直接子节点为「名称 → 文本」map。
@@ -32,12 +33,12 @@ pub fn root_children_map(xml: &str) -> Result<HashMap<String, String>, String> {
     loop {
         match reader.read_event_into(&mut buf) {
             Ok(Event::Start(e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_string();
+                let name = e.name().as_ref().to_string();
                 let text = collect_element_text(&mut reader)?;
                 fields.entry(name).or_insert(text);
             }
             Ok(Event::Empty(e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_string();
+                let name = e.name().as_ref().to_string();
                 fields.entry(name).or_insert_with(String::new);
             }
             Ok(Event::End(_)) => break, // 根元素结束
@@ -61,10 +62,10 @@ fn collect_element_text(reader: &mut Reader<&[u8]>) -> Result<String, String> {
                 text.push_str(&collect_element_text(reader)?);
             }
             Ok(Event::Text(t)) => {
-                text.push_str(&t.decode().map_err(|e| e.to_string())?);
+                text.push_str(&t.xml_content(XmlVersion::Implicit1_0));
             }
             Ok(Event::CData(t)) => {
-                text.push_str(&t.decode().map_err(|e| e.to_string())?);
+                text.push_str(&t.xml_content(XmlVersion::Implicit1_0));
             }
             Ok(Event::End(_)) => break,
             Ok(Event::Eof) => return Err("XML 解析失败: 元素未闭合".to_string()),

@@ -51,13 +51,14 @@ impl WxAispeechServiceImpl {
 /// `PLATFORM_NA`，reqwest 不内建该支持）。
 fn build_http_client(config: &dyn WxAispeechConfigStorage) -> reqwest::Client {
     let mut builder = reqwest::Client::builder();
-    if let Some(host) = config.http_proxy_host() {
-        if !host.is_empty() && config.http_proxy_port() > 0 {
-            builder = builder.proxy(
-                reqwest::Proxy::all(format!("http://{host}:{}", config.http_proxy_port()))
-                    .expect("代理地址合法"),
-            );
-        }
+    if let Some(host) = config.http_proxy_host()
+        && !host.is_empty()
+        && config.http_proxy_port() > 0
+    {
+        builder = builder.proxy(
+            reqwest::Proxy::all(format!("http://{host}:{}", config.http_proxy_port()))
+                .expect("代理地址合法"),
+        );
     }
     builder.build().expect("HTTP 客户端构建失败")
 }

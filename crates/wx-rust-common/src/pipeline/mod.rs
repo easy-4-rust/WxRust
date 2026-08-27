@@ -186,18 +186,18 @@ where
         let body_text = String::from_utf8_lossy(&resp.body);
         let wx_error = WxError::from_json_with_type(&body_text, Some(wx_type));
         if wx_error.error_code != 0 {
-            if crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES.contains(&wx_error.error_code) {
-                if let Some(on_token_invalid) = on_token_invalid {
-                    // 强制设置 access token 过期，下一次请求里就会刷新
-                    // （重放沿用同一 token，与 miniapp 现实现一致）。
-                    // 置过期恒执行；重放仅在 replay_on_token_invalid 为真
-                    // 且未重放过时发生（对齐 miniapp「auto_refresh_token()
-                    // && !do_not_auto_refresh」语义）
-                    on_token_invalid().await;
-                    if ctx.replay_on_token_invalid && !replayed {
-                        replayed = true;
-                        continue;
-                    }
+            if crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES.contains(&wx_error.error_code)
+                && let Some(on_token_invalid) = on_token_invalid
+            {
+                // 强制设置 access token 过期，下一次请求里就会刷新
+                // （重放沿用同一 token，与 miniapp 现实现一致）。
+                // 置过期恒执行；重放仅在 replay_on_token_invalid 为真
+                // 且未重放过时发生（对齐 miniapp「auto_refresh_token()
+                // && !do_not_auto_refresh」语义）
+                on_token_invalid().await;
+                if ctx.replay_on_token_invalid && !replayed {
+                    replayed = true;
+                    continue;
                 }
             }
             // 保留完整 WxError（含原始报文 json）供上层回解析

@@ -501,7 +501,7 @@ fn aes_256_ecb_decrypt_pkcs7(key: &[u8], data: &[u8]) -> Result<Vec<u8>, String>
     if key.len() != 32 {
         return Err("无效的AES密钥，长度必须为32个字节".to_string());
     }
-    if data.is_empty() || data.len() % 16 != 0 {
+    if data.is_empty() || !data.len().is_multiple_of(16) {
         return Err("密文长度不是16的整数倍".to_string());
     }
     let cipher = Aes256::new_from_slice(key).map_err(|e| e.to_string())?;

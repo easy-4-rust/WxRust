@@ -8,6 +8,7 @@
 use std::collections::HashMap;
 
 use quick_xml::Reader;
+use quick_xml::XmlVersion;
 use quick_xml::events::Event;
 use serde::{Deserialize, Serialize};
 
@@ -110,20 +111,20 @@ fn parse_element_body(reader: &mut Reader<&[u8]>) -> Result<XmlValue, String> {
     loop {
         match reader.read_event_into(&mut buf) {
             Ok(Event::Start(e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_string();
+                let name = e.name().as_ref().to_string();
                 let child = parse_element_body(reader)?;
                 insert_field(&mut fields, name, child);
             }
             Ok(Event::Empty(e)) => {
-                let name = String::from_utf8_lossy(e.name().as_ref()).to_string();
+                let name = e.name().as_ref().to_string();
                 insert_field(&mut fields, name, XmlValue::Node(HashMap::new()));
             }
             Ok(Event::Text(t)) => {
-                let s = t.decode().map_err(|e| e.to_string())?;
+                let s = t.xml_content(XmlVersion::Implicit1_0);
                 text.push_str(&s);
             }
             Ok(Event::CData(t)) => {
-                let s = t.decode().map_err(|e| e.to_string())?;
+                let s = t.xml_content(XmlVersion::Implicit1_0);
                 text.push_str(&s);
             }
             Ok(Event::End(_)) => break,

@@ -280,15 +280,15 @@ impl WxMpKefuMessage {
             other => return Err(format!("非法消息类型，暂不支持: {other}")),
         }
 
-        if let Some(v) = &self.kf_account {
-            if !v.is_empty() {
-                let mut customservice = serde_json::Map::new();
-                customservice.insert("kf_account".into(), serde_json::json!(v));
-                map.insert(
-                    "customservice".into(),
-                    serde_json::Value::Object(customservice),
-                );
-            }
+        if let Some(v) = &self.kf_account
+            && !v.is_empty()
+        {
+            let mut customservice = serde_json::Map::new();
+            customservice.insert("kf_account".into(), serde_json::json!(v));
+            map.insert(
+                "customservice".into(),
+                serde_json::Value::Object(customservice),
+            );
         }
 
         serde_json::to_string(&serde_json::Value::Object(map))

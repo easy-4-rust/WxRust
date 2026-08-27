@@ -114,10 +114,10 @@ impl RedisDistributedLock {
             match self.try_lock() {
                 Ok(Some(g)) => return Ok(g),
                 Ok(None) => {
-                    if let Some(t) = timeout {
-                        if start.elapsed() >= t {
-                            return Err("acquire timeouted".to_string());
-                        }
+                    if let Some(t) = timeout
+                        && start.elapsed() >= t
+                    {
+                        return Err("acquire timeouted".to_string());
                     }
                     std::thread::sleep(std::time::Duration::from_millis(1000));
                 }

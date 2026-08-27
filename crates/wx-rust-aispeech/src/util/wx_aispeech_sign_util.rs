@@ -108,20 +108,20 @@ fn decode_aes_key(aes_key: &str) -> Result<Vec<u8>, String> {
         }
         // 两字符量子：第二字符低 4 位被丢弃
         2 => {
-            if let Some(c) = s.chars().last() {
-                if let Some(idx) = b64_index(c as u8) {
-                    s.pop();
-                    s.push(B64_CHARS[(idx & !0b1111) as usize] as char);
-                }
+            if let Some(c) = s.chars().last()
+                && let Some(idx) = b64_index(c as u8)
+            {
+                s.pop();
+                s.push(B64_CHARS[(idx & !0b1111) as usize] as char);
             }
         }
         // 三字符量子：第三字符低 2 位被丢弃
         3 => {
-            if let Some(c) = s.chars().last() {
-                if let Some(idx) = b64_index(c as u8) {
-                    s.pop();
-                    s.push(B64_CHARS[(idx & !0b11) as usize] as char);
-                }
+            if let Some(c) = s.chars().last()
+                && let Some(idx) = b64_index(c as u8)
+            {
+                s.pop();
+                s.push(B64_CHARS[(idx & !0b11) as usize] as char);
             }
         }
         _ => {}

@@ -82,10 +82,10 @@ impl WxError {
         if err.error_code == 0 || wx_type.is_none() {
             return err;
         }
-        if let Some(msg) = &err.error_msg {
-            if !msg.is_empty() {
-                err.error_msg_en = Some(msg.clone());
-            }
+        if let Some(msg) = &err.error_msg
+            && !msg.is_empty()
+        {
+            err.error_msg_en = Some(msg.clone());
         }
 
         if let Some(t) = wx_type {

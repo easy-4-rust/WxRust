@@ -37,20 +37,20 @@ impl WxQidianHostConfig {
         match host_config {
             None => format!("{prefix}{path}"),
             Some(config) => {
-                if let Some(host) = &config.api_host {
-                    if prefix == API_DEFAULT_HOST_URL {
-                        return format!("{host}{path}");
-                    }
+                if let Some(host) = &config.api_host
+                    && prefix == API_DEFAULT_HOST_URL
+                {
+                    return format!("{host}{path}");
                 }
-                if let Some(host) = &config.qidian_host {
-                    if prefix == QIDIAN_DEFAULT_HOST_URL {
-                        return format!("{host}{path}");
-                    }
+                if let Some(host) = &config.qidian_host
+                    && prefix == QIDIAN_DEFAULT_HOST_URL
+                {
+                    return format!("{host}{path}");
                 }
-                if let Some(host) = &config.open_host {
-                    if prefix == OPEN_DEFAULT_HOST_URL {
-                        return format!("{host}{path}");
-                    }
+                if let Some(host) = &config.open_host
+                    && prefix == OPEN_DEFAULT_HOST_URL
+                {
+                    return format!("{host}{path}");
                 }
                 format!("{prefix}{path}")
             }

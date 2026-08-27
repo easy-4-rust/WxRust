@@ -324,10 +324,10 @@ impl WxCryptUtil {
         let content = &xml[start..start + end];
         // 去除可能的 CDATA 包裹
         let content = content.trim();
-        if let Some(rest) = content.strip_prefix("<![CDATA[") {
-            if let Some(v) = rest.strip_suffix("]]>") {
-                return Ok(v.to_string());
-            }
+        if let Some(rest) = content.strip_prefix("<![CDATA[")
+            && let Some(v) = rest.strip_suffix("]]>")
+        {
+            return Ok(v.to_string());
         }
         Ok(content.to_string())
     }
@@ -388,18 +388,18 @@ fn lenient_base64_decode(input: &str) -> Result<Vec<u8>, String> {
     if rem == 2 || rem == 3 {
         // 尾字符只保留 2 位（rem=2）或 4 位（rem=3）有效数据：
         // 将尾字符替换为合法编码（低 2 位清零）
-        if let Some(&last) = s.as_bytes().last() {
-            if let Some(idx) = base64_charset_index(last) {
-                let masked = idx & !0b11;
-                if let Some(ch) = base64_charset_char(masked) {
-                    let mut s2 = s[..s.len() - 1].to_string();
-                    s2.push(ch as char);
-                    return base64::Engine::decode(
-                        &base64::engine::general_purpose::STANDARD_NO_PAD,
-                        &s2,
-                    )
-                    .map_err(|e| e.to_string());
-                }
+        if let Some(&last) = s.as_bytes().last()
+            && let Some(idx) = base64_charset_index(last)
+        {
+            let masked = idx & !0b11;
+            if let Some(ch) = base64_charset_char(masked) {
+                let mut s2 = s[..s.len() - 1].to_string();
+                s2.push(ch as char);
+                return base64::Engine::decode(
+                    &base64::engine::general_purpose::STANDARD_NO_PAD,
+                    &s2,
+                )
+                .map_err(|e| e.to_string());
             }
         }
     }

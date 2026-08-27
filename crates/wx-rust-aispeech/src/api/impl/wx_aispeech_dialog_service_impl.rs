@@ -197,10 +197,10 @@ impl WxAispeechDialogService for WxAispeechDialogServiceImpl {
         let mut dialog_result = result
             .data
             .ok_or_else(|| WxErrorException::from_code(-99, "data 字段缺失"))?;
-        if let Some(answer) = dialog_result.answer.as_deref() {
-            if looks_like_json(answer) {
-                dialog_result.raw_answer = serde_json::from_str(answer).ok();
-            }
+        if let Some(answer) = dialog_result.answer.as_deref()
+            && looks_like_json(answer)
+        {
+            dialog_result.raw_answer = serde_json::from_str(answer).ok();
         }
         Ok(dialog_result)
     }

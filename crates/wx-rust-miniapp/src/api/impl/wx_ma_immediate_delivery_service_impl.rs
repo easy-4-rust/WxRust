@@ -76,17 +76,18 @@ impl WxMaImmediateDeliveryServiceImpl {
             .map_err(|e| WxErrorException::Serde(e.to_string()))?;
         // 是否为微信错误响应：当 errcode==0 或不存在时再看运力方 resultcode
         let element = json_object.get("errcode");
-        if let Some(element) = element {
-            if !element.is_null() && SUCCESS_CODE != element.as_i64().unwrap_or_default() {
-                let error = wx_rust_common::error::WxError::from_json_with_type(
-                    response_content,
-                    Some(wx_rust_common::enums::WxType::MiniApp),
-                );
-                return Err(WxErrorException::from_code(
-                    error.error_code,
-                    error.error_msg.unwrap_or_default(),
-                ));
-            }
+        if let Some(element) = element
+            && !element.is_null()
+            && SUCCESS_CODE != element.as_i64().unwrap_or_default()
+        {
+            let error = wx_rust_common::error::WxError::from_json_with_type(
+                response_content,
+                Some(wx_rust_common::enums::WxType::MiniApp),
+            );
+            return Err(WxErrorException::from_code(
+                error.error_code,
+                error.error_msg.unwrap_or_default(),
+            ));
         }
         // 是否为运力方错误响应
         let delivery = json_object.get(SF_ERR_CODE);

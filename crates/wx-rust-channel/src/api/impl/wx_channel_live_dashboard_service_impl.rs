@@ -63,12 +63,12 @@ impl WxChannelLiveDashboardServiceImpl {
             serde_json::from_str(res_json).map_err(WxErrorException::from)?;
         for key in DATA_KEYS {
             let node = root.get(key);
-            if let Some(node) = node {
-                if let Some(s) = node.as_str() {
-                    let data: serde_json::Value =
-                        serde_json::from_str(s).map_err(WxErrorException::from)?;
-                    root[key] = data;
-                }
+            if let Some(node) = node
+                && let Some(s) = node.as_str()
+            {
+                let data: serde_json::Value =
+                    serde_json::from_str(s).map_err(WxErrorException::from)?;
+                root[key] = data;
             }
         }
         serde_json::from_value(root).map_err(WxErrorException::from)

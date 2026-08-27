@@ -78,10 +78,10 @@ impl RedisServer {
                 if sock_path.exists() {
                     // 尝试连接验证就绪
                     let url = format!("unix://{}", sock_path.display());
-                    if let Ok(client) = redis::Client::open(url.as_str()) {
-                        if client.get_connection().is_ok() {
-                            break;
-                        }
+                    if let Ok(client) = redis::Client::open(url.as_str())
+                        && client.get_connection().is_ok()
+                    {
+                        break;
                     }
                 }
                 attempt += 1;
