@@ -10,29 +10,37 @@ use wx_rust_common::error::WxErrorException;
 use crate::bean::WxMaBaseResponse;
 use crate::bean::xpay::{
     WxMaXPayBindTransferAccountRequest, WxMaXPayCancelCurrencyPayRequest,
-    WxMaXPayCancelCurrencyPayResponse, WxMaXPayCompleteComplaintRequest,
-    WxMaXPayCreateFundsBillRequest, WxMaXPayCreateFundsBillResponse,
-    WxMaXPayCreateWithdrawOrderRequest, WxMaXPayCreateWithdrawOrderResponse,
-    WxMaXPayCurrencyPayRequest, WxMaXPayCurrencyPayResponse,
+    WxMaXPayCancelCurrencyPayResponse, WxMaXPayCancelSubscribeContractRequest,
+    WxMaXPayCompleteComplaintRequest, WxMaXPayCreateFundsBillRequest,
+    WxMaXPayCreateFundsBillResponse, WxMaXPayCreateWithdrawOrderRequest,
+    WxMaXPayCreateWithdrawOrderResponse, WxMaXPayCurrencyPayRequest, WxMaXPayCurrencyPayResponse,
     WxMaXPayDownloadAdverfundsOrderRequest, WxMaXPayDownloadAdverfundsOrderResponse,
-    WxMaXPayDownloadBillRequest, WxMaXPayDownloadBillResponse, WxMaXPayGetComplaintDetailRequest,
-    WxMaXPayGetComplaintDetailResponse, WxMaXPayGetComplaintListRequest,
-    WxMaXPayGetComplaintListResponse, WxMaXPayGetNegotiationHistoryRequest,
-    WxMaXPayGetNegotiationHistoryResponse, WxMaXPayGetUploadFileSignRequest,
-    WxMaXPayGetUploadFileSignResponse, WxMaXPayNotifyProvideGoodsRequest,
-    WxMaXPayPresentCurrencyRequest, WxMaXPayPresentCurrencyResponse, WxMaXPayPresentGoodsRequest,
-    WxMaXPayPresentGoodsResponse, WxMaXPayQueryAdverFundsRequest, WxMaXPayQueryAdverFundsResponse,
-    WxMaXPayQueryBizBalanceRequest, WxMaXPayQueryBizBalanceResponse, WxMaXPayQueryFundsBillRequest,
-    WxMaXPayQueryFundsBillResponse, WxMaXPayQueryOrderRequest, WxMaXPayQueryOrderResponse,
-    WxMaXPayQueryPublishGoodsRequest, WxMaXPayQueryPublishGoodsResponse,
-    WxMaXPayQueryRecoverBillRequest, WxMaXPayQueryRecoverBillResponse,
-    WxMaXPayQueryTransferAccountRequest, WxMaXPayQueryTransferAccountResponse,
-    WxMaXPayQueryUploadGoodsRequest, WxMaXPayQueryUploadGoodsResponse,
-    WxMaXPayQueryUserBalanceRequest, WxMaXPayQueryUserBalanceResponse,
-    WxMaXPayQueryWithdrawOrderRequest, WxMaXPayQueryWithdrawOrderResponse,
-    WxMaXPayRefundOrderRequest, WxMaXPayRefundOrderResponse, WxMaXPayResponseComplaintRequest,
-    WxMaXPaySigParams, WxMaXPayStartPublishGoodsRequest, WxMaXPayStartUploadGoodsRequest,
-    WxMaXPayUploadVpFileRequest, WxMaXPayUploadVpFileResponse,
+    WxMaXPayDownloadBillRequest, WxMaXPayDownloadBillResponse,
+    WxMaXPayDownloadIosSettlementBillRequest, WxMaXPayDownloadIosSettlementBillResponse,
+    WxMaXPayGetComplaintDetailRequest, WxMaXPayGetComplaintDetailResponse,
+    WxMaXPayGetComplaintListRequest, WxMaXPayGetComplaintListResponse,
+    WxMaXPayGetNegotiationHistoryRequest, WxMaXPayGetNegotiationHistoryResponse,
+    WxMaXPayGetUploadFileSignRequest, WxMaXPayGetUploadFileSignResponse,
+    WxMaXPayNotifyProvideGoodsRequest, WxMaXPayPresentCurrencyRequest,
+    WxMaXPayPresentCurrencyResponse, WxMaXPayPresentGoodsRequest, WxMaXPayPresentGoodsResponse,
+    WxMaXPayQueryAdverFundsRequest, WxMaXPayQueryAdverFundsResponse,
+    WxMaXPayQueryBizBalanceRequest, WxMaXPayQueryBizBalanceResponse,
+    WxMaXPayQueryDownloadOrderRequest, WxMaXPayQueryDownloadOrderResponse,
+    WxMaXPayQueryFundsBillRequest, WxMaXPayQueryFundsBillResponse, WxMaXPayQueryOrderRequest,
+    WxMaXPayQueryOrderResponse, WxMaXPayQueryPublishGoodsRequest,
+    WxMaXPayQueryPublishGoodsResponse, WxMaXPayQueryPunishmentReasonsRequest,
+    WxMaXPayQueryPunishmentReasonsResponse, WxMaXPayQueryRecoverBillRequest,
+    WxMaXPayQueryRecoverBillResponse, WxMaXPayQuerySubscribeContractRequest,
+    WxMaXPayQuerySubscribeContractResponse, WxMaXPayQueryTransferAccountRequest,
+    WxMaXPayQueryTransferAccountResponse, WxMaXPayQueryUploadGoodsRequest,
+    WxMaXPayQueryUploadGoodsResponse, WxMaXPayQueryUserBalanceRequest,
+    WxMaXPayQueryUserBalanceResponse, WxMaXPayQueryWithdrawOrderRequest,
+    WxMaXPayQueryWithdrawOrderResponse, WxMaXPayRefundOrderRequest, WxMaXPayRefundOrderResponse,
+    WxMaXPayResponseComplaintRequest, WxMaXPaySendSubscribePrePaymentRequest, WxMaXPaySigParams,
+    WxMaXPayStartDownloadOrderRequest, WxMaXPayStartDownloadOrderResponse,
+    WxMaXPayStartPublishGoodsRequest, WxMaXPayStartUploadGoodsRequest,
+    WxMaXPaySubmitSubscribePayOrderRequest, WxMaXPayUploadVpFileRequest,
+    WxMaXPayUploadVpFileResponse,
 };
 
 /// 小程序虚拟支付服务。
@@ -252,4 +260,80 @@ pub trait WxMaXPayService: Send + Sync {
         request: &WxMaXPayDownloadAdverfundsOrderRequest,
         sig_params: &WxMaXPaySigParams,
     ) -> Result<WxMaXPayDownloadAdverfundsOrderResponse, WxErrorException>;
+
+    /// 查询签约关系（官方文档 2026-09 新增：订阅制道具签约状态查询）。
+    ///
+    /// 返回 `authorization_state`：SIGNED（签约生效中）/ TERMINATED（已解约终态）/
+    /// UNBINDUSER（从未签约）。
+    async fn query_subscribe_contract(
+        &self,
+        request: &WxMaXPayQuerySubscribeContractRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayQuerySubscribeContractResponse, WxErrorException>;
+
+    /// 预通知扣款（官方文档 2026-09 新增：订阅扣款前预通知）。
+    ///
+    /// 预通知时间窗约束：上一单成功且订阅周期到期 T-3 之前不可发；
+    /// 上一单失败/未支付/支付中且在其 T+8 内不可发；仅 07:10~21:50 可发。
+    async fn send_subscribe_pre_payment(
+        &self,
+        request: &WxMaXPaySendSubscribePrePaymentRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaBaseResponse, WxErrorException>;
+
+    /// 发起订阅扣款（官方文档 2026-09 新增：受理后扣款）。
+    ///
+    /// 返回成功仅代表受理成功；扣款成功后通过 `xpay_goods_deliver_notify`
+    /// 通知。受理后扣款失败可在 T 日～T+6 日重试（同用户同道具每小时一次）。
+    async fn submit_subscribe_pay_order(
+        &self,
+        request: &WxMaXPaySubmitSubscribePayOrderRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaBaseResponse, WxErrorException>;
+
+    /// 商家解约（官方文档 2026-09 新增：商家侧终止订阅签约）。
+    async fn cancel_subscribe_contract(
+        &self,
+        request: &WxMaXPayCancelSubscribeContractRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaBaseResponse, WxErrorException>;
+
+    /// 下载支付订单（官方文档 2026-09 新增：按日期/类型创建下载任务）。
+    ///
+    /// `order_type`：1=代币交易 / 2=道具直购 / 3=会员订阅 / 4=退款订单；
+    /// 返回 `task_id` 供 `query_download_order` 轮询。
+    async fn start_download_order(
+        &self,
+        request: &WxMaXPayStartDownloadOrderRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayStartDownloadOrderResponse, WxErrorException>;
+
+    /// 查询下载订单任务（官方文档 2026-09 新增：轮询下载任务状态）。
+    ///
+    /// `status`：0=初始化 / 1=运行中 / 2=成功 / 3=失败；
+    /// 成功后 `download_url` 可用至 `expire_at`。
+    async fn query_download_order(
+        &self,
+        request: &WxMaXPayQueryDownloadOrderRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayQueryDownloadOrderResponse, WxErrorException>;
+
+    /// 下载虚拟支付 iOS 月结账单（官方文档 2026-09 新增）。
+    ///
+    /// 返回逐月 `bill_list`（`bill_url` 有时效，需及时下载）。
+    async fn download_ios_settlement_bill(
+        &self,
+        request: &WxMaXPayDownloadIosSettlementBillRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayDownloadIosSettlementBillResponse, WxErrorException>;
+
+    /// 商户被管控原因查询（官方文档 2026-09 新增）。
+    ///
+    /// 返回被管控能力列表与逐条 `recovery_specifications`
+    /// （管控原因、影响能力与解脱路径）。
+    async fn query_punishment_reasons(
+        &self,
+        request: &WxMaXPayQueryPunishmentReasonsRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayQueryPunishmentReasonsResponse, WxErrorException>;
 }

@@ -18,29 +18,37 @@ use crate::api::g4_services::WxMaXPayService;
 use crate::bean::WxMaBaseResponse;
 use crate::bean::xpay::{
     WxMaXPayBindTransferAccountRequest, WxMaXPayCancelCurrencyPayRequest,
-    WxMaXPayCancelCurrencyPayResponse, WxMaXPayCompleteComplaintRequest,
-    WxMaXPayCreateFundsBillRequest, WxMaXPayCreateFundsBillResponse,
-    WxMaXPayCreateWithdrawOrderRequest, WxMaXPayCreateWithdrawOrderResponse,
-    WxMaXPayCurrencyPayRequest, WxMaXPayCurrencyPayResponse,
+    WxMaXPayCancelCurrencyPayResponse, WxMaXPayCancelSubscribeContractRequest,
+    WxMaXPayCompleteComplaintRequest, WxMaXPayCreateFundsBillRequest,
+    WxMaXPayCreateFundsBillResponse, WxMaXPayCreateWithdrawOrderRequest,
+    WxMaXPayCreateWithdrawOrderResponse, WxMaXPayCurrencyPayRequest, WxMaXPayCurrencyPayResponse,
     WxMaXPayDownloadAdverfundsOrderRequest, WxMaXPayDownloadAdverfundsOrderResponse,
-    WxMaXPayDownloadBillRequest, WxMaXPayDownloadBillResponse, WxMaXPayGetComplaintDetailRequest,
-    WxMaXPayGetComplaintDetailResponse, WxMaXPayGetComplaintListRequest,
-    WxMaXPayGetComplaintListResponse, WxMaXPayGetNegotiationHistoryRequest,
-    WxMaXPayGetNegotiationHistoryResponse, WxMaXPayGetUploadFileSignRequest,
-    WxMaXPayGetUploadFileSignResponse, WxMaXPayNotifyProvideGoodsRequest,
-    WxMaXPayPresentCurrencyRequest, WxMaXPayPresentCurrencyResponse, WxMaXPayPresentGoodsRequest,
-    WxMaXPayPresentGoodsResponse, WxMaXPayQueryAdverFundsRequest, WxMaXPayQueryAdverFundsResponse,
-    WxMaXPayQueryBizBalanceRequest, WxMaXPayQueryBizBalanceResponse, WxMaXPayQueryFundsBillRequest,
-    WxMaXPayQueryFundsBillResponse, WxMaXPayQueryOrderRequest, WxMaXPayQueryOrderResponse,
-    WxMaXPayQueryPublishGoodsRequest, WxMaXPayQueryPublishGoodsResponse,
-    WxMaXPayQueryRecoverBillRequest, WxMaXPayQueryRecoverBillResponse,
-    WxMaXPayQueryTransferAccountRequest, WxMaXPayQueryTransferAccountResponse,
-    WxMaXPayQueryUploadGoodsRequest, WxMaXPayQueryUploadGoodsResponse,
-    WxMaXPayQueryUserBalanceRequest, WxMaXPayQueryUserBalanceResponse,
-    WxMaXPayQueryWithdrawOrderRequest, WxMaXPayQueryWithdrawOrderResponse,
-    WxMaXPayRefundOrderRequest, WxMaXPayRefundOrderResponse, WxMaXPayResponseComplaintRequest,
-    WxMaXPaySigParams, WxMaXPayStartPublishGoodsRequest, WxMaXPayStartUploadGoodsRequest,
-    WxMaXPayUploadVpFileRequest, WxMaXPayUploadVpFileResponse,
+    WxMaXPayDownloadBillRequest, WxMaXPayDownloadBillResponse,
+    WxMaXPayDownloadIosSettlementBillRequest, WxMaXPayDownloadIosSettlementBillResponse,
+    WxMaXPayGetComplaintDetailRequest, WxMaXPayGetComplaintDetailResponse,
+    WxMaXPayGetComplaintListRequest, WxMaXPayGetComplaintListResponse,
+    WxMaXPayGetNegotiationHistoryRequest, WxMaXPayGetNegotiationHistoryResponse,
+    WxMaXPayGetUploadFileSignRequest, WxMaXPayGetUploadFileSignResponse,
+    WxMaXPayNotifyProvideGoodsRequest, WxMaXPayPresentCurrencyRequest,
+    WxMaXPayPresentCurrencyResponse, WxMaXPayPresentGoodsRequest, WxMaXPayPresentGoodsResponse,
+    WxMaXPayQueryAdverFundsRequest, WxMaXPayQueryAdverFundsResponse,
+    WxMaXPayQueryBizBalanceRequest, WxMaXPayQueryBizBalanceResponse,
+    WxMaXPayQueryDownloadOrderRequest, WxMaXPayQueryDownloadOrderResponse,
+    WxMaXPayQueryFundsBillRequest, WxMaXPayQueryFundsBillResponse, WxMaXPayQueryOrderRequest,
+    WxMaXPayQueryOrderResponse, WxMaXPayQueryPublishGoodsRequest,
+    WxMaXPayQueryPublishGoodsResponse, WxMaXPayQueryPunishmentReasonsRequest,
+    WxMaXPayQueryPunishmentReasonsResponse, WxMaXPayQueryRecoverBillRequest,
+    WxMaXPayQueryRecoverBillResponse, WxMaXPayQuerySubscribeContractRequest,
+    WxMaXPayQuerySubscribeContractResponse, WxMaXPayQueryTransferAccountRequest,
+    WxMaXPayQueryTransferAccountResponse, WxMaXPayQueryUploadGoodsRequest,
+    WxMaXPayQueryUploadGoodsResponse, WxMaXPayQueryUserBalanceRequest,
+    WxMaXPayQueryUserBalanceResponse, WxMaXPayQueryWithdrawOrderRequest,
+    WxMaXPayQueryWithdrawOrderResponse, WxMaXPayRefundOrderRequest, WxMaXPayRefundOrderResponse,
+    WxMaXPayResponseComplaintRequest, WxMaXPaySendSubscribePrePaymentRequest, WxMaXPaySigParams,
+    WxMaXPayStartDownloadOrderRequest, WxMaXPayStartDownloadOrderResponse,
+    WxMaXPayStartPublishGoodsRequest, WxMaXPayStartUploadGoodsRequest,
+    WxMaXPaySubmitSubscribePayOrderRequest, WxMaXPayUploadVpFileRequest,
+    WxMaXPayUploadVpFileResponse,
 };
 use crate::enums::g4_urls::url_g4_ability::xpay as xpay_url;
 
@@ -640,6 +648,142 @@ impl WxMaXPayService for WxMaXPayServiceImpl {
         let post_body = Self::to_json(request)?;
         let config = svc.wx_ma_config();
         let url = xpay_url::download_adverfunds_order_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 查询签约关系（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn query_subscribe_contract(
+        &self,
+        request: &WxMaXPayQuerySubscribeContractRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayQuerySubscribeContractResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::query_subscribe_contract_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 预通知扣款（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn send_subscribe_pre_payment(
+        &self,
+        request: &WxMaXPaySendSubscribePrePaymentRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::send_subscribe_pre_payment_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 发起订阅扣款（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn submit_subscribe_pay_order(
+        &self,
+        request: &WxMaXPaySubmitSubscribePayOrderRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::submit_subscribe_pay_order_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 商家解约（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn cancel_subscribe_contract(
+        &self,
+        request: &WxMaXPayCancelSubscribeContractRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaBaseResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::cancel_subscribe_contract_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 下载支付订单（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn start_download_order(
+        &self,
+        request: &WxMaXPayStartDownloadOrderRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayStartDownloadOrderResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::start_download_order_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 查询下载订单任务（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn query_download_order(
+        &self,
+        request: &WxMaXPayQueryDownloadOrderRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayQueryDownloadOrderResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::query_download_order_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 下载虚拟支付 iOS 月结账单（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn download_ios_settlement_bill(
+        &self,
+        request: &WxMaXPayDownloadIosSettlementBillRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayDownloadIosSettlementBillResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::download_ios_settlement_bill_url(config.as_ref());
+        let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
+        Self::post_signed(svc.as_ref(), &uri, &post_body).await
+    }
+
+    /// 商户被管控原因查询（官方 2026-09 新增；URL 单 pay_sig 签名）。
+    async fn query_punishment_reasons(
+        &self,
+        request: &WxMaXPayQueryPunishmentReasonsRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<WxMaXPayQueryPunishmentReasonsResponse, WxErrorException> {
+        let svc = self
+            .service
+            .upgrade()
+            .ok_or_else(|| WxErrorException::from_code(-99, "小程序服务已释放"))?;
+        let post_body = Self::to_json(request)?;
+        let config = svc.wx_ma_config();
+        let url = xpay_url::query_punishment_reasons_url(config.as_ref());
         let uri = Self::sign_uri_with_pay(&url, &post_body, sig_params);
         Self::post_signed(svc.as_ref(), &uri, &post_body).await
     }

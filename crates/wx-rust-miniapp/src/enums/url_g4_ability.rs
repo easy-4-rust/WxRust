@@ -1184,6 +1184,78 @@ pub mod xpay {
             "/xpay/download_adverfunds_order?pay_sig=%s",
         )
     }
+
+    /// 查询签约关系（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn query_subscribe_contract_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/xpay/query_subscribe_contract?pay_sig=%s",
+        )
+    }
+
+    /// 预通知扣款（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn send_subscribe_pre_payment_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/xpay/send_subscribe_pre_payment?pay_sig=%s",
+        )
+    }
+
+    /// 发起订阅扣款（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn submit_subscribe_pay_order_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/xpay/submit_subscribe_pay_order?pay_sig=%s",
+        )
+    }
+
+    /// 商家解约（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn cancel_subscribe_contract_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/xpay/cancel_subscribe_contract?pay_sig=%s",
+        )
+    }
+
+    /// 下载支付订单（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn start_download_order_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(config, &h.api_host, "/xpay/start_download_order?pay_sig=%s")
+    }
+
+    /// 查询下载订单任务（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn query_download_order_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(config, &h.api_host, "/xpay/query_download_order?pay_sig=%s")
+    }
+
+    /// 下载虚拟支付 iOS 月结账单（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn download_ios_settlement_bill_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/xpay/download_ios_settlement_bill?pay_sig=%s",
+        )
+    }
+
+    /// 商户被管控原因查询（官方文档 2026-09 新增，超出 WxJava 4.8.6 覆盖）。
+    pub fn query_punishment_reasons_url(config: &dyn WxMaConfig) -> String {
+        let h = config.host_config();
+        url(
+            config,
+            &h.api_host,
+            "/xpay/query_punishment_reasons?pay_sig=%s",
+        )
+    }
 }
 
 /// OCR 识别接口地址（对应 Java `WxMaApiUrlConstants.Ocr`）。
