@@ -1,6 +1,25 @@
 # Changelog
 
-本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.3`（workspace 统一版本）。
+本文件记录 WxRust 项目的关键里程碑。当前版本为 `0.1.4`（workspace 统一版本）。
+
+## [0.1.4] - 2026-09-02
+
+### 虚拟支付补齐（对照官方 2026.09 文档，超出 WxJava 4.8.6 范围的新增）
+
+- **`WxMaXPayService` 30 → 38 方法**，补齐官方 `/xpay/*` 2026 新增 8 接口：
+  - 订阅系列（**个人主体小程序虚拟支付**新能力）：`query_subscribe_contract`（签约关系 SIGNED/TERMINATED/UNBINDUSER）、`send_subscribe_pre_payment`（预通知扣款）、`submit_subscribe_pay_order`（发起订阅扣款，受理≠成功）、`cancel_subscribe_contract`（商家解约）
+  - 订单下载任务：`start_download_order`（1 代币/2 道具/3 订阅/4 退款，≤31 天窗口）、`query_download_order`（0 初始化/1 运行/2 成功/3 失败 + 时效 URL）
+  - `download_ios_settlement_bill`（iOS 月结账单，逐月链接）
+  - `query_punishment_reasons`（商户管控原因，含 recovery_specifications 12 字段解脱路径）
+- bean 14 新文件、URL 8 个（单 `pay_sig` 签名）、测试 13 用例（golden 取官方文档示例）
+- **对齐核查报告**：`docs/verification/wxpay-doc-alignment-and-virtual-payment-2026-09-02.md`
+  - merchant 文档 32 章节 vs pay 38 service：30/32 对齐；唯二缺口医保支付/AI 支付（2025-2026 定向新产品，WxJava 亦未覆盖）
+
+### 验证
+
+- workspace tests：**3602 passed / 0 failed**（+13 新用例）
+- fmt clean、clippy 0 error
+- 本版本由 **GitHub Actions release.yml** 全流程发布（validate → build&test → dry-run → publish → release）
 
 ## [0.1.3] - 2026-08-28
 
