@@ -74,6 +74,11 @@ __pycache__/
 .fastRequest
 *.http
 *.json
+!docs/verification/wechat-upstream-verification-evidence-2026-10-06.json
+!openspec/changes/complete-wechat-upstream-capabilities/store-coverage.json
+!openspec/changes/complete-wechat-upstream-capabilities/store-upstream-tree.json
+!openspec/changes/archive/*-complete-wechat-upstream-capabilities/store-coverage.json
+!openspec/changes/archive/*-complete-wechat-upstream-capabilities/store-upstream-tree.json
 .flattened-pom.xml
 /agentdb.rvf
 /agentdb.rvf.lock

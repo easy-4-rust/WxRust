@@ -6,7 +6,7 @@
 
 **A comprehensive Rust SDK for the WeChat ecosystem, ported from WxJava**
 
-[![MSRV](https://img.shields.io/badge/MSRV-1.85-orange)](#3-rust-baseline)
+[![MSRV](https://img.shields.io/badge/MSRV-1.89-orange)](#3-rust-baseline)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
@@ -21,13 +21,15 @@
 ---
 
 > **Version**: `0.1.0`<br>
-> **MSRV**: Rust `1.85`<br>
+> **MSRV**: Rust `1.89`<br>
 > **Edition**: `2024`<br>
 > **Workspace Resolver**: `3`<br>
 > **Maturity**: Experimental<br>
 > **Last verified**: 2026-08-10
 
 ## 1. Overview
+
+The four upstream additions (personal virtual payment, CP customer-service knowledge, passenger invoices, and the independent `wx-rust-store` module) are described in the [integration and migration guide](docs/wechat-upstream-capabilities.md).
 
 ### 1.1 What is WxRust?
 
@@ -38,7 +40,7 @@ It is a semantic port of [WxJava](https://github.com/binarywang/WxJava) (v4.8.4.
 | Dimension | Value |
 |---|---|
 | Version | `0.1.0` |
-| MSRV / Edition | `1.85` / `2024` |
+| MSRV / Edition | `1.89` / `2024` |
 | unsafe policy | `#![forbid(unsafe_code)]` |
 | Async runtime | tokio |
 | HTTP client | reqwest (rustls) |
@@ -71,6 +73,7 @@ It is a semantic port of [WxJava](https://github.com/binarywang/WxJava) (v4.8.4.
 | `weixin-java-cp` | `wx-rust-cp` | 594 | WeChat Work, session archive, OA |
 | `weixin-java-open` | `wx-rust-open` | 240 | Third-party platform, proxy mp/ma |
 | `weixin-java-channel` | `wx-rust-channel` | 618 | Channels / WeChat Shop e-commerce |
+| `weixin-java-store` | `wx-rust-store` | — | Independent WeChat Store SDK; no Channel dependency |
 | `weixin-java-aispeech` | `wx-rust-aispeech` | 25 | AI Speech |
 | `weixin-java-qidian` | `wx-rust-qidian` | 27 | Qidian call center |
 | facade | `wx-rust` | — | Feature-gated re-exports |
@@ -114,7 +117,7 @@ It is a semantic port of [WxJava](https://github.com/binarywang/WxJava) (v4.8.4.
 
 | Item | Value | Source |
 |---|---|---|
-| MSRV | `1.85` | `workspace.package.rust-version` |
+| MSRV | `1.89` | `workspace.package.rust-version` |
 | Edition | `2024` | `workspace.package.edition` |
 | Resolver | `3` | `[workspace] resolver` |
 | Clippy | `-D warnings` | CI |
@@ -267,7 +270,7 @@ cargo llvm-cov --workspace --summary-only
 
 | Symptom | Common Cause | Fix |
 |---|---|---|
-| `cargo check` fails | MSRV too low | Use Rust >= 1.85 |
+| `cargo check` fails | MSRV too low | Use Rust >= 1.89 |
 | Feature compile error | Missing optional dep | Enable required feature |
 | Test timeout | Async runtime conflict | Ensure `tokio` features match |
 

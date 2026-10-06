@@ -27,12 +27,12 @@ use wx_rust_common::redis::{WxRedisOps, WxRedisOpsImpl};
 
 /// 测试用 Redis 服务器管理器。
 ///
-/// 自动 spawn 一个 redis-server（Unix socket，端口 0），提供 Client 构造方法；
-/// Drop 时自动 kill 进程并清理临时目录。
+/// 启动临时 Unix socket Redis，或连接 REDIS_URL 指定的真实测试服务；
+/// Drop 仅清理本测试拥有的进程和临时目录，不关闭或清空外部服务。
 struct RedisServer {
-    child: Child,
-    _dir: TempDir,
-    sock_path: std::path::PathBuf,
+    child: Option<Child>,
+    _dir: Option<TempDir>,
+    url: String,
 }
 
 impl RedisServer {
@@ -89,30 +89,46 @@ impl RedisServer {
         }
 
         Self {
-            child,
-            _dir: dir,
-            sock_path,
+            child: Some(child),
+            _dir: Some(dir),
+            url: format!("unix://{}", sock_path.display()),
         }
     }
 
-    /// 为本服务器创建 WxRedisOpsImpl（通过 Unix socket 连接）。
-    fn ops(&self) -> WxRedisOpsImpl {
-        let url = format!("unix://{}", self.sock_path.display());
-        let client = redis::Client::open(url.as_str()).expect("创建 redis client");
-        WxRedisOpsImpl::new(client)
+    /// 连接已启动的真实测试 Redis；外部服务生命周期由调用方管理。
+    fn connect_existing(url: String) -> Self {
+        let client = redis::Client::open(url.as_str()).expect("解析测试 Redis 地址");
+        let mut connection = client
+            .get_connection_with_timeout(Duration::from_secs(5))
+            .expect("连接测试 Redis");
+        let pong: String = redis::cmd("PING")
+            .query(&mut connection)
+            .expect("测试 Redis 就绪检查");
+        assert_eq!(pong, "PONG");
+        Self {
+            child: None,
+            _dir: None,
+            url,
+        }
     }
 
-    /// 为本服务器创建 redis::Client（通过 Unix socket 连接）。
+    /// 为配置的真实测试 Redis 创建 WxRedisOpsImpl。
+    fn ops(&self) -> WxRedisOpsImpl {
+        WxRedisOpsImpl::new(self.client())
+    }
+
+    /// 为配置的真实测试 Redis 创建 redis::Client。
     fn client(&self) -> redis::Client {
-        let url = format!("unix://{}", self.sock_path.display());
-        redis::Client::open(url.as_str()).expect("创建 redis client")
+        redis::Client::open(self.url.as_str()).expect("创建 redis client")
     }
 }
 
 impl Drop for RedisServer {
     fn drop(&mut self) {
-        let _ = self.child.kill();
-        let _ = self.child.wait();
+        if let Some(child) = self.child.as_mut() {
+            let _ = child.kill();
+            let _ = child.wait();
+        }
     }
 }
 
@@ -140,6 +156,9 @@ fn shared_server() -> &'static RedisServer {
     use std::sync::OnceLock;
     static INSTANCE: OnceLock<RedisServer> = OnceLock::new();
     INSTANCE.get_or_init(|| {
+        if let Ok(url) = std::env::var("REDIS_URL") {
+            return RedisServer::connect_existing(url);
+        }
         let bin = std::env::var("REDIS_SERVER_BIN")
             .unwrap_or_else(|_| "/opt/homebrew/bin/redis-server".to_string());
         RedisServer::start(&bin)

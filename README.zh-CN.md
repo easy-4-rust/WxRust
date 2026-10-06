@@ -6,6 +6,8 @@
 
 **面向微信生态的 Rust 全栈 SDK，移植自 WxJava**
 
+本次新增个人主体虚拟支付、企业微信客服知识库、旅客运输电子发票和独立 `wx-rust-store` 模块，详见[接入与迁移指南](docs/wechat-upstream-capabilities.md)。旧 Channel 接口继续可用。
+
 [![MSRV](https://img.shields.io/badge/MSRV-1.85-orange)](#3-rust-基线)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 

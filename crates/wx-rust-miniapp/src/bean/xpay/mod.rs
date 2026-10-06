@@ -155,3 +155,11 @@ pub use wx_ma_x_pay_submit_subscribe_pay_order_request::WxMaXPaySubmitSubscribeP
 pub use wx_ma_x_pay_team_info::WxMaXPayTeamInfo;
 pub use wx_ma_x_pay_upload_vp_file_request::WxMaXPayUploadVpFileRequest;
 pub use wx_ma_x_pay_upload_vp_file_response::WxMaXPayUploadVpFileResponse;
+pub mod wx_ma_x_pay_goods_info;
+pub mod wx_ma_x_pay_request_virtual_payment_data;
+pub mod wx_ma_x_pay_request_virtual_payment_request;
+pub mod wx_ma_x_pay_we_chat_pay_info;
+pub use wx_ma_x_pay_goods_info::WxMaXPayGoodsInfo;
+pub use wx_ma_x_pay_request_virtual_payment_data::WxMaXPayRequestVirtualPaymentData;
+pub use wx_ma_x_pay_request_virtual_payment_request::WxMaXPayRequestVirtualPaymentRequest;
+pub use wx_ma_x_pay_we_chat_pay_info::WxMaXPayWeChatPayInfo;

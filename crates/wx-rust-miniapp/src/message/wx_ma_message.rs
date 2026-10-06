@@ -14,6 +14,7 @@ use serde::{Deserialize, Serialize};
 
 use wx_rust_common::util::crypto::WxCryptUtil;
 
+use crate::bean::xpay::{WxMaXPayGoodsInfo, WxMaXPayWeChatPayInfo};
 use crate::bean::{DetailBean, ResultBean, WxMaXPayTeamInfo};
 use crate::config::WxMaConfig;
 use crate::message::{
@@ -469,6 +470,15 @@ pub struct WxMaMessage {
     /// 重试次数，从 0 开始。
     #[serde(rename = "RetryTimes", skip_serializing_if = "Option::is_none")]
     pub retry_times: Option<i32>,
+    /// 虚拟支付商户订单号。
+    #[serde(rename = "OutTradeNo", skip_serializing_if = "Option::is_none")]
+    pub out_trade_no: Option<String>,
+    /// 微信支付订单信息。
+    #[serde(rename = "WeChatPayInfo", skip_serializing_if = "Option::is_none")]
+    pub we_chat_pay_info: Option<WxMaXPayWeChatPayInfo>,
+    /// 虚拟支付商品信息。
+    #[serde(rename = "GoodsInfo", skip_serializing_if = "Option::is_none")]
+    pub goods_info: Option<WxMaXPayGoodsInfo>,
     /// 拼团信息。
     #[serde(rename = "TeamInfo", skip_serializing_if = "Option::is_none")]
     pub team_info: Option<WxMaXPayTeamInfo>,
@@ -637,6 +647,14 @@ impl WxMaMessage {
             refund_succ_timestamp: long_field(&root, "RefundSuccTimestamp"),
             wxpay_refund_transaction_id: str_field(&root, "WxpayRefundTransactionId"),
             retry_times: int_field(&root, "RetryTimes"),
+            out_trade_no: str_field(&root, "OutTradeNo"),
+            we_chat_pay_info: node_field(&root, "WeChatPayInfo").map(|m| WxMaXPayWeChatPayInfo {
+                mch_order_no: str_field(m, "MchOrderNo"),
+            }),
+            goods_info: node_field(&root, "GoodsInfo").map(|m| WxMaXPayGoodsInfo {
+                product_id: str_field(m, "ProductId"),
+                quantity: int_field(m, "Quantity"),
+            }),
             team_info: node_field(&root, "TeamInfo").map(parse_team_info),
             complaint_transaction_id: str_field(&root, "TransactionId"),
             complaint_id: str_field(&root, "ComplaintId"),
@@ -916,6 +934,18 @@ impl WxMaMessage {
             self.wxpay_refund_transaction_id.as_deref(),
         );
         push_num(&mut s, "RetryTimes", self.retry_times);
+        push_cdata(&mut s, "OutTradeNo", self.out_trade_no.as_deref());
+        if let Some(info) = &self.we_chat_pay_info {
+            s.push_str("<WeChatPayInfo>");
+            push_cdata(&mut s, "MchOrderNo", info.mch_order_no.as_deref());
+            s.push_str("</WeChatPayInfo>");
+        }
+        if let Some(info) = &self.goods_info {
+            s.push_str("<GoodsInfo>");
+            push_cdata(&mut s, "ProductId", info.product_id.as_deref());
+            push_num(&mut s, "Quantity", info.quantity);
+            s.push_str("</GoodsInfo>");
+        }
         if let Some(team) = &self.team_info {
             s.push_str("<TeamInfo>");
             push_cdata(&mut s, "ActivityId", Some(&team.activity_id));

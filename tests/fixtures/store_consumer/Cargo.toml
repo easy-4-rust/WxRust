@@ -1,0 +1,11 @@
+[package]
+name = "store-consumer-fixture"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+wx-rust-store = { path = "../../../crates/wx-rust-store" }
+tokio = { version = "1", features = ["macros", "rt", "net", "io-util"] }

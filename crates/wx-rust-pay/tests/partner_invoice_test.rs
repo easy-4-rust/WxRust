@@ -22,6 +22,85 @@ use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
 use serde_json::json;
+use wx_rust_pay::api::PassengerTransportInvoiceService;
+use wx_rust_pay::bean::invoice::passenger_transport_invoice_request::PassengerTransportInvoiceRequest;
+
+fn passenger_fixture() -> serde_json::Value {
+    json!({
+        "sub_mchid":"1900000109","fapiao_apply_id":"apply_001",
+        "buyer_information":{"type":"INDIVIDUAL","name":"示例旅客","phone":"encrypted-phone","email":"encrypted-email","amount":1000},
+        "fapiao_information":{
+            "fapiao_id":"invoice_001","total_amount":1000,"export_business_policy_code":1,"vat_refund_levy_code":3,
+            "billing_person_id":"billing_001","billing_person":"张** 1234","fapiao_bill_type":"COMM_FAPIAO","remark":"测试",
+            "items":[{"tax_code":"3010101020100000000","goods_name":"旅客运输","specification":"客运","unit":"次","quantity":2200000000_i64,"total_amount":1100,"tax_rate":300,"discount":false,"preferential_policy_code":8,
+                "passenger_information":{"name":"张**","certificate_type":"IDENTITY_CARD","certificate_number":"encrypted-certificate-number","departure_date":"2026-08-27T10:00:00+08:00","departure_place":"出发地","destination":"目的地","transportation_type":"SHIP","transportation_classes":"SHIP_FIRST_CLASS_CABIN"}},
+                {"tax_code":"3010101020100000000","goods_name":"折扣","total_amount":-100,"tax_rate":300,"discount":true}],
+            "transaction_information":[{"pay_channel":"WECHAT_PAY","transaction_id":"wx_order","out_trade_no":"order_001","amount":1000}]
+        }
+    })
+}
+
+#[test]
+fn passenger_invoice_preserves_fields_large_integer_and_negative_discount() {
+    let input = passenger_fixture();
+    let request: PassengerTransportInvoiceRequest = serde_json::from_value(input.clone()).unwrap();
+    assert_eq!(serde_json::to_value(request).unwrap(), input);
+}
+
+#[tokio::test]
+async fn passenger_invoice_accepts_202_empty_body_and_preserves_ciphertexts() {
+    let server = MockServer::start(|_, _, headers| {
+        assert_eq!(
+            headers.get("wechatpay-serial").map(String::as_str),
+            Some("PUB_KEY_ID_TEST")
+        );
+        assert!(
+            headers
+                .get("authorization")
+                .unwrap()
+                .starts_with("WECHATPAY2-SHA256-RSA2048 ")
+        );
+        let mut response = signed_json_response("");
+        response.0 = 202;
+        response
+    })
+    .await;
+    let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
+    let request: PassengerTransportInvoiceRequest =
+        serde_json::from_value(passenger_fixture()).unwrap();
+    service
+        .issue_passenger_transport_invoice(&request)
+        .await
+        .unwrap();
+    assert_eq!(server.last_method(), "POST");
+    assert_eq!(
+        server.last_path(),
+        "/v3/new-tax-control-fapiao/fapiao-applications/issue-passenger-transport"
+    );
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&server.last_body()).unwrap(),
+        passenger_fixture()
+    );
+}
+
+#[tokio::test]
+async fn passenger_invoice_propagates_payment_failure() {
+    let server = MockServer::start(|_, _, _| {
+        let mut response = signed_json_response(r#"{"code":"PARAM_ERROR","message":"invalid"}"#);
+        response.0 = 400;
+        response
+    })
+    .await;
+    let service = WxPayServiceImpl::new_arc(config_with_host(&server.url("")));
+    let request: PassengerTransportInvoiceRequest =
+        serde_json::from_value(passenger_fixture()).unwrap();
+    assert!(
+        service
+            .issue_passenger_transport_invoice(&request)
+            .await
+            .is_err()
+    );
+}
 use wx_rust_pay::api::WxPayService;
 use wx_rust_pay::api::r#impl::WxPayServiceImpl;
 use wx_rust_pay::bean::invoice::buyer_information::BuyerInformation;

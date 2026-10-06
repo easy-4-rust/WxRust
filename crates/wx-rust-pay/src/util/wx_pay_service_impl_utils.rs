@@ -1182,7 +1182,7 @@ pub fn validate_v3_response(
 /// `postV3WithWechatpaySerial` 的组合）：
 /// - Authorization 头（WECHATPAY2-SHA256-RSA2048，canonical URL 含
 ///   apiHostUrlPath 前缀裁剪）与 Wechatpay-Serial 头；
-/// - 200/204 → 响应体（空响应 → 空串）；响应为 JSON 时按
+/// - 200/202/204 → 响应体（空响应 → 空串）；202 表示受理而非业务完成；响应为 JSON 时按
 ///   [`validate_v3_response`] 验签；
 /// - 其余状态码 → 解析 v3 错误 JSON `{code, message}` 抛错
 ///   （对应 Java `convertException`，消息为 `code message`）。
@@ -1253,7 +1253,10 @@ pub async fn execute_v3(
         .await
         .map_err(|e| WxErrorException::Http(e.to_string()))?;
 
-    if status == reqwest::StatusCode::OK || status == reqwest::StatusCode::NO_CONTENT {
+    if matches!(
+        status,
+        reqwest::StatusCode::OK | reqwest::StatusCode::ACCEPTED | reqwest::StatusCode::NO_CONTENT
+    ) {
         if !text.is_empty() {
             let header_refs: Vec<(&str, &str)> = headers
                 .iter()

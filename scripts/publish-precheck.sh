@@ -56,6 +56,7 @@ ALL_CRATES=(
   wx-rust-common
   wx-rust-aispeech
   wx-rust-channel
+  wx-rust-store
   wx-rust-cp
   wx-rust-miniapp
   wx-rust-mp

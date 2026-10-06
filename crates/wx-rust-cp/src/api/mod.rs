@@ -77,3 +77,5 @@ pub use wx_cp_tag_service::WxCpTagService;
 pub use wx_cp_task_card_service::WxCpTaskCardService;
 pub use wx_cp_todo_service::WxCpTodoService;
 pub use wx_cp_user_service::WxCpUserService;
+pub mod wx_cp_kf_knowledge_service;
+pub use wx_cp_kf_knowledge_service::WxCpKfKnowledgeService;

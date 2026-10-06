@@ -23,6 +23,7 @@ wx-rust-pay = { version = "0.1.4", path = "crates/wx-rust-pay" }
 wx-rust-cp = { version = "0.1.4", path = "crates/wx-rust-cp" }
 wx-rust-open = { version = "0.1.4", path = "crates/wx-rust-open" }
 wx-rust-channel = { version = "0.1.4", path = "crates/wx-rust-channel" }
+wx-rust-store = { version = "0.1.4", path = "crates/wx-rust-store" }
 wx-rust-aispeech = { version = "0.1.4", path = "crates/wx-rust-aispeech" }
 wx-rust-qidian = { version = "0.1.4", path = "crates/wx-rust-qidian" }
 async-trait = "0.1.89"

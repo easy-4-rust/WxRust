@@ -51,6 +51,16 @@ use crate::bean::xpay::{
 /// URL（对应 Java `WxMaXPaySigParams.signUriWithPay/signUriWithBoth`）。
 #[async_trait]
 pub trait WxMaXPayService: Send + Sync {
+    /// 根据请求与签名密钥生成前端支付数据；仅本地计算，返回数据或序列化错误。
+    /// 对应 Java: WxMaXPayService#createRequestVirtualPaymentData
+    fn create_request_virtual_payment_data(
+        &self,
+        request: &crate::bean::xpay::WxMaXPayRequestVirtualPaymentRequest,
+        sig_params: &WxMaXPaySigParams,
+    ) -> Result<crate::bean::xpay::WxMaXPayRequestVirtualPaymentData, WxErrorException> {
+        request.create_pay_data(sig_params)
+    }
+
     /// 查询用户虚拟币余额（对应 Java `queryUserBalance`，双签名）。
     async fn query_user_balance(
         &self,

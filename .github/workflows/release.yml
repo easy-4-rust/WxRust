@@ -110,7 +110,7 @@ jobs:
           # Layer 0: wx-rust-common -- no internal deps, full dry-run
           cargo publish -p wx-rust-common --dry-run --allow-dirty
           # Layer 1/2: depend on unpublished internals, validate packaging only
-          for crate in wx-rust-aispeech wx-rust-channel wx-rust-cp wx-rust-miniapp wx-rust-mp wx-rust-pay wx-rust-qidian wx-rust-open; do
+          for crate in wx-rust-aispeech wx-rust-channel wx-rust-store wx-rust-cp wx-rust-miniapp wx-rust-mp wx-rust-pay wx-rust-qidian wx-rust-open; do
             echo "::group::Packaging $crate"
             cargo package -p "$crate" --list --allow-dirty
             echo "::endgroup::"
@@ -147,6 +147,7 @@ jobs:
             wx-rust-common
             wx-rust-aispeech
             wx-rust-channel
+            wx-rust-store
             wx-rust-cp
             wx-rust-miniapp
             wx-rust-mp

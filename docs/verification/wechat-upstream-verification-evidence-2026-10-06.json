@@ -1,0 +1,290 @@
+{
+  "date": "2026-10-06",
+  "baseline": "260d800",
+  "rust_static_checks": "1.97.1",
+  "rust_tests": "1.99.0",
+  "final_build_environment": {
+    "CARGO_TARGET_DIR": "C:/Users/hnxyh/AppData/Local/Temp/wxrust-upstream-20261006-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0"
+  },
+  "results": [
+    {
+      "command": "cargo test -p wx-rust-store --all-features --offline",
+      "exit_code": 0,
+      "local_log": ".codegraph/store-final.log",
+      "sha256": "4226f046d9562384d4761e469bf9f377b05e4d60c46ceab5914ecb94cf749502",
+      "passed": 1392,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test --workspace --all-features --offline -- --skip redis_",
+      "exit_code": 0,
+      "local_log": ".codegraph/workspace-final.log",
+      "sha256": "176ed7680abd6bff296d42d9215e774419c60fcddc3dcf3b4ef6a40e797529a2",
+      "passed": 5005,
+      "failed": 0,
+      "ignored": 1,
+      "filtered": 16
+    },
+    {
+      "command": "cargo test -p wx-rust-common --all-features --offline --test batch_d_common_beans --test rust_obligation_value_add redis_",
+      "exit_code": 0,
+      "local_log": ".codegraph/redis-type-final.log",
+      "sha256": "0e5fa8e5ce9334584c8269d62bff65f9faa4c1a4d04d7cb6d8d67dfaaec79fe2",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 64
+    },
+    {
+      "command": "cargo check --workspace --all-features --offline",
+      "exit_code": 0,
+      "local_log": ".codegraph/check-final.log",
+      "sha256": "af462f587774e225a9bc1e74408ca782cd020bc7ab281659a68dfe35c6e55de0",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo +1.97.1 clippy --workspace --all-targets --all-features --offline -- -D warnings",
+      "exit_code": 0,
+      "local_log": ".codegraph/clippy-final.log",
+      "sha256": "e5eb05ec4a957e1abceca0d17f95adc4f73455a506b17c7869c1124275d899c2",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0,
+      "local_log": ".codegraph/fmt-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo check -p wx-rust-miniapp -p wx-rust-cp -p wx-rust-pay -p wx-rust-store --examples --offline",
+      "exit_code": 0,
+      "local_log": ".codegraph/examples-final.log",
+      "sha256": "34734c7146ed7b05bfd92a79c4b6cf0628b60ba49e73b4b3bd275b4fd332f86d",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo run --manifest-path tests/fixtures/store_consumer/Cargo.toml --offline",
+      "exit_code": 0,
+      "local_log": ".codegraph/store-consumer-final.log",
+      "sha256": "128b29ce34ce95f7743db21801feba1bc2cb42a9927b303483610e24194fa852",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo run --manifest-path tests/fixtures/channel_store_consumer/Cargo.toml --offline",
+      "exit_code": 0,
+      "local_log": ".codegraph/dual-consumer-final.log",
+      "sha256": "7dc16075ac342ea670867cc7b7d71eaee5a284f64482fdf7254863a37c6469f9",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test -p wx-rust-common --bench pipeline_concurrency_bench --offline -- --test",
+      "exit_code": 0,
+      "local_log": ".codegraph/common-concurrency.log",
+      "sha256": "13c40c6bac0f5201c56bd8f8d4ca89749072867944aa460c4c0222a64c7267f2",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test -p wx-rust-miniapp --bench token_single_flight_bench --offline -- --test",
+      "exit_code": 0,
+      "local_log": ".codegraph/miniapp-concurrency.log",
+      "sha256": "fe829eb3515b025917a1db131de049088e9786808b520fdee367c6d2f6c6ef16",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo package -p wx-rust-store --allow-dirty --no-verify --offline",
+      "exit_code": 0,
+      "local_log": ".codegraph/store-package-final.log",
+      "sha256": "3d1177092cc341ad2e8005e870018db10fc05b9d2aec3f45c9dca7e8df8f3496",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test --workspace --all-features --offline (unfiltered first attempt)",
+      "exit_code": 101,
+      "local_log": ".codegraph/workspace-test.log",
+      "sha256": "fc601089ffb1eb6bdf35ab43741d6610aab4a945c1c27397ca6b0cb2cbb99e52",
+      "passed": 844,
+      "failed": 14,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test -p wx-rust-store --test upstream_nullable_models --offline (before Option correction)",
+      "exit_code": 101,
+      "local_log": ".codegraph/store-nullable-red.log",
+      "sha256": "e499ed3b3d9fac659b8a44a3c0d1a4c1bd1cd76af30e62a09320e5724995d831",
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test -p wx-rust-common --all-features --offline --test redis_integration_test",
+      "exit_code": 0,
+      "local_log": ".codegraph/redis-real-final.log",
+      "sha256": "db8feb04ccbc1e1a4c0556bf44f84ac716504ea7595ed742a2265aa281c74101",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test --workspace --all-features --offline (REDIS_URL local real Redis)",
+      "exit_code": 0,
+      "local_log": ".codegraph/workspace-unfiltered-final.log",
+      "sha256": "0b3cf88c9182ab126984dc0792c5a6cdc3668d71667f5eb211b39b23857f6fb7",
+      "passed": 5021,
+      "failed": 0,
+      "ignored": 1,
+      "filtered": 0
+    },
+    {
+      "command": "cargo +1.97.1 bench -p wx-rust-common --bench pipeline_concurrency_bench --offline -- --test",
+      "exit_code": 0,
+      "local_log": ".codegraph/common-release-final.log",
+      "sha256": "24a1e2b331f01ecd8a1cc995c75747a4473c9941b8f6987f41158578ec68218d",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo +1.97.1 bench -p wx-rust-miniapp --bench token_single_flight_bench --offline -- --test",
+      "exit_code": 0,
+      "local_log": ".codegraph/miniapp-release-final.log",
+      "sha256": "54dfa115bd4f979504446086bf3b198707deb8d969197c3492fbb22220586819",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo run --manifest-path tests/fixtures/channel_store_consumer/Cargo.toml --offline (parallel equivalent requests and distinct tokens)",
+      "exit_code": 0,
+      "local_log": ".codegraph/dual-consumer-equivalent.log",
+      "sha256": "4d03a4bd43b31d4593066659dfa45b5d055ede77e057b8a916cd0db59adeb815",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo test -p wx-rust-common --all-features --offline --test redis_integration_test redis_set_get_round_trip (before REDIS_URL support)",
+      "exit_code": 101,
+      "local_log": ".codegraph/redis-url-red.log",
+      "sha256": "be75a2431ef5e037d7322d40882d9d0bf264d18e313da635151c8bcd4f1e3a7f",
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0,
+      "filtered": 13
+    },
+    {
+      "command": "cargo +1.97.1 clippy --workspace --all-targets --all-features --offline -- -D warnings",
+      "exit_code": 0,
+      "local_log": ".codegraph/clippy-resume-isolated.log",
+      "sha256": "2fba5a41a20a713309d7c518ee3588b879dfb11225f87a855ef2925246cc6749",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0,
+      "local_log": ".codegraph/fmt-resume.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "cargo +1.89.0 check --workspace --all-features --offline",
+      "exit_code": 0,
+      "local_log": ".codegraph/msrv-final.log",
+      "sha256": "decac7cb36635cdb7efec9d370b884e798c1370349ec063c8fdef0e2bb461343",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "openspec validate --all --strict --no-interactive",
+      "exit_code": 0,
+      "local_log": ".codegraph/openspec-main-final.log",
+      "sha256": "15dba3556c57e080c1d7b8dc841310c14600a16458b87999e2d04da29880c16b",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "command": "openspec validate --archived --strict --no-interactive",
+      "exit_code": 0,
+      "local_log": ".codegraph/openspec-archive-final.log",
+      "sha256": "b000f37b20e6b117c4c9f912c6e6d8aef5860518e8a1be47909170fae0f43655",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    }
+  ],
+  "source_audit": {
+    "wildcard": [],
+    "stubs": [],
+    "mod_types": [],
+    "empty_body": [],
+    "block_on": [],
+    "invalid_rust_paths": [],
+    "unmapped_methods": [],
+    "methods_without_test_reference": []
+  },
+  "deferred": [
+    "real WeChat account integration (not an offline task acceptance gate)"
+  ],
+  "count_note": "Latest unfiltered workspace run: 5021 passed, 0 failed, 1 ignored, 0 filtered. Earlier filtered runs are preserved as historical execution evidence; do not sum overlapping suites.",
+  "redis_runtime": {
+    "image": "redis:8.2.10-alpine",
+    "transport": "TCP bound to 127.0.0.1 ephemeral port",
+    "test_harness": "REDIS_URL; existing local image; no image pull or server install",
+    "lifecycle": "PING confirmed service alive after tests; owned ephemeral container stopped after validation"
+  },
+  "msrv_toolchain": "rustc 1.89.0 (29483883e 2025-08-04); user-authorized minimal install, default stable unchanged",
+  "openspec_archive": {
+    "specs_updated": true,
+    "tasks_completed": 43,
+    "path": "openspec/changes/archive/2026-10-06-complete-wechat-upstream-capabilities",
+    "requirements_added": 17
+  }
+}

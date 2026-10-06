@@ -26,6 +26,7 @@ CRATES=(
   # Layer 1 -- leaf modules (depend only on common)
   wx-rust-aispeech
   wx-rust-channel
+  wx-rust-store
   wx-rust-cp
   wx-rust-miniapp
   wx-rust-mp

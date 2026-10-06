@@ -70,3 +70,5 @@ pub use transfer_service::TransferService;
 pub use wx_deposit_service::WxDepositService;
 pub use wx_entrust_pap_service::WxEntrustPapService;
 pub use wx_pay_service::WxPayService;
+pub mod passenger_transport_invoice_service;
+pub use passenger_transport_invoice_service::PassengerTransportInvoiceService;

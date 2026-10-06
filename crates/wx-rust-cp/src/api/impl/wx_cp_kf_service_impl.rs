@@ -584,8 +584,148 @@ impl WxCpKfService for WxCpKfServiceImpl {
 
 #[cfg(test)]
 mod tests {
-    //! 内嵌测试：经 MockServer 验证客服接口请求路径/请求体/响应解析
-    //! （镜像 Java `WxCpKfServiceImplTest` 的有效用例语义）。
+    use crate::api::WxCpKfKnowledgeService;
+    use crate::bean::kf::{WxCpKfKnowledgeGroup, WxCpKfKnowledgeIntent};
+
+    #[tokio::test]
+    async fn knowledge_eight_endpoints_and_optional_filters() {
+        let server = MockServer::start(dispatch(|_| json(r#"{"errcode":0,"errmsg":"ok","group_id":"g","intent_id":"i","next_cursor":"next","has_more":1,"group_list":[],"intent_list":[]}"#))).await;
+        let service = service_with_host(&server.url(""));
+        let group = WxCpKfKnowledgeGroup {
+            group_id: Some("g".into()),
+            name: Some("name".into()),
+            is_default: Some(0),
+        };
+        let intent = WxCpKfKnowledgeIntent {
+            intent_id: Some("i".into()),
+            ..Default::default()
+        };
+        assert_eq!(
+            service
+                .add_knowledge_group(&group)
+                .await
+                .unwrap()
+                .group_id
+                .as_deref(),
+            Some("g")
+        );
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/add_group")
+        );
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&server.last_body()).unwrap()["is_default"],
+            0
+        );
+        service.mod_knowledge_group(&group).await.unwrap();
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/mod_group")
+        );
+        service.del_knowledge_group("g").await.unwrap();
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/del_group")
+        );
+        assert_eq!(server.last_body(), r#"{"group_id":"g"}"#);
+        let groups = service
+            .list_knowledge_group(None, None, None)
+            .await
+            .unwrap();
+        assert_eq!(groups.has_more, Some(1));
+        assert_eq!(server.last_body(), "{}");
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/list_group")
+        );
+        service
+            .list_knowledge_group(groups.next_cursor.as_deref(), Some(2), Some("g"))
+            .await
+            .unwrap();
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&server.last_body()).unwrap(),
+            serde_json::json!({"cursor":"next","limit":2,"group_id":"g"})
+        );
+        assert_eq!(
+            service
+                .add_knowledge_intent(&intent)
+                .await
+                .unwrap()
+                .intent_id
+                .as_deref(),
+            Some("i")
+        );
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/add_intent")
+        );
+        service.mod_knowledge_intent(&intent).await.unwrap();
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/mod_intent")
+        );
+        service.del_knowledge_intent("i").await.unwrap();
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/del_intent")
+        );
+        assert_eq!(server.last_body(), r#"{"intent_id":"i"}"#);
+        service
+            .list_knowledge_intent(Some(""), Some(10), Some("g"), Some("i"))
+            .await
+            .unwrap();
+        assert!(
+            server
+                .last_path()
+                .contains("/cgi-bin/kf/knowledge/list_intent")
+        );
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&server.last_body()).unwrap(),
+            serde_json::json!({"cursor":"","limit":10,"group_id":"g","intent_id":"i"})
+        );
+        service
+            .list_knowledge_intent(None, None, None, None)
+            .await
+            .unwrap();
+        assert_eq!(server.last_body(), "{}");
+    }
+
+    #[tokio::test]
+    async fn knowledge_propagates_bad_json_and_business_errors() {
+        for body in [r#"{"errcode":40058,"errmsg":"invalid"}"#, "invalid json"] {
+            let server = MockServer::start(dispatch(move |_| json(body))).await;
+            let service = service_with_host(&server.url(""));
+            assert!(
+                service
+                    .list_knowledge_group(None, None, None)
+                    .await
+                    .is_err()
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn knowledge_propagates_connection_failure() {
+        // 释放本地临时端口，使请求遇到连接拒绝；不访问微信业务接口。
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        drop(listener);
+        let service = service_with_host(&format!("http://{address}"));
+        let error = service
+            .list_knowledge_group(None, None, None)
+            .await
+            .unwrap_err();
+        assert!(matches!(error, WxErrorException::Http(_)), "{error}");
+    }
+    // 内嵌测试：经 MockServer 验证客服接口请求路径/请求体/响应解析。
+    // 镜像 Java WxCpKfServiceImplTest 的有效用例语义。
 
     use super::*;
     use crate::api::r#impl::g2_impls::test_support::{
