@@ -8,7 +8,7 @@
 
 本次新增个人主体虚拟支付、企业微信客服知识库、旅客运输电子发票和独立 `wx-rust-store` 模块，详见[接入与迁移指南](docs/wechat-upstream-capabilities.md)。旧 Channel 接口继续可用。
 
-[![MSRV](https://img.shields.io/badge/MSRV-1.85-orange)](#3-rust-基线)
+[![MSRV](https://img.shields.io/badge/MSRV-1.89-orange)](#3-rust-基线)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
@@ -22,12 +22,12 @@
 
 ---
 
-> **版本**：`0.1.0`<br>
-> **MSRV**：Rust `1.85`<br>
+> **版本**：`0.1.5`<br>
+> **MSRV**：Rust `1.89`<br>
 > **Edition**：`2024`<br>
 > **Workspace Resolver**：`3`<br>
 > **成熟度**：实验性<br>
-> **最后核验**：2026-08-10
+> **最后核验**：2026-10-06
 
 ## 1. 项目定位
 
@@ -39,8 +39,8 @@
 
 | 维度 | 值 |
 |---|---|
-| 版本 | `0.1.0` |
-| MSRV / Edition | `1.85` / `2024` |
+| 版本 | `0.1.5` |
+| MSRV / Edition | `1.89` / `2024` |
 | unsafe 策略 | `#![forbid(unsafe_code)]` |
 | 异步运行时 | tokio |
 | HTTP 客户端 | reqwest（rustls） |
@@ -116,7 +116,7 @@
 
 | 项目 | 值 | 来源 |
 |---|---|---|
-| MSRV | `1.85` | `workspace.package.rust-version` |
+| MSRV | `1.89` | `workspace.package.rust-version` |
 | Edition | `2024` | `workspace.package.edition` |
 | Resolver | `3` | `[workspace] resolver` |
 | Clippy | `-D warnings` | CI |
@@ -158,7 +158,7 @@ wx-rust-mp = { git = "https://github.com/easy-4-rust/WxRust", branch = "main" }
 
 ```toml
 [dependencies]
-wx-rust-common = { version = "0.1.0", default-features = false, features = ["redis"] }
+wx-rust-common = { version = "0.1.5", default-features = false, features = ["redis"] }
 ```
 
 ## 7. 项目结构
@@ -269,7 +269,7 @@ cargo llvm-cov --workspace --summary-only
 
 | 症状 | 常见原因 | 处理 |
 |---|---|---|
-| `cargo check` 失败 | MSRV 过低 | 使用 Rust >= 1.85 |
+| `cargo check` 失败 | MSRV 过低 | 使用 Rust >= 1.89 |
 | Feature 编译错误 | 可选依赖缺失 | 启用对应 feature |
 | 测试超时 | 异步运行时冲突 | 确保 `tokio` features 匹配 |
 

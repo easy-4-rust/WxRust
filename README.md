@@ -20,12 +20,12 @@
 
 ---
 
-> **Version**: `0.1.0`<br>
+> **Version**: `0.1.5`<br>
 > **MSRV**: Rust `1.89`<br>
 > **Edition**: `2024`<br>
 > **Workspace Resolver**: `3`<br>
 > **Maturity**: Experimental<br>
-> **Last verified**: 2026-08-10
+> **Last verified**: 2026-10-06
 
 ## 1. Overview
 
@@ -39,7 +39,7 @@ It is a semantic port of [WxJava](https://github.com/binarywang/WxJava) (v4.8.4.
 
 | Dimension | Value |
 |---|---|
-| Version | `0.1.0` |
+| Version | `0.1.5` |
 | MSRV / Edition | `1.89` / `2024` |
 | unsafe policy | `#![forbid(unsafe_code)]` |
 | Async runtime | tokio |
@@ -159,7 +159,7 @@ wx-rust-mp = { git = "https://github.com/easy-4-rust/WxRust", branch = "main" }
 
 ```toml
 [dependencies]
-wx-rust-common = { version = "0.1.0", default-features = false, features = ["redis"] }
+wx-rust-common = { version = "0.1.5", default-features = false, features = ["redis"] }
 ```
 
 ## 7. Project Structure
