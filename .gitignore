@@ -93,6 +93,23 @@ Cargo.lock
 **/target/
 **/*.rs.bk
 !xtask/Cargo.lock
+
+# WP-03 local build/raw logs; retain the portable verification summary.
+/artifacts/phase1-diff/
+!docs/verification/wp03-differential-2026-11-11.json
+!docs/verification/wp03-common-error-2026-11-12.json
+!docs/verification/wp03-common-http-2026-11-13.json
+!docs/verification/wp03-http-evidence-2026-11-13/*.json
+!docs/verification/wp03-common-http-get-status-2026-11-13.json
+!docs/verification/wp03-http-get-status-evidence-2026-11-13/*.json
+!docs/verification/wp03-common-http-client-xml-2026-11-13.json
+!docs/verification/wp03-http-client-xml-evidence-2026-11-13/*.json
+!docs/verification/wp03-common-http-client-xml-2026-11-13.json
+!docs/verification/wp03-http-client-xml-evidence-2026-11-13/*.json
+!docs/verification/wp03-dynamic-interceptor-multipart-binary-2026-11-15.json
+!docs/verification/wp03-media-file-compat-2026-11-15.json
+!docs/verification/wp03-media-file-evidence-2026-11-15/*.json
+!docs/verification/wp03-media-file-evidence-2026-11-15/*.log
 .idea/
 .vscode/
 *.swp

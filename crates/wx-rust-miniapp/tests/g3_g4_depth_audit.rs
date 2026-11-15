@@ -5,7 +5,7 @@
 //! 断言覆盖：状态码、字段值、错误码（errcode != 0）、请求体关键字段。
 
 use std::sync::Arc;
-use std::sync::atomic::Ordering;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use wx_rust_miniapp::api::WxMaService;
 use wx_rust_miniapp::api::r#impl::WxMaServiceImpl;
@@ -988,11 +988,29 @@ async fn g4_qrcode_jump_test_delete_rule() {
 /// 对应 Java: WxMaComplaintServiceImplTest 查询投诉 errcode!=0 场景
 #[tokio::test]
 async fn g4_complaint_query_errcode_nonzero() {
-    let s = MockServer::start(dispatch(|_| {
-        r#"{"errcode":40001,"errmsg":"invalid credential"}"#.into()
-    }))
+    // The Token endpoint must also be part of this mock. Java executeInternal
+    // obtains a fresh token before retrying a 40001 response; without this
+    // override the test accidentally contacts the configured real API host.
+    let business_calls = Arc::new(AtomicUsize::new(0));
+    let token_calls = Arc::new(AtomicUsize::new(0));
+    let business_counter = Arc::clone(&business_calls);
+    let token_counter = Arc::clone(&token_calls);
+    let s = MockServer::start(move |path| {
+        if path.contains("/cgi-bin/token") || path.contains("/stable_token") {
+            token_counter.fetch_add(1, Ordering::SeqCst);
+            r#"{"access_token":"MOCK_TOKEN","expires_in":7200}"#.to_string()
+        } else {
+            business_counter.fetch_add(1, Ordering::SeqCst);
+            r#"{"errcode":40001,"errmsg":"invalid credential"}"#.to_string()
+        }
+    })
     .await;
-    let svc = WxMaServiceImpl::new_arc(config_with_host(&s.url("")));
+    let config = config_with_host(&s.url(""));
+    config.set_access_token_url(&format!(
+        "{}/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s",
+        s.url("")
+    ));
+    let svc = WxMaServiceImpl::new_arc(config);
     let mut q = wx_rust_miniapp::bean::complaint::WxMaComplaintRequest::default();
     q.begin_date = "2024-01-01".into();
     q.end_date = "2024-01-31".into();
@@ -1005,6 +1023,16 @@ async fn g4_complaint_query_errcode_nonzero() {
         .await
         .expect_err("errcode!=0 应报错");
     assert_eq!(err.error_code(), Some(40001));
+    assert_eq!(
+        business_calls.load(Ordering::SeqCst),
+        2,
+        "initial API request + one replay"
+    );
+    assert_eq!(
+        token_calls.load(Ordering::SeqCst),
+        2,
+        "initial token fetch + refresh"
+    );
 }
 
 /// 对应 Java: WxMaXPayServiceImplTest 虚拟支付 errcode!=0 场景

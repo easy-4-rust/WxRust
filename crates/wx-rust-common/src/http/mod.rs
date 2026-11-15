@@ -8,6 +8,6 @@
 pub mod transport;
 
 pub use transport::{
-    HttpTransport, MockTransport, ReqwestTransport, TransportBody, TransportMethod,
-    TransportRequest, TransportResponse,
+    HttpRequestInterceptor, HttpTransport, MockTransport, ReqwestTransport, TransportBody,
+    TransportMethod, TransportRequest, TransportResponse, send_with_interceptors,
 };

@@ -623,8 +623,8 @@ async fn v2_refund_notify_ecb_decrypt_java_golden() {
         let pad_len = 16 - (plain.len() % 16);
         plain.extend(std::iter::repeat_n(pad_len as u8, pad_len));
         let mut out = Vec::new();
-        for chunk in plain.chunks_exact(16) {
-            let mut block = Block::<Aes256>::try_from(chunk).expect("块");
+        for chunk in plain.as_chunks::<16>().0 {
+            let mut block = Block::<Aes256>::try_from(chunk.as_slice()).expect("块");
             cipher.encrypt_block(&mut block);
             out.extend_from_slice(block.as_slice());
         }

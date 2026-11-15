@@ -56,11 +56,16 @@ It is a semantic port of [WxJava](https://github.com/binarywang/WxJava) (v4.8.4.
 
 | Claim | Value | Evidence |
 |---|---|---|
-| Workspace compiles | Pass | `cargo check --workspace` |
-| Tests | All green, 0 failures | `cargo test --workspace` |
-| Coverage (line) | 39.81% | `cargo llvm-cov --workspace` |
-| Java objects mapped | 3287 / 3287 (0 MISSING) | `docs/migration/README.md` |
-| Rust source files | 3406 | `find crates -name '*.rs'` |
+| Workspace compiles | cargo check --all-targets passed on Phase 1 working tree | current validation |
+| Tests | cargo test --workspace --offline --locked: **5028 passed, 0 failed, 1 ignored** (2026-11-15; D-drive isolated target) | docs/verification/wp03-media-file-compat-2026-11-15.md |
+| Clippy | cargo clippy --workspace --all-targets --all-features --offline --locked -- -D warnings passed (2026-11-15) | docs/verification/wp03-media-file-compat-2026-11-15.md |
+| Coverage (line) | 39.81% historical snapshot; not re-measured on this working tree | historical cargo llvm-cov report |
+| wx-rust-common coverage only | lines 92.94%, functions 72.81%, regions 90.93% (NOT full Workspace) | docs/verification/wp03-common-http-client-xml-2026-11-13.json |
+| Java source files dispositioned | 3288 / 3288 (1 PARTIAL, 0 MISSING); not behavior parity | docs/verification/phase1-object-inventory-2026-11-09.md |
+| Java declared methods inventoried | 57440; matrix 57440; VERIFIED=0 | docs/verification/phase1-method-matrix-2026-11-09.md |
+| Live Java/Rust differential | 30 scenarios: 24 exact values, 3 category-only matches, 3 legacy API differences; overall parity NOT passed | docs/verification/wp03-common-error-2026-11-12.md |
+| Live HTTP differential | Historical 7 HTTP scenarios + dynamic interceptor 1/1 equivalent; additive File-download 3/3 semantic/error scenarios equivalent (raw random file names differ); multipart raw-wire still DIFFERENT | docs/verification/wp03-media-file-compat-2026-11-15.md |
+| Rust source files | 4541 in current worktree (4536 tracked) | `Get-ChildItem crates -Recurse -Filter '*.rs'` |
 
 ## 2. Module Map
 
@@ -70,7 +75,7 @@ It is a semantic port of [WxJava](https://github.com/binarywang/WxJava) (v4.8.4.
 | `weixin-java-mp` | `wx-rust-mp` | 428 | Official Accounts API, message router, XML crypto |
 | `weixin-java-miniapp` | `wx-rust-miniapp` | 611 | Mini Program code2Session, 50+ sub-services |
 | `weixin-java-pay` | `wx-rust-pay` | 570 | WeChat Pay v2/v3, certs, signatures, XML |
-| `weixin-java-cp` | `wx-rust-cp` | 594 | WeChat Work, session archive, OA |
+| `weixin-java-cp` | `wx-rust-cp` | 595 | WeChat Work, session archive, OA |
 | `weixin-java-open` | `wx-rust-open` | 240 | Third-party platform, proxy mp/ma |
 | `weixin-java-channel` | `wx-rust-channel` | 618 | Channels / WeChat Shop e-commerce |
 | `weixin-java-store` | `wx-rust-store` | — | Independent WeChat Store SDK; no Channel dependency |
@@ -222,18 +227,22 @@ cargo llvm-cov --workspace --summary-only
 
 ### 9.2 Object migration status
 
-| Java Module | Objects | Implemented | PLATFORM_NA | DEPENDENCY_REUSED | MISSING |
-|---|---:|---:|---:|---:|---:|
-| common | 174 | 90 | 87 | 1 | 0 |
-| mp | 428 | 284 | 44 | 39 | 0 |
-| miniapp | 611 | 560 | 35 | 16 | 0 |
-| pay | 570 | 556 | 12 | 2 | 0 |
-| cp | 594 | 565 | 20 | 9 | 0 |
-| open | 240 | 213 | 14 | 13 | 0 |
-| channel | 618 | 603 | 9 | 6 | 0 |
-| aispeech | 25 | 23 | 2 | 0 | 0 |
-| qidian | 27 | 20 | 7 | 0 | 0 |
-| **Total** | **3287** | **2914** | **230** | **86** | **0** |
+| Java Module | Source files | IMPLEMENTED | PARTIAL | PLATFORM_NA | DEPENDENCY_REUSED | MISSING |
+|---|---:|---:|---:|---:|---:|---:|
+| common | 174 | 81 | 0 | 75 | 18 | 0 |
+| mp | 428 | 347 | 0 | 44 | 37 | 0 |
+| miniapp | 611 | 559 | 0 | 42 | 10 | 0 |
+| pay | 570 | 555 | 0 | 14 | 1 | 0 |
+| cp | 595 | 565 | 1 | 20 | 9 | 0 |
+| open | 240 | 213 | 0 | 17 | 10 | 0 |
+| channel | 618 | 603 | 0 | 11 | 4 | 0 |
+| aispeech | 25 | 23 | 0 | 2 | 0 | 0 |
+| qidian | 27 | 20 | 0 | 6 | 1 | 0 |
+| **Total** | **3288** | **2966** | **1** | **231** | **90** | **0** |
+
+These are Java source-file dispositions, not behavior-parity claims. PARTIAL, PLATFORM_NA and DEPENDENCY_REUSED are not VERIFIED.
+
+Method-level inventory: 57,440 declared public/protected methods; 57,440 compatibility rows. Automatic matching has VERIFIED=0. See docs/verification/phase1-method-matrix-2026-11-09.md.
 
 ### 9.3 Key semantic mappings
 
@@ -259,7 +268,7 @@ cargo llvm-cov --workspace --summary-only
 | Document | Path | Purpose |
 |---|---|---|
 | Migration Roadmap | `docs/MIGRATION_ROADMAP.md` | B0-V6 phase plan |
-| Object Mapping | `docs/OBJECT_MAPPING_TABLE.md` | 3287 object index |
+| Object Mapping | docs/superpowers/data/inventory_java_objects.csv| 3287 object index |
 | Semantic Mapping | `docs/SEMANTIC_MAPPING_TABLE.md` | Core call chain / error / serialization |
 | Name Consistency | `docs/NAME_CONSISTENCY_CHECK.md` | Java-to-Rust naming |
 | Tech Stack | `docs/TECH_STACK_SELECTION.md` | Dependency selection |

@@ -12,7 +12,7 @@ pub mod wx_mp_error_msg_enum;
 pub mod wx_open_error_msg_enum;
 pub mod wx_runtime_exception;
 
-pub use wx_error::WxError;
+pub use wx_error::{WxError, WxErrorParseError};
 pub use wx_error_exception::{DEFAULT_ERROR_CODE, WxErrorError};
 pub use wx_runtime_exception::WxRuntimeError;
 

@@ -1209,10 +1209,24 @@ async fn basic_get_address_code_with_null() {
 
 #[tokio::test]
 async fn errcode_nonzero_throws() {
-    let server =
-        MockServer::start(|_path| r#"{"errcode":40001,"errmsg":"invalid credential"}"#.to_string())
-            .await;
-    let service = new_service(config_with_host(&server.url("")));
+    let server = MockServer::start(|path| {
+        if path.contains("/cgi-bin/token") {
+            r#"{"access_token":"REFRESHED_TOKEN","expires_in":7200}"#.to_string()
+        } else {
+            r#"{"errcode":40001,"errmsg":"invalid credential"}"#.to_string()
+        }
+    })
+    .await;
+
+    let mut config = WxStoreDefaultConfig::new("wxappid", "secret");
+    config.set_token("token123");
+    config.update_access_token("MOCK_TOKEN", 7200);
+    config.set_api_host_url(&server.url(""));
+    config.set_access_token_url(&format!(
+        "{}/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s",
+        server.url("")
+    ));
+    let service = new_service(Arc::new(config));
     let product_service = WxStoreProductServiceImpl::new(weak_service(&service));
 
     let err = product_service
@@ -1220,6 +1234,11 @@ async fn errcode_nonzero_throws() {
         .await
         .expect_err("errcode!=0 应报错");
     assert_eq!(err.error_code(), Some(40001));
+    assert_eq!(
+        server.request_count(),
+        3,
+        "首次 API + Token 刷新 + 单次重放"
+    );
 }
 
 #[tokio::test]

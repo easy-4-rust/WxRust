@@ -1,0 +1,192 @@
+{
+  "date": "2026-11-15",
+  "scope": "WxJava 4.8.4.B vs Rust additive get_media_file: 3 pinned real loopback scenarios only",
+  "oracle_commit": "a49d6e1461752c06b752d2afd8aeeb7e6e78cefe",
+  "rust_branch": "feature/wxjava-1to1-phase1",
+  "rust_head": "bc5dbb7ab7bfa7f4e236e9907411edde42e5f0bc",
+  "rust_dirty": true,
+  "source_sha256": "ffa7e9f108812c52f737936e395504022f9f25c98f5730bb679f1575c17cf5ea",
+  "runs": {
+    "strict_red": {
+      "status": "DIFFERENT",
+      "counts": {
+        "DIFFERENT": 1
+      },
+      "source_sha256": "c1d8040ee0ea248e9db9faeeb7cc0bbb7f12841a32522c9ccdf26cd4c3b94697",
+      "report_sha256": "f6cdf57687e78ebd78898fd9999030415f35310a9c1f5abd80e156021f960bf4",
+      "fixture_sha256": "ae83fbbcd321994cde7b23fc825633ba47bfffba436c7a9bcc0c9ddf3f9bff9c",
+      "case_id": "http-media-download-file"
+    },
+    "file_green": {
+      "status": "EQUIVALENT",
+      "counts": {
+        "EQUIVALENT": 1
+      },
+      "source_sha256": "ffa7e9f108812c52f737936e395504022f9f25c98f5730bb679f1575c17cf5ea",
+      "report_sha256": "ec5bbd1bad9fd6a15ce192dbb1cfa8755f0a9feb40e8bf7f57f3aefe42901946",
+      "fixture_sha256": "8daf9235cc7f1fb1f1d689b46368c8a3b544a79fc6f11aa197b3b75041e5ef33",
+      "case_id": "http-media-download-file"
+    },
+    "missing_green": {
+      "status": "EQUIVALENT",
+      "counts": {
+        "EQUIVALENT": 1
+      },
+      "source_sha256": "ffa7e9f108812c52f737936e395504022f9f25c98f5730bb679f1575c17cf5ea",
+      "report_sha256": "6314dff51ca513a0566793252a8abcb9efd97cff350c947fa79a7a785cc0142b",
+      "fixture_sha256": "3c8f81b7151619172f948f8fa044113e9b1ee29f1c10e7e3dbd0cad1a75c5c87",
+      "case_id": "http-media-download-file-no-disposition"
+    },
+    "status_red": {
+      "status": "DIFFERENT",
+      "counts": {
+        "DIFFERENT": 1
+      },
+      "source_sha256": "a31b63a6f945c28064b77421d5b7db730bf201a6a0a42d9b4e7aba97b35a4b45",
+      "report_sha256": "68dc11e25b3dc8b2d62f5dac5c96ef028cd1e01b3c1973aa1feadccb8291c218",
+      "fixture_sha256": "b9ef365d6f1164267411be5fd617bd04e2a11bacfbf33588576b8e6850f34895",
+      "case_id": "http-media-download-file-http-503"
+    },
+    "status_green": {
+      "status": "EQUIVALENT",
+      "counts": {
+        "EQUIVALENT": 1
+      },
+      "source_sha256": "ffa7e9f108812c52f737936e395504022f9f25c98f5730bb679f1575c17cf5ea",
+      "report_sha256": "067e28171fbf9c6fec0254ed3ae248f05ab2f8de4b22d0daa7408bcb8470b4ef",
+      "fixture_sha256": "b9ef365d6f1164267411be5fd617bd04e2a11bacfbf33588576b8e6850f34895",
+      "case_id": "http-media-download-file-http-503"
+    }
+  },
+  "file_semantics": {
+    "comparison_scope": "file_semantics_only",
+    "raw_value_equal": false,
+    "file_exists_both": true,
+    "request_trace_exact_equal": true,
+    "download_bytes_hex": "000102030d0a4142437f",
+    "java_actual": {
+      "file_name": "phase1-download8270387491158965713.bin",
+      "bytes_hex": "000102030d0a4142437f",
+      "file_exists": true,
+      "temp_dir_name": "wxma16294075199680796566"
+    },
+    "rust_actual": {
+      "file_name": "phase1-download1794708055948781600.bin",
+      "bytes_hex": "000102030d0a4142437f",
+      "file_exists": true,
+      "temp_dir_name": "wxma5648-1794708055948781600-0"
+    }
+  },
+  "negative_cases": {
+    "missing_green": {
+      "category": "missing_content_disposition",
+      "java_type": "me.chanjar.weixin.common.error.WxErrorException",
+      "rust_type": "WxErrorException::Wx",
+      "trace_equal": true
+    },
+    "status_green": {
+      "category": "http_status",
+      "java_type": "me.chanjar.weixin.common.error.WxRuntimeException",
+      "rust_type": "WxErrorException::Runtime",
+      "trace_equal": true
+    }
+  },
+  "validation": {
+    "passed": true,
+    "results": [
+      {
+        "name": "fmt",
+        "exit_code": 0,
+        "seconds": 2.8,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+        "log": "D:\\WxRust-Phase1-media-file-validation-20261115\\fmt.log"
+      },
+      {
+        "name": "check",
+        "exit_code": 0,
+        "seconds": 101.8,
+        "sha256": "9E890BB9C21AFAEA8FFE7151406102AEE52F8C05BC7FDFA0EC502B95F12ACDF6",
+        "log": "D:\\WxRust-Phase1-media-file-validation-20261115\\check.log"
+      },
+      {
+        "name": "clippy",
+        "exit_code": 0,
+        "seconds": 23.2,
+        "sha256": "C65D5986B68CF977F21E7870B8DB631F77466D48F4B8BF2D8E5149226CA4EAE8",
+        "log": "D:\\WxRust-Phase1-media-file-validation-20261115\\clippy.log"
+      },
+      {
+        "name": "media-tests",
+        "exit_code": 0,
+        "seconds": 13,
+        "sha256": "9A29182FE8A0F8FF4199DCAFCF53CA640AB65C980B9E2B57F3098AB21D839A4D",
+        "log": "D:\\WxRust-Phase1-media-file-validation-20261115\\media-tests.log"
+      },
+      {
+        "name": "workspace-tests",
+        "exit_code": 0,
+        "seconds": 157.8,
+        "sha256": "D5CAC50FF26118C84A2350BB51B2A0F04D17E8C02E211F7619213B328849D1B5",
+        "log": "D:\\WxRust-Phase1-media-file-validation-20261115\\workspace-tests.log"
+      }
+    ],
+    "workspace": {
+      "groups": 215,
+      "passed": 5028,
+      "failed": 0,
+      "ignored": 1
+    }
+  },
+  "portable_evidence_sha256": {
+    "strict_red-report.json": "f6cdf57687e78ebd78898fd9999030415f35310a9c1f5abd80e156021f960bf4",
+    "strict_red-java.jsonl": "5c2384c408b8ba39e24a036a0f983036c8eb8655341c23ed8bdb72010471846a",
+    "strict_red-rust.jsonl": "08e4dbeefc0752e6aeeb8e3cfcaf7249c282ddaadfbd847d0059d2573fa8f8a5",
+    "strict_red-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "strict_red-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "file_green-report.json": "ec5bbd1bad9fd6a15ce192dbb1cfa8755f0a9feb40e8bf7f57f3aefe42901946",
+    "file_green-java.jsonl": "beb5448cacf81d9a1d8c914db6f7098d2b8832439ce3f78de5b8674dead1306d",
+    "file_green-rust.jsonl": "66f31a83bf326dd2236fae03eb89c11d2a14f0bb543b65777fef992c993ccb38",
+    "file_green-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "file_green-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "missing_green-report.json": "6314dff51ca513a0566793252a8abcb9efd97cff350c947fa79a7a785cc0142b",
+    "missing_green-java.jsonl": "b090337638ed0643fbae5108840d6f303b13fc97bf1bee117a0aa2217f165e36",
+    "missing_green-rust.jsonl": "ddd015044a2bbf15baeabf2e2f0df8f9f18a7dbab4fa3e597b03f96b88942fa0",
+    "missing_green-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "missing_green-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status_red-report.json": "68dc11e25b3dc8b2d62f5dac5c96ef028cd1e01b3c1973aa1feadccb8291c218",
+    "status_red-java.jsonl": "5b2d2ce39fa7ca3e1d81f2dee968b9381594dfe4d112a05b9f9a7445f32d2ebd",
+    "status_red-rust.jsonl": "85f7645d8963a56f50fd9912ff44d77bd34dd2c33a6ddea7bc3192d4a9ad6b25",
+    "status_red-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "status_red-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status_green-report.json": "067e28171fbf9c6fec0254ed3ae248f05ab2f8de4b22d0daa7408bcb8470b4ef",
+    "status_green-java.jsonl": "5b2d2ce39fa7ca3e1d81f2dee968b9381594dfe4d112a05b9f9a7445f32d2ebd",
+    "status_green-rust.jsonl": "49578d41d0115a0b07361abb921d830a835dbc1511f665ede13317c5abb1252c",
+    "status_green-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "status_green-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "success-fixture.jsonl": "8daf9235cc7f1fb1f1d689b46368c8a3b544a79fc6f11aa197b3b75041e5ef33",
+    "missing-fixture.jsonl": "3c8f81b7151619172f948f8fa044113e9b1ee29f1c10e7e3dbd0cad1a75c5c87",
+    "status-fixture.jsonl": "b9ef365d6f1164267411be5fd617bd04e2a11bacfbf33588576b8e6850f34895",
+    "validation.json": "6daa09007ac4eb597dffc74e96b160dcb398e8bb3f40bd4ca545c47bd96c27c1",
+    "fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check.log": "9e890bb9c21afaea8ffe7151406102aee52f8c05bc7fdfa0ec502b95f12acdf6",
+    "clippy.log": "c65d5986b68cf977f21e7870b8db631f77466d48f4b8bf2d8e5149226ca4eae8",
+    "media-tests.log": "9a29182fe8a0f8ff4199dcafcf53ca640ab65c980b9e2b57f3098ab21d839a4d",
+    "workspace-tests.log": "d5cac50ff26118c84a2350bb51b2a0f04d17e8c02e211f7619213b328849d1b5"
+  },
+  "method_matrix_verified": 0,
+  "unverified": [
+    "Rust get_media() byte-return convenience remains ADAPTED",
+    "File.deleteOnExit vs Rust caller cleanup",
+    "Raw unpredictable temp names",
+    "Arbitrary raw Content-Disposition bytes / Unicode filename encoding",
+    "Multipart raw-wire boundary difference",
+    "Token refresh concurrency, cancellation and timeouts",
+    "Whole WxJava/WxRust method parity"
+  ],
+  "git_actions": {
+    "commit": false,
+    "push": false,
+    "merge": false,
+    "release": false
+  }
+}

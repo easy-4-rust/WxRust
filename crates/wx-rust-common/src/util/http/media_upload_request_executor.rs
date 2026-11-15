@@ -6,26 +6,41 @@
 
 use async_trait::async_trait;
 use reqwest::multipart::{Form, Part};
+use std::sync::Arc;
 
 use crate::bean::CommonUploadParam;
 use crate::enums::WxType;
 use crate::error::WxErrorException;
+use crate::http::{HttpRequestInterceptor, send_with_interceptors};
 use crate::util::http::RequestExecutor;
 use crate::util::http::simple_get_request_executor::SimpleGetRequestExecutor;
 
 /// 媒体上传请求执行器。
 ///
 /// 使用 multipart/form-data 上传媒体文件（对应 Java `MediaUploadRequestExecutor`）。
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct MediaUploadRequestExecutor {
     /// reqwest 客户端
     client: reqwest::Client,
+    /// 有序的 per-request interceptor 链
+    interceptors: Vec<HttpRequestInterceptor>,
 }
 
 impl MediaUploadRequestExecutor {
     /// 构建上传执行器。
     pub fn new(client: reqwest::Client) -> Self {
-        Self { client }
+        Self::new_with_interceptors(client, Vec::new())
+    }
+
+    /// 使用调用方配置的 per-request interceptor 链构建上传执行器。
+    pub fn new_with_interceptors(
+        client: reqwest::Client,
+        interceptors: Vec<HttpRequestInterceptor>,
+    ) -> Self {
+        Self {
+            client,
+            interceptors,
+        }
     }
 
     /// 以 multipart 形式上传。
@@ -46,14 +61,51 @@ impl MediaUploadRequestExecutor {
             .file_name
             .clone()
             .unwrap_or_else(|| "file".to_string());
-        let part = Part::bytes(param.data.content).file_name(file_name);
+        let part = Part::bytes(param.data.content)
+            .file_name(file_name)
+            .mime_str("application/octet-stream")
+            .map_err(|error| WxErrorException::Http(error.to_string()))?;
         form = form.part(param.name, part);
         if let Some(fields) = param.form_fields {
-            for (k, v) in fields {
-                form = form.text(k, v);
+            for (name, value) in fields {
+                let mut part_headers = reqwest::header::HeaderMap::new();
+                part_headers.insert(
+                    reqwest::header::CONTENT_TYPE,
+                    reqwest::header::HeaderValue::from_static("text/plain; charset=UTF-8"),
+                );
+                let text_part = Part::text(value).headers(part_headers);
+                form = form.part(name, text_part);
             }
         }
-        let resp = self.client.post(uri).multipart(form).send().await?;
+        // Apache HttpComponents EXTENDED emits an outer ISO-8859-1 charset.
+        // Keep Reqwest's generated boundary unchanged while matching that header.
+        let mut interceptors = Vec::with_capacity(self.interceptors.len() + 1);
+        interceptors.push(Arc::new(|request: &mut reqwest::Request| {
+            let current = request
+                .headers()
+                .get(reqwest::header::CONTENT_TYPE)
+                .and_then(|value| value.to_str().ok())
+                .map(str::to_owned);
+            if let Some(current) = current {
+                if let Some((_, boundary)) = current.split_once("boundary=") {
+                    let compatible = reqwest::header::HeaderValue::from_str(&format!(
+                        "multipart/form-data; charset=ISO-8859-1; boundary={boundary}"
+                    ))
+                    .map_err(|error| WxErrorException::Http(error.to_string()))?;
+                    request
+                        .headers_mut()
+                        .insert(reqwest::header::CONTENT_TYPE, compatible);
+                }
+            }
+            Ok(())
+        }) as HttpRequestInterceptor);
+        interceptors.extend(self.interceptors.iter().cloned());
+        let resp = send_with_interceptors(
+            &self.client,
+            self.client.post(uri).multipart(form),
+            &interceptors,
+        )
+        .await?;
         let body = resp.text().await?;
         SimpleGetRequestExecutor::handle_response(wx_type, &body)
     }

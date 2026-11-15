@@ -1,0 +1,27 @@
+{"id":"error-success","operation":"common.error","input":{"body":"{\"errcode\":0,\"errmsg\":\"ok\"}"}}
+{"id":"error-no-fields","operation":"common.error","input":{"body":"{}"}}
+{"id":"error-unknown-code","operation":"common.error","input":{"body":"{\"errcode\":987654,\"errmsg\":\"custom failure\"}"}}
+{"id":"error-code-string","operation":"common.error","input":{"body":"{\"errcode\":\"40001\",\"errmsg\":\"invalid credential\"}"}}
+{"id":"error-code-null","operation":"common.error","input":{"body":"{\"errcode\":null,\"errmsg\":\"empty code\"}"}}
+{"id":"error-message-null","operation":"common.error","input":{"body":"{\"errcode\":40001,\"errmsg\":null}"}}
+{"id":"error-message-empty","operation":"common.error","input":{"body":"{\"errcode\":40001,\"errmsg\":\"\"}"}}
+{"id":"error-message-number","operation":"common.error","input":{"body":"{\"errcode\":40001,\"errmsg\":123}"}}
+{"id":"error-malformed-json","operation":"common.error","input":{"body":"{not-json"}}
+{"id":"error-json-null","operation":"common.error","input":{"body":"null"}}
+{"id":"error-json-array","operation":"common.error","input":{"body":"[]"}}
+{"id":"error-unknown-extra-fields","operation":"common.error","input":{"body":"{\"errcode\":0,\"errmsg\":\"ok\",\"other\":{\"x\":1}}"}}
+{"id":"error-mp-translation","operation":"common.error","input":{"body":"{\"errcode\":40001,\"errmsg\":\"invalid credential\"}","wx_type":"MP"}}
+{"id":"error-cp-translation","operation":"common.error","input":{"body":"{\"errcode\":42001,\"errmsg\":\"expired\"}","wx_type":"CP"}}
+{"id":"error-miniapp-translation","operation":"common.error","input":{"body":"{\"errcode\":40014,\"errmsg\":\"bad token\"}","wx_type":"MiniApp"}}
+{"id":"error-open-unknown","operation":"common.error","input":{"body":"{\"errcode\":987654,\"errmsg\":\"custom failure\"}","wx_type":"Open"}}
+{"id":"sign-md5-basic","operation":"pay.sign","input":{"params":{"appid":"wx-demo","mch_id":"123","nonce_str":"fixed","total_fee":"100"},"sign_type":"MD5","sign_key":"fixture-only-not-a-secret","ignored":[]}}
+{"id":"sign-md5-default","operation":"pay.sign","input":{"params":{"b":"2","a":"1"},"sign_type":null,"sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-hmac-basic","operation":"pay.sign","input":{"params":{"appid":"wx-demo","body":"中文商品","total_fee":"1"},"sign_type":"HMAC-SHA256","sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-empty-values","operation":"pay.sign","input":{"params":{"a":"","b":" ","c":"0"},"sign_type":"MD5","sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-reserved-fields","operation":"pay.sign","input":{"params":{"sign":"OLD","key":"ignored","xmlString":"<xml/>","xmlDoc":"ignored","couponList":"ignored","a":"1"},"sign_type":"MD5","sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-ignored-fields","operation":"pay.sign","input":{"params":{"a":"1","b":"2","c":"3"},"sign_type":"MD5","sign_key":"fixture-key","ignored":["b","missing"]}}
+{"id":"sign-unknown-type-fallback","operation":"pay.sign","input":{"params":{"a":"1"},"sign_type":"unknown","sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-empty-map","operation":"pay.sign","input":{"params":{},"sign_type":"MD5","sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-special-values","operation":"pay.sign","input":{"params":{"a":"x&y=z","b":"line1\nline2"},"sign_type":"HMAC-SHA256","sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-utf16-key-order","operation":"pay.sign","input":{"params":{"\ue000":"BMP","\ud800\udc00":"SUPPLEMENTARY","a":"ASCII"},"sign_type":"MD5","sign_key":"fixture-key","ignored":[]}}
+{"id":"sign-utf16-key-order-hmac","operation":"pay.sign","input":{"params":{"\ue000":"BMP","\ud800\udc00":"SUPPLEMENTARY","a":"ASCII"},"sign_type":"HMAC-SHA256","sign_key":"fixture-key","ignored":[]}}

@@ -506,8 +506,9 @@ fn aes_256_ecb_decrypt_pkcs7(key: &[u8], data: &[u8]) -> Result<Vec<u8>, String>
     }
     let cipher = Aes256::new_from_slice(key).map_err(|e| e.to_string())?;
     let mut plain = Vec::with_capacity(data.len());
-    for chunk in data.chunks_exact(16) {
-        let mut block = Block::<Aes256>::try_from(chunk).map_err(|_| "块长度错误".to_string())?;
+    for chunk in data.as_chunks::<16>().0 {
+        let mut block =
+            Block::<Aes256>::try_from(chunk.as_slice()).map_err(|_| "块长度错误".to_string())?;
         cipher.decrypt_block(&mut block);
         plain.extend_from_slice(block.as_slice());
     }

@@ -1,0 +1,152 @@
+{
+  "source_sha256_before": "eddd877c5b6428ddd84db84c830035f8169dd6b093292f15d9fac394c709f2de",
+  "source_sha256_after": "eddd877c5b6428ddd84db84c830035f8169dd6b093292f15d9fac394c709f2de",
+  "results": [
+    {
+      "name": "python-tests",
+      "exit_code": 0,
+      "seconds": 0.44,
+      "command": [
+        "C:\\Users\\hnxyh\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/compat",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\python-tests.log",
+      "log_sha256": "dd7bf611e301ad133c1b43f76c359d384f604d4abef2582db2ae6e292dc6cc3a",
+      "executed": 36
+    },
+    {
+      "name": "fmt",
+      "exit_code": 0,
+      "seconds": 5.69,
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "check",
+      "exit_code": 0,
+      "seconds": 120.41,
+      "command": [
+        "cargo",
+        "check",
+        "--workspace",
+        "--all-targets",
+        "--offline",
+        "--locked"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\check.log",
+      "log_sha256": "333f89d0af558d1b3f88625ccde5abf4ce2d3c28c8adeeacc5b5efbe446c4e86"
+    },
+    {
+      "name": "clippy",
+      "exit_code": 0,
+      "seconds": 111.94,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--offline",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\clippy.log",
+      "log_sha256": "27a507519a63b1a61d541078c05b36739732deaa37acd122727bb1dbb25478d2"
+    },
+    {
+      "name": "pipeline-tests",
+      "exit_code": 0,
+      "seconds": 3.34,
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "wx-rust-common",
+        "--test",
+        "execute_pipeline_test"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\pipeline-tests.log",
+      "log_sha256": "add64bafed82bc9758f2ed6f4309c089a0c349425527bc4e694afbca4e901024",
+      "summary_groups": 1,
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "workspace-tests",
+      "exit_code": 0,
+      "seconds": 450.17,
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--offline",
+        "--locked"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\workspace-tests.log",
+      "log_sha256": "62a10b26cfd0d6ed01632d724ca4f7109b982bdca879543c992077b7a4794dd6",
+      "summary_groups": 214,
+      "passed": 5023,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "common-llvm-cov",
+      "exit_code": 0,
+      "seconds": 36.08,
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "--package",
+        "wx-rust-common",
+        "--summary-only",
+        "--offline",
+        "--locked"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\common-llvm-cov.log",
+      "log_sha256": "78f2095cbc8c85489a9a8aad3788f48e105858f78dea0d132a8e7d30dfe40b8d",
+      "coverage": {
+        "regions_total": 4542,
+        "regions_missed": 412,
+        "region_percent": 90.93,
+        "functions_total": 217,
+        "functions_missed": 59,
+        "function_percent": 72.81,
+        "lines_total": 4122,
+        "lines_missed": 291,
+        "line_percent": 92.94
+      }
+    },
+    {
+      "name": "git-diff-check",
+      "exit_code": 0,
+      "seconds": 0.17,
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "log": "artifacts\\phase1-diff\\http-client-xml-validation-20261113-01\\git-diff-check.log",
+      "log_sha256": "464114a10143ec53f245bc93682db9b8e497b08959bd560566c1dea8874da852"
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,46 @@
+﻿{
+    "passed":  true,
+    "results":  [
+                    {
+                        "name":  "fmt",
+                        "exit_code":  0,
+                        "seconds":  2.8,
+                        "sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                        "log":  "D:\\WxRust-Phase1-media-file-validation-20261115\\fmt.log"
+                    },
+                    {
+                        "name":  "check",
+                        "exit_code":  0,
+                        "seconds":  101.8,
+                        "sha256":  "9E890BB9C21AFAEA8FFE7151406102AEE52F8C05BC7FDFA0EC502B95F12ACDF6",
+                        "log":  "D:\\WxRust-Phase1-media-file-validation-20261115\\check.log"
+                    },
+                    {
+                        "name":  "clippy",
+                        "exit_code":  0,
+                        "seconds":  23.2,
+                        "sha256":  "C65D5986B68CF977F21E7870B8DB631F77466D48F4B8BF2D8E5149226CA4EAE8",
+                        "log":  "D:\\WxRust-Phase1-media-file-validation-20261115\\clippy.log"
+                    },
+                    {
+                        "name":  "media-tests",
+                        "exit_code":  0,
+                        "seconds":  13,
+                        "sha256":  "9A29182FE8A0F8FF4199DCAFCF53CA640AB65C980B9E2B57F3098AB21D839A4D",
+                        "log":  "D:\\WxRust-Phase1-media-file-validation-20261115\\media-tests.log"
+                    },
+                    {
+                        "name":  "workspace-tests",
+                        "exit_code":  0,
+                        "seconds":  157.8,
+                        "sha256":  "D5CAC50FF26118C84A2350BB51B2A0F04D17E8C02E211F7619213B328849D1B5",
+                        "log":  "D:\\WxRust-Phase1-media-file-validation-20261115\\workspace-tests.log"
+                    }
+                ],
+    "workspace":  {
+                      "groups":  215,
+                      "passed":  5028,
+                      "failed":  0,
+                      "ignored":  1
+                  }
+}

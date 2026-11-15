@@ -11,22 +11,28 @@
 //!
 //! 1. uri 含 `access_token=` 时前置报错（-99，文案与 miniapp 现实现一致）；
 //! 2. 组装 URL 注入 token（已有 `?` 则 `&` 追加，否则 `?` 追加
-//!    `access_token={token}`）；
+//!    `access_token={token}`）；GET 通过
+//!    `execute_pipeline_with_refresh_and_query` 在 Token 之后追加 queryParam；
 //! 3. 经 [`HttpTransport`] 发送；传输错误（`error_code()` 为 `None`）
-//!    直接上抛、不重放；
-//! 4. 应答按 `WxError::from_json_with_type` 校验 errcode（与
-//!    `SimpleGet/SimplePostRequestExecutor::handle_response` 一致，
+//!    直接上抛、不重放；HTTP status >= 300 在响应体解析前转为 Runtime
+//!    response failure（对齐 Java HttpComponents ResponseHandler）；
+//! 4. GET 空 Body 对齐 SimpleGet 的 Runtime failure；Text POST 空 Body
+//!    对齐 SimplePost 的 `WxErrorException(-99, "无响应内容")`；Text POST
+//!    响应以精确的 `<xml>` 前缀开头时原样返回，不进入 WxError JSON 解析；
+//! 5. 其余非空 2xx 应答按 `WxError::from_json_with_type` 校验 errcode
+//!    （与 `SimpleGet/SimplePostRequestExecutor::handle_response` 一致，
 //!    `wx_type` 用于错误码翻译）；errcode 非 0 时保留完整 `WxError`
 //!    （含原始报文 `json`）返回 `Err`；
-//! 5. errcode ∈ [`crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES`]
+//! 6. errcode ∈ [`crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES`]
 //!    （40001/40014/42001）时先执行 `on_token_invalid`（各 crate 承接
 //!    「加锁比对→置过期」，内部含 `.await` 故为 `BoxFuture`）——置过期
 //!    恒执行；随后仅当 `replay_on_token_invalid`（对应 miniapp
 //!    `auto_refresh_token()`）为真且未重放过时单次重放（`replayed`
-//!    flag 防无限递归，对应 miniapp `do_not_auto_refresh`）；重放沿用
-//!    同一 URL 与同一 token——token 刷新由服务层在下一次独立请求时发生
-//!    （与 miniapp 现实现一致：重放循环使用同一 `uri_with_access_token`）；
-//! 6. errcode 为 0 时交 `parse` 闭包提取成功值（parse 自身的错误原样
+//!    flag 防无限递归，对应 miniapp `do_not_auto_refresh`）；生产 Service
+//!    通过 `execute_pipeline_with_refresh` 在失效后重新调用服务层
+//!    `get_access_token()`，并以新 Token 重建 URL；兼容入口
+//!    `execute_pipeline` 在未提供刷新回调时保留旧的同 Token 重放行为；
+//! 7. errcode 为 0 时交 `parse` 闭包提取成功值（parse 自身的错误原样
 //!    上抛，不吞不换）。
 //!
 //! # 熔断（可选，默认关闭）
@@ -41,19 +47,28 @@
 //! # body → 请求方法映射规则
 //!
 //! - [`TransportBody::None`] → `GET`（无请求体）；
-//! - [`TransportBody::Text`] / [`TransportBody::Bytes`] → `POST`，
-//!   体原样透传（对应 `SimplePostRequestExecutor` 的 POST 文本体语义）。
+//! - [`TransportBody::Text`] → `POST`，体原样透传，并附加
+//!   `Content-Type: application/json; charset=UTF-8`（对应 Java
+//!   HttpComponents `SimplePostRequestExecutor` 的 UTF-8 `StringEntity`）；
+//! - [`TransportBody::Bytes`] → `POST`，体原样透传，不推断文本 Content-Type。
 //!
 //! # 适用边界
 //!
-//! 本管线按「JSON 报文 + errcode 校验」语义工作；二进制应答下载
+//! 本管线按「GET JSON / POST JSON 或精确 `<xml>` 响应 + errcode 校验」语义工作；二进制应答下载
 //! （如二维码图片字节流）不适用，应走各自执行器或后续流式管线
 //! （[`stream::execute_stream`]，Task 7 落地）。
 
 pub mod stream;
 
+use std::future::Future;
+use std::pin::Pin;
+
 use crate::enums::WxType;
-use crate::error::{WxError, WxErrorError, WxErrorException};
+use crate::error::{WxError, WxErrorError, WxErrorException, WxRuntimeError};
+
+type RefreshAccessTokenFuture<'a> =
+    Pin<Box<dyn Future<Output = Result<String, WxErrorException>> + Send + 'a>>;
+type RefreshAccessToken<'a> = dyn Fn() -> RefreshAccessTokenFuture<'a> + Sync + 'a;
 use crate::http::{
     HttpTransport, TransportBody, TransportMethod, TransportRequest, TransportResponse,
 };
@@ -74,6 +89,27 @@ pub trait CircuitBreakerLike: Send + Sync {
 ///
 /// 解析失败（或无 host 段）时退回整段 uri 作键——保持熔断行为确定性，
 /// 不影响请求本身。
+fn build_access_token_url(uri: &str, access_token: &str) -> String {
+    if uri.contains('?') {
+        format!("{uri}&access_token={access_token}")
+    } else {
+        format!("{uri}?access_token={access_token}")
+    }
+}
+
+fn build_access_token_url_with_query(
+    uri: &str,
+    access_token: &str,
+    query_param: Option<&str>,
+) -> String {
+    let url = build_access_token_url(uri, access_token);
+    match query_param.filter(|query| !query.is_empty()) {
+        Some(query) if url.contains('?') => format!("{url}&{query}"),
+        Some(query) => format!("{url}?{query}"),
+        None => url,
+    }
+}
+
 fn breaker_host_key(uri: &str) -> String {
     match url::Url::parse(uri) {
         Ok(parsed) => match (parsed.scheme(), parsed.host_str(), parsed.port()) {
@@ -90,7 +126,7 @@ pub struct PipelineContext<'a> {
     /// 传输实现（生产 [`crate::http::ReqwestTransport`]，测试
     /// [`crate::http::MockTransport`]）
     pub transport: &'a dyn HttpTransport,
-    /// 当前有效 access_token（由服务层取得；重放沿用同一 token）
+    /// 首次请求使用的 access_token；生产 Service 重放前会通过刷新回调替换为新 Token。
     pub access_token: String,
     /// 请求 uri（不含 access_token；与 Java「uri 不允许带 access_token」
     /// 一致的前置校验）
@@ -123,11 +159,74 @@ pub struct PipelineContext<'a> {
 ///
 /// # 返回
 /// `parse` 提取的成功值；或 errcode 非 0 的业务错误 / 传输错误。
+/// 兼容入口：保留旧的同 Token 重放行为，供无刷新上下文的调用使用。
 pub async fn execute_pipeline<T, F>(
     ctx: PipelineContext<'_>,
     wx_type: WxType,
     parse: F,
     on_token_invalid: Option<&(dyn Fn() -> futures_util::future::BoxFuture<'static, ()> + Sync)>,
+) -> Result<T, WxErrorException>
+where
+    F: Fn(TransportResponse) -> Result<T, WxErrorException>,
+{
+    execute_pipeline_inner(ctx, wx_type, parse, on_token_invalid, None, None).await
+}
+
+/// 与 Java executeInternal 一致：Token 失效后重新获取 Token，再重放一次。
+pub async fn execute_pipeline_with_refresh<'ctx, 'refresh, T, F>(
+    ctx: PipelineContext<'ctx>,
+    wx_type: WxType,
+    parse: F,
+    on_token_invalid: Option<&(dyn Fn() -> futures_util::future::BoxFuture<'static, ()> + Sync)>,
+    refresh_access_token: Option<&RefreshAccessToken<'refresh>>,
+) -> Result<T, WxErrorException>
+where
+    F: Fn(TransportResponse) -> Result<T, WxErrorException>,
+{
+    execute_pipeline_inner(
+        ctx,
+        wx_type,
+        parse,
+        on_token_invalid,
+        refresh_access_token,
+        None,
+    )
+    .await
+}
+
+/// 与 Java executeInternal + SimpleGetRequestExecutor 一致：先注入 Token，再追加 queryParam。
+///
+/// Java 的 BaseWxMaServiceImpl.executeInternal 先构造 uriWithAccessToken，
+/// 随后 SimpleGetRequestExecutor.execute 再追加 queryParam。
+pub async fn execute_pipeline_with_refresh_and_query<'ctx, 'refresh, T, F>(
+    ctx: PipelineContext<'ctx>,
+    wx_type: WxType,
+    parse: F,
+    on_token_invalid: Option<&(dyn Fn() -> futures_util::future::BoxFuture<'static, ()> + Sync)>,
+    refresh_access_token: Option<&RefreshAccessToken<'refresh>>,
+    query_param: Option<&str>,
+) -> Result<T, WxErrorException>
+where
+    F: Fn(TransportResponse) -> Result<T, WxErrorException>,
+{
+    execute_pipeline_inner(
+        ctx,
+        wx_type,
+        parse,
+        on_token_invalid,
+        refresh_access_token,
+        query_param,
+    )
+    .await
+}
+
+async fn execute_pipeline_inner<'ctx, 'refresh, T, F>(
+    ctx: PipelineContext<'ctx>,
+    wx_type: WxType,
+    parse: F,
+    on_token_invalid: Option<&(dyn Fn() -> futures_util::future::BoxFuture<'static, ()> + Sync)>,
+    refresh_access_token: Option<&RefreshAccessToken<'refresh>>,
+    query_param: Option<&str>,
 ) -> Result<T, WxErrorException>
 where
     F: Fn(TransportResponse) -> Result<T, WxErrorException>,
@@ -150,17 +249,25 @@ where
         breaker.before(key).await?;
     }
 
-    // token 注入（? 已存在则 & 追加）——循环外组装一次，重放沿用同一 URL
-    let url = if ctx.uri.contains('?') {
-        format!("{}&access_token={}", ctx.uri, ctx.access_token)
-    } else {
-        format!("{}?access_token={}", ctx.uri, ctx.access_token)
-    };
+    // 首次请求使用服务层 Token；刷新后重新构造 URL。
+    let mut active_token = ctx.access_token.clone();
+    let mut url = build_access_token_url_with_query(&ctx.uri, &active_token, query_param);
 
     // body → 方法映射（规则见模块文档）
     let method = match &ctx.body {
         TransportBody::None => TransportMethod::Get,
         TransportBody::Text(_) | TransportBody::Bytes(_) => TransportMethod::Post,
+    };
+
+    // Java HttpComponents SimplePostRequestExecutor uses
+    // StringEntity(data, ContentType.APPLICATION_JSON.withCharset(UTF_8)).
+    // Keep binary bodies free of an inferred text/JSON content type.
+    let headers = match &ctx.body {
+        TransportBody::Text(_) => vec![(
+            "Content-Type".to_string(),
+            "application/json; charset=UTF-8".to_string(),
+        )],
+        TransportBody::None | TransportBody::Bytes(_) => vec![],
     };
 
     // Java 以递归实现单次 token 自动刷新；Rust 以 flag 循环表达同一
@@ -173,7 +280,7 @@ where
             .send(TransportRequest {
                 method: method.clone(),
                 url: url.clone(),
-                headers: vec![],
+                headers: headers.clone(),
                 body: ctx.body.clone(),
             })
             .await
@@ -182,20 +289,51 @@ where
             Err(e) => break Err(e),
         };
 
-        // 与标准执行器 handle_response 一致的 errcode 校验
+        // Apache AbstractHttpClientResponseHandler rejects HTTP status >= 300
+        // before parsing the response entity; BaseWxMaServiceImpl wraps the
+        // resulting IOException as WxRuntimeException. Match that boundary.
+        if resp.status >= 300 {
+            break Err(WxErrorException::Runtime(WxRuntimeError::new(format!(
+                "HTTP response status: {}",
+                resp.status
+            ))));
+        }
+        // Java SimplePostRequestExecutor rejects an empty body as
+        // WxErrorException(-99, "无响应内容"); SimpleGet has no such guard and
+        // dereferences the null Gson result, yielding a runtime exception.
+        let simple_post = matches!(&ctx.body, TransportBody::Text(_));
+        if resp.body.is_empty() {
+            if simple_post {
+                break Err(WxErrorException::from_code(-99, "无响应内容"));
+            }
+            break Err(WxErrorException::Runtime(WxRuntimeError::new(
+                "HTTP response body is empty",
+            )));
+        }
+
         let body_text = String::from_utf8_lossy(&resp.body);
+        // Java SimplePostRequestExecutor returns an exact "<xml>" prefix as-is
+        // before attempting WxError JSON parsing; GET does not have this branch.
+        if simple_post && body_text.starts_with("<xml>") {
+            break parse(resp);
+        }
+        // 与标准执行器 handle_response 一致的 errcode 校验
         let wx_error = WxError::from_json_with_type(&body_text, Some(wx_type));
         if wx_error.error_code != 0 {
             if crate::api::wx_consts::ACCESS_TOKEN_ERROR_CODES.contains(&wx_error.error_code)
                 && let Some(on_token_invalid) = on_token_invalid
             {
-                // 强制设置 access token 过期，下一次请求里就会刷新
-                // （重放沿用同一 token，与 miniapp 现实现一致）。
-                // 置过期恒执行；重放仅在 replay_on_token_invalid 为真
-                // 且未重放过时发生（对齐 miniapp「auto_refresh_token()
-                // && !do_not_auto_refresh」语义）
+                // 先按 Java 语义加锁比对并使旧 Token 过期。
                 on_token_invalid().await;
                 if ctx.replay_on_token_invalid && !replayed {
+                    // Java 递归进入 executeInternal 后会再次调用 getAccessToken(false)。
+                    if let Some(refresh) = refresh_access_token {
+                        match refresh().await {
+                            Ok(token) => active_token = token,
+                            Err(error) => break Err(error),
+                        }
+                    }
+                    url = build_access_token_url_with_query(&ctx.uri, &active_token, query_param);
                     replayed = true;
                     continue;
                 }

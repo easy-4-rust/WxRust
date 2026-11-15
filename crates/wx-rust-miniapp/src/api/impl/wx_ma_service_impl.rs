@@ -47,6 +47,7 @@ use crate::api::{
 };
 use crate::config::WxMaConfig;
 use crate::util::wx_ma_config_holder;
+use wx_rust_common::http::HttpRequestInterceptor;
 use wx_rust_common::service::{WxImgProcService, WxOcrService};
 
 /// 子服务集合（对应 Java WxMaService 各 `getXxxService()` 返回的子服务字段）。
@@ -113,6 +114,7 @@ struct SubServices {
 /// 小程序服务实现（reqwest HTTP 后端）。
 pub struct WxMaServiceImpl {
     client: reqwest::Client,
+    request_interceptors: Vec<HttpRequestInterceptor>,
     config_storages: Mutex<HashMap<String, Arc<dyn WxMaConfig>>>,
     default_appid: String,
     sub_services: OnceLock<SubServices>,
@@ -124,11 +126,32 @@ impl WxMaServiceImpl {
     /// # 参数
     /// - `config`：初始小程序配置
     pub fn new_arc(config: Arc<dyn WxMaConfig>) -> Arc<Self> {
+        Self::new_arc_with_http_client(config, reqwest::Client::new())
+    }
+
+    /// 使用调用方配置的 HTTP Client 构建服务（支持 default headers、代理、超时与连接池）。
+    ///
+    /// 对应 Java 通过 DefaultHttpComponentsClientBuilder 配置共享 HttpClient /
+    /// request interceptors 的能力；所有子服务复用同一 Client。
+    pub fn new_arc_with_http_client(
+        config: Arc<dyn WxMaConfig>,
+        client: reqwest::Client,
+    ) -> Arc<Self> {
+        Self::new_arc_with_http_client_and_interceptors(config, client, Vec::new())
+    }
+
+    /// Construct the service with an ordered per-request interceptor chain.
+    pub fn new_arc_with_http_client_and_interceptors(
+        config: Arc<dyn WxMaConfig>,
+        client: reqwest::Client,
+        request_interceptors: Vec<HttpRequestInterceptor>,
+    ) -> Arc<Self> {
         let appid = config.app_id().to_string();
         let mut storages = HashMap::new();
         storages.insert(appid.clone(), config);
         let arc = Arc::new(Self {
-            client: reqwest::Client::new(),
+            client,
+            request_interceptors,
             config_storages: Mutex::new(storages),
             default_appid: appid,
             sub_services: OnceLock::new(),
@@ -272,6 +295,10 @@ impl WxMaService for WxMaServiceImpl {
 
     fn http_client(&self) -> &reqwest::Client {
         &self.client
+    }
+
+    fn http_request_interceptors(&self) -> Vec<HttpRequestInterceptor> {
+        self.request_interceptors.clone()
     }
 
     fn user_service(&self) -> Option<Arc<dyn WxMaUserService>> {

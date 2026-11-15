@@ -727,9 +727,9 @@ async fn media_upload_parse_result_and_json_error_download() {
         .upload("image", "jpg", b"JPEG_BYTES".to_vec())
         .await
         .expect("upload 成功");
-    assert_eq!(result.media_id, "MEDIA_1");
-    assert_eq!(result.url, "https://example.com/upload");
-    assert_eq!(result.r#type, "image");
+    assert_eq!(result.media_id.as_deref(), Some("MEDIA_1"));
+    assert_eq!(result.url.as_deref(), Some("https://example.com/upload"));
+    assert_eq!(result.r#type.as_deref(), Some("image"));
     assert_eq!(result.created_at, 1720000000);
     let path = server.last_path();
     assert!(
@@ -744,7 +744,7 @@ async fn media_upload_parse_result_and_json_error_download() {
         .upload_with_url("image", "logo.png", &remote.url("/logo.png"))
         .await
         .expect("uploadWithUrl 成功");
-    assert_eq!(result.media_id, "MEDIA_1");
+    assert_eq!(result.media_id.as_deref(), Some("MEDIA_1"));
     let body = server.last_body();
     assert!(
         body.contains("filename=\"logo.png\""),

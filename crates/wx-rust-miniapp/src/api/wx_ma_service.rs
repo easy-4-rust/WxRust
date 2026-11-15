@@ -31,6 +31,7 @@ use wx_rust_common::bean::subscribemsg::{
 };
 use wx_rust_common::bean::{CommonUploadData, CommonUploadParam};
 use wx_rust_common::error::WxErrorException;
+use wx_rust_common::http::{HttpRequestInterceptor, send_with_interceptors};
 use wx_rust_common::util::SignUtils;
 use wx_rust_common::util::crypto::Sha1;
 use wx_rust_common::util::fs::FileUtils;
@@ -79,6 +80,36 @@ pub trait WxMaService: Send + Sync {
 
     /// HTTP 客户端。
     fn http_client(&self) -> &reqwest::Client;
+
+    /// Ordered request interceptors applied immediately before every SDK HTTP send.
+    fn http_request_interceptors(&self) -> Vec<HttpRequestInterceptor> {
+        Vec::new()
+    }
+
+    /// Build and execute a request through this service's per-request interceptor chain.
+    async fn send_http_request(
+        &self,
+        builder: reqwest::RequestBuilder,
+    ) -> Result<reqwest::Response, WxErrorException> {
+        let interceptors = self.http_request_interceptors();
+        send_with_interceptors(self.http_client(), builder, &interceptors).await
+    }
+
+    /// 通用 multipart 上传入口，对应 Java `WxService.upload(url, CommonUploadParam)`。
+    ///
+    /// 使用统一 Token/重试执行链，并在最终请求发送前运行服务级 Request Interceptor。
+    async fn upload(
+        &self,
+        uri: &str,
+        param: CommonUploadParam,
+    ) -> Result<String, WxErrorException> {
+        let executor = MediaUploadRequestExecutor::new_with_interceptors(
+            self.http_client().clone(),
+            self.http_request_interceptors(),
+        );
+        crate::api::r#impl::base_wx_ma_service_impl::execute_with_retry(self, &executor, uri, param)
+            .await
+    }
 
     // ---- 子服务（对应 Java WxMaService 的 `getXxxService()`；默认返回
     // None，由 WxMaServiceImpl 覆写为装配后的实例） ----
@@ -452,8 +483,9 @@ pub trait WxMaService: Send + Sync {
     /// POST 请求（对应 Java `post(String, String)`）。
     ///
     /// 走统一管线（经 `execute_post_via_pipeline`：POST 文本体原样透传 +
-    /// -1 指数退避重试 + token 失效单次重放——原
-    /// `SimplePostRequestExecutor` 路径）。
+    /// JSON UTF-8 Content-Type + -1 指数退避重试 + token 失效单次重放）。
+    /// 对齐 Java `SimplePostRequestExecutor`：空响应返回 -99「无响应内容」；
+    /// 响应以精确 `<xml>` 前缀开头时原样返回，不尝试 JSON 错误码解析。
     async fn post(&self, url: &str, post_data: &str) -> Result<String, WxErrorException> {
         crate::api::r#impl::base_wx_ma_service_impl::execute_post_via_pipeline(self, url, post_data)
             .await
@@ -512,12 +544,7 @@ pub trait WxMaService: Send + Sync {
             }
             _ => url_core::get_access_token_url(config.as_ref()),
         };
-        let client = self.http_client();
-        let resp = client
-            .get(&url)
-            .send()
-            .await
-            .map_err(|e| WxErrorException::Http(e.to_string()))?;
+        let resp = self.send_http_request(self.http_client().get(&url)).await?;
         let body = resp
             .text()
             .await
@@ -541,13 +568,9 @@ pub trait WxMaService: Send + Sync {
             "secret": config.secret(),
             "force_refresh": force_refresh,
         });
-        let client = self.http_client();
-        let resp = client
-            .post(&url)
-            .json(&body)
-            .send()
-            .await
-            .map_err(|e| WxErrorException::Http(e.to_string()))?;
+        let resp = self
+            .send_http_request(self.http_client().post(&url).json(&body))
+            .await?;
         let text = resp
             .text()
             .await
@@ -821,7 +844,10 @@ pub trait WxMaService: Send + Sync {
     /// 以 multipart（字段名 `media`）上传图片文件到 `/wxa/img_sec_check`；
     /// 上传成功即返回 true（Java `result != null`）。
     async fn check_image_file(&self, file_path: &str) -> Result<bool, WxErrorException> {
-        let executor = MediaUploadRequestExecutor::new(self.http_client().clone());
+        let executor = MediaUploadRequestExecutor::new_with_interceptors(
+            self.http_client().clone(),
+            self.http_request_interceptors(),
+        );
         let content = std::fs::read(file_path).map_err(|e| WxErrorException::Io(e.to_string()))?;
         let file_name = std::path::Path::new(file_path)
             .file_name()
@@ -845,9 +871,7 @@ pub trait WxMaService: Send + Sync {
     /// （Java `WxError.builder().errorCode(-1).errorMsg("文件地址读取异常")`）。
     async fn check_image_url(&self, file_url: &str) -> Result<bool, WxErrorException> {
         let resp = self
-            .http_client()
-            .get(file_url)
-            .send()
+            .send_http_request(self.http_client().get(file_url))
             .await
             .map_err(|_| WxErrorException::from_code(-1, "文件地址读取异常"))?;
         let bytes = resp
@@ -981,8 +1005,9 @@ pub trait WxMaService: Send + Sync {
         width: i32,
     ) -> Result<Vec<u8>, WxErrorException> {
         let body = serde_json::json!({ "path": path, "width": width });
-        let executor = crate::api::r#impl::base_wx_ma_service_impl::QrcodeBytesRequestExecutor::new(
+        let executor = crate::api::r#impl::base_wx_ma_service_impl::QrcodeBytesRequestExecutor::new_with_interceptors(
             self.http_client().clone(),
+            self.http_request_interceptors(),
         );
         let config = self.wx_ma_config();
         crate::api::r#impl::base_wx_ma_service_impl::execute_with_retry(
@@ -1063,8 +1088,9 @@ pub trait WxMaService: Send + Sync {
             body["line_color"] =
                 serde_json::to_value(lc).map_err(|e| WxErrorException::Serde(e.to_string()))?;
         }
-        let executor = crate::api::r#impl::base_wx_ma_service_impl::QrcodeBytesRequestExecutor::new(
+        let executor = crate::api::r#impl::base_wx_ma_service_impl::QrcodeBytesRequestExecutor::new_with_interceptors(
             self.http_client().clone(),
+            self.http_request_interceptors(),
         );
         let config = self.wx_ma_config();
         crate::api::r#impl::base_wx_ma_service_impl::execute_with_retry(
@@ -1182,8 +1208,9 @@ pub trait WxMaService: Send + Sync {
                 serde_json::to_value(lc).map_err(|e| WxErrorException::Serde(e.to_string()))?,
             );
         }
-        let executor = crate::api::r#impl::base_wx_ma_service_impl::QrcodeBytesRequestExecutor::new(
+        let executor = crate::api::r#impl::base_wx_ma_service_impl::QrcodeBytesRequestExecutor::new_with_interceptors(
             self.http_client().clone(),
+            self.http_request_interceptors(),
         );
         let config = self.wx_ma_config();
         crate::api::r#impl::base_wx_ma_service_impl::execute_with_retry(

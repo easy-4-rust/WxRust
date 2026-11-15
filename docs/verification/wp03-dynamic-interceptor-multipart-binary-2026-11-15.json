@@ -1,0 +1,106 @@
+{
+  "report_date": "2026-11-15",
+  "oracle": {
+    "repository": "binarywang/WxJava",
+    "version": "4.8.4.B",
+    "commit": "a49d6e1461752c06b752d2afd8aeeb7e6e78cefe"
+  },
+  "rust": {
+    "repository": "easy-4-rust/WxRust",
+    "branch": "feature/wxjava-1to1-phase1",
+    "head": "bc5dbb7ab7bfa7f4e236e9907411edde42e5f0bc",
+    "uncommitted_work_preserved": true
+  },
+  "scenarios": [
+    {
+      "id": "http-get-dynamic-interceptor",
+      "red": "DIFFERENT",
+      "green": "EQUIVALENT",
+      "evidence_red": "artifacts/phase1-diff/http-dynamic-interceptor-red-20261114-03/report.json",
+      "evidence_green": "artifacts/phase1-diff/http-dynamic-interceptor-green-20261114-03/report.json",
+      "comparison": "strict JSON and raw HTTP trace",
+      "verified_scope": "Token GET and API GET receive different dynamic Header values"
+    },
+    {
+      "id": "http-media-upload-multipart",
+      "raw_wire": "DIFFERENT",
+      "mime_semantics": "EQUIVALENT in independently parsed fields/bytes",
+      "evidence": "artifacts/phase1-diff/http-multipart-media-final-20261114-03/report.json",
+      "difference": "generated multipart boundary bytes differ"
+    },
+    {
+      "id": "http-common-upload-multipart",
+      "raw_wire": "DIFFERENT",
+      "mime_semantics": "EQUIVALENT in independently parsed fields/bytes",
+      "evidence": "artifacts/phase1-diff/http-multipart-common-upload-green-20261114-01/report.json",
+      "difference": "generated multipart boundary and textual part HTTP header casing differ"
+    },
+    {
+      "id": "http-media-download-binary",
+      "raw_value": "DIFFERENT",
+      "byte_payload": "EQUAL",
+      "evidence": "artifacts/phase1-diff/http-media-download-green-20261114-01/report.json",
+      "difference": "Java returns a temporary File with filename; Rust returns Vec<u8>"
+    }
+  ],
+  "multipart_payload": {
+    "media_file_bytes": 14,
+    "media_file_sha256": "eb2e42101eb44509ef7c39418c6e7dfa36a3926e8e401bcf25fe158f4b763b24",
+    "common_description_bytes": 22,
+    "common_description_sha256": "b489ee2a1a8f0eb2f6daf68868c7e34e86b88486a5f744eb002272ac347ab333"
+  },
+  "validation": {
+    "python_harness": {
+      "passed": 40,
+      "failed": 0
+    },
+    "targeted_rust": {
+      "passed": 18,
+      "failed": 0
+    },
+    "cargo_check": {
+      "command": "cargo check --workspace --all-targets --offline --locked",
+      "exit_code": 0
+    },
+    "workspace": {
+      "command": "cargo test --workspace --offline --locked --quiet",
+      "target_dir": "D:\\WxRust-Phase1-verify-target-20261115",
+      "passed": 5025,
+      "failed": 0,
+      "ignored": 1,
+      "summary_groups": 215,
+      "exit_code": 0,
+      "log": "D:\\WxRust-Phase1-validation-20261115\\workspace-tests-final-02.log",
+      "sha256": "CD60919E6801F4E067A02EEDEED24E7F7320D6D6DF942C2A56A7908152C9B425"
+    },
+    "strict_clippy": {
+      "command": "cargo clippy --workspace --all-targets --all-features --offline --locked -- -D warnings",
+      "exit_code": 0,
+      "log": "D:\\WxRust-Phase1-validation-20261115\\clippy-all-targets-03.log",
+      "sha256": "7D6CB2B487DFA5AEFB562E48F61D27A3BCF486C78A5C2B6423374C99B2ED497B"
+    },
+    "cargo_fmt_check": 0,
+    "git_diff_check": 0,
+    "cargo_lock_changed": false
+  },
+  "environment": {
+    "original_workspace_target": "E: drive",
+    "original_workspace_test_failure": "rustc-LLVM ERROR: no space on device",
+    "d_drive_target_used": true,
+    "original_cache_preserved": true
+  },
+  "method_matrix_verified": 0,
+  "not_verified": [
+    "multipart raw byte parity",
+    "binary File vs Vec<u8> API return contract",
+    "cross-process token refresh and concurrency",
+    "request cancellation/timeout semantics",
+    "full WxJava/WxRust method parity"
+  ],
+  "git_actions": {
+    "commit": false,
+    "push": false,
+    "merge": false,
+    "release": false
+  }
+}

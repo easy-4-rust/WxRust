@@ -56,11 +56,16 @@
 
 | 声明 | 当前值 | 证据 |
 |---|---|---|
-| workspace 可编译 | 通过 | `cargo check --workspace` |
-| 测试 | 全绿，0 失败 | `cargo test --workspace` |
-| 行覆盖率 | 39.81% | `cargo llvm-cov --workspace` |
-| Java 对象已映射 | 3287 / 3287（0 MISSING） | `docs/migration/README.md` |
-| Rust 源文件数 | 3406 | `find crates -name '*.rs'` |
+| workspace 可编译 | Phase 1 工作区 cargo check --all-targets 通过 | 当前验证 |
+| 测试 | cargo test --workspace --offline --locked：**5028 通过、0 失败、1 忽略**（2026-11-15；D 盘独立构建目录） | docs/verification/wp03-media-file-compat-2026-11-15.md |
+| Clippy | cargo clippy --workspace --all-targets --all-features --offline --locked -- -D warnings 通过（2026-11-15） | docs/verification/wp03-media-file-compat-2026-11-15.md |
+| 行覆盖率 | 39.81% 为历史快照，本工作区尚未重新测量 | 历史 cargo llvm-cov 报告 |
+| wx-rust-common 单包覆盖率 | 行 92.94%、函数 72.81%、Region 90.93%（非整个 Workspace） | docs/verification/wp03-common-http-client-xml-2026-11-13.json |
+| Java 主源码文件处置 | 3288 / 3288（1 PARTIAL，0 MISSING）；不代表行为兼容 | docs/verification/phase1-object-inventory-2026-11-09.md |
+| Java 声明方法清点 | 57440；方法矩阵 57440；VERIFIED=0 | docs/verification/phase1-method-matrix-2026-11-09.md |
+| Java/Rust 真实差分 | 30 场景：24 个完整值一致、3 个仅错误类别一致、3 个旧 API 差异；整体兼容未通过 | docs/verification/wp03-common-error-2026-11-12.md |
+| Java/Rust HTTP 差分 | 原有 7 场景和动态拦截器单场景通过；新增文件式下载 3/3 语义/错误类别场景一致（原始随机文件名不同）；两类 Multipart Raw Wire 仍 DIFFERENT | docs/verification/wp03-media-file-compat-2026-11-15.md |
+| Rust 源文件数 | 当前工作树 4541（Git 已跟踪 4536） | `Get-ChildItem crates -Recurse -Filter '*.rs'` |
 
 ## 2. 模块总览
 
@@ -70,7 +75,7 @@
 | `weixin-java-mp` | `wx-rust-mp` | 428 | 公众号 API、消息路由、XML 加解密 |
 | `weixin-java-miniapp` | `wx-rust-miniapp` | 611 | 小程序 code2Session、50+ 子服务 |
 | `weixin-java-pay` | `wx-rust-pay` | 570 | 微信支付 v2/v3、证书、签名、XML |
-| `weixin-java-cp` | `wx-rust-cp` | 594 | 企业微信、会话存档、OA |
+| `weixin-java-cp` | `wx-rust-cp` | 595 | 企业微信、会话存档、OA |
 | `weixin-java-open` | `wx-rust-open` | 240 | 第三方平台、代 mp/ma |
 | `weixin-java-channel` | `wx-rust-channel` | 618 | 视频号/微信小店电商 |
 | `weixin-java-aispeech` | `wx-rust-aispeech` | 25 | AI 语音 |
@@ -221,18 +226,22 @@ cargo llvm-cov --workspace --summary-only
 
 ### 9.2 对象迁移状态
 
-| Java 模块 | 对象数 | 已实现 | PLATFORM_NA | DEPENDENCY_REUSED | MISSING |
-|---|---:|---:|---:|---:|---:|
-| common | 174 | 90 | 87 | 1 | 0 |
-| mp | 428 | 284 | 44 | 39 | 0 |
-| miniapp | 611 | 560 | 35 | 16 | 0 |
-| pay | 570 | 556 | 12 | 2 | 0 |
-| cp | 594 | 565 | 20 | 9 | 0 |
-| open | 240 | 213 | 14 | 13 | 0 |
-| channel | 618 | 603 | 9 | 6 | 0 |
-| aispeech | 25 | 23 | 2 | 0 | 0 |
-| qidian | 27 | 20 | 7 | 0 | 0 |
-| **合计** | **3287** | **2914** | **230** | **86** | **0** |
+| Java 模块 | 主源码文件 | IMPLEMENTED | PARTIAL | PLATFORM_NA | DEPENDENCY_REUSED | MISSING |
+|---|---:|---:|---:|---:|---:|---:|
+| common | 174 | 81 | 0 | 75 | 18 | 0 |
+| mp | 428 | 347 | 0 | 44 | 37 | 0 |
+| miniapp | 611 | 559 | 0 | 42 | 10 | 0 |
+| pay | 570 | 555 | 0 | 14 | 1 | 0 |
+| cp | 595 | 565 | 1 | 20 | 9 | 0 |
+| open | 240 | 213 | 0 | 17 | 10 | 0 |
+| channel | 618 | 603 | 0 | 11 | 4 | 0 |
+| aispeech | 25 | 23 | 0 | 2 | 0 | 0 |
+| qidian | 27 | 20 | 0 | 6 | 1 | 0 |
+| **合计** | **3288** | **2966** | **1** | **231** | **90** | **0** |
+
+以上是 Java 主源码文件的处置统计，不是行为兼容结论。PARTIAL、PLATFORM_NA、DEPENDENCY_REUSED 均不能视为 VERIFIED。
+
+方法级清点：57,440 条 public/protected 声明方法，兼容矩阵 57,440 行，自动映射 VERIFIED=0。详见 docs/verification/phase1-method-matrix-2026-11-09.md。
 
 ### 9.3 关键语义映射
 
@@ -258,7 +267,7 @@ cargo llvm-cov --workspace --summary-only
 | 文档 | 路径 | 用途 |
 |---|---|---|
 | 迁移路线图 | `docs/MIGRATION_ROADMAP.md` | B0-V6 阶段规划 |
-| 对象级对照表 | `docs/OBJECT_MAPPING_TABLE.md` | 3287 对象索引 |
+| 对象级对照表 | docs/superpowers/data/inventory_java_objects.csv| 3287 对象索引 |
 | 语义迁移对照表 | `docs/SEMANTIC_MAPPING_TABLE.md` | 核心调用链/错误/序列化 |
 | 名称一致性检查 | `docs/NAME_CONSISTENCY_CHECK.md` | Java→Rust 命名一致性 |
 | 技术选型 | `docs/TECH_STACK_SELECTION.md` | 依赖选型决策 |

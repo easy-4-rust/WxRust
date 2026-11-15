@@ -100,7 +100,11 @@ impl WxCpTpMediaService for WxCpTpMediaServiceImpl {
         self.upload_file(&url, file_path).await
     }
 
-    async fn upload_img(&self, file_path: &str, corp_id: &str) -> Result<String, WxErrorException> {
+    async fn upload_img(
+        &self,
+        file_path: &str,
+        corp_id: &str,
+    ) -> Result<Option<String>, WxErrorException> {
         let service = self.service()?;
         let config = service.wx_cp_tp_config_storage();
         let url = format!(
@@ -109,6 +113,6 @@ impl WxCpTpMediaService for WxCpTpMediaServiceImpl {
             config.access_token(corp_id).unwrap_or_default()
         );
         let result = self.upload_file(&url, file_path).await?;
-        Ok(result.url)
+        Ok(result.url) // Java getUrl() may return null; preserve it explicitly.
     }
 }

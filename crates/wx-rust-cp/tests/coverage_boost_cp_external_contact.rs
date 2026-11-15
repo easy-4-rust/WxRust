@@ -1620,7 +1620,7 @@ async fn test_ec_upload_attachment() {
         .upload_attachment("file", "pdf", 1, b"PDF_BYTES".to_vec())
         .await
         .expect("上传附件成功");
-    assert_eq!(result.media_id, "MEDIA_1");
+    assert_eq!(result.media_id.as_deref(), Some("MEDIA_1"));
     let path = server.last_path();
     assert!(
         path.contains("/cgi-bin/media/upload_attachment"),

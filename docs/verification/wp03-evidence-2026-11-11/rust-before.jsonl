@@ -1,0 +1,27 @@
+{"id":"error-success","operation":"common.error","result":{"kind":"value","value":{"error_code":0,"error_msg":"ok","error_msg_en":null}}}
+{"id":"error-no-fields","operation":"common.error","result":{"kind":"value","value":{"error_code":0,"error_msg":null,"error_msg_en":null}}}
+{"id":"error-unknown-code","operation":"common.error","result":{"kind":"value","value":{"error_code":987654,"error_msg":"custom failure","error_msg_en":null}}}
+{"id":"error-code-string","operation":"common.error","result":{"kind":"value","value":{"error_code":-99,"error_msg":"JSON 解析失败，原始报文：{\"errcode\":\"40001\",\"errmsg\":\"invalid credential\"}","error_msg_en":null}}}
+{"id":"error-code-null","operation":"common.error","result":{"kind":"value","value":{"error_code":-99,"error_msg":"JSON 解析失败，原始报文：{\"errcode\":null,\"errmsg\":\"empty code\"}","error_msg_en":null}}}
+{"id":"error-message-null","operation":"common.error","result":{"kind":"value","value":{"error_code":40001,"error_msg":null,"error_msg_en":null}}}
+{"id":"error-message-empty","operation":"common.error","result":{"kind":"value","value":{"error_code":40001,"error_msg":"","error_msg_en":null}}}
+{"id":"error-message-number","operation":"common.error","result":{"kind":"value","value":{"error_code":-99,"error_msg":"JSON 解析失败，原始报文：{\"errcode\":40001,\"errmsg\":123}","error_msg_en":null}}}
+{"id":"error-malformed-json","operation":"common.error","result":{"kind":"value","value":{"error_code":-99,"error_msg":"JSON 解析失败，原始报文：{not-json","error_msg_en":null}}}
+{"id":"error-json-null","operation":"common.error","result":{"kind":"value","value":{"error_code":-99,"error_msg":"JSON 解析失败，原始报文：null","error_msg_en":null}}}
+{"id":"error-json-array","operation":"common.error","result":{"kind":"value","value":{"error_code":-99,"error_msg":"JSON 解析失败，原始报文：[]","error_msg_en":null}}}
+{"id":"error-unknown-extra-fields","operation":"common.error","result":{"kind":"value","value":{"error_code":0,"error_msg":"ok","error_msg_en":null}}}
+{"id":"error-mp-translation","operation":"common.error","result":{"kind":"value","value":{"error_code":40001,"error_msg":"获取 access_token 时 AppSecret 错误，或者 access_token 无效。请开发者认真比对 AppSecret 的正确性，或查看是否正在为恰当的公众号调用接口","error_msg_en":"invalid credential"}}}
+{"id":"error-cp-translation","operation":"common.error","result":{"kind":"value","value":{"error_code":42001,"error_msg":"access_token已过期；access_token有时效性，需要重新获取一次","error_msg_en":"expired"}}}
+{"id":"error-miniapp-translation","operation":"common.error","result":{"kind":"value","value":{"error_code":40014,"error_msg":"bad token","error_msg_en":"bad token"}}}
+{"id":"error-open-unknown","operation":"common.error","result":{"kind":"value","value":{"error_code":987654,"error_msg":"custom failure","error_msg_en":"custom failure"}}}
+{"id":"sign-md5-basic","operation":"pay.sign","result":{"kind":"value","value":"A631543F51B9F5BB6DD0FB70C28AA5E9"}}
+{"id":"sign-md5-default","operation":"pay.sign","result":{"kind":"value","value":"0B331D1C510FB5EFDC53DF42C902FA83"}}
+{"id":"sign-hmac-basic","operation":"pay.sign","result":{"kind":"value","value":"056A124FFDB9E4D60DCBD8196434EC537256092814F4E518EC89295FC0C89090"}}
+{"id":"sign-empty-values","operation":"pay.sign","result":{"kind":"value","value":"E06635DB22609DA5B1849B0DA03FA43B"}}
+{"id":"sign-reserved-fields","operation":"pay.sign","result":{"kind":"value","value":"04A62A540CF1EF33B84CEF3A04CE64CF"}}
+{"id":"sign-ignored-fields","operation":"pay.sign","result":{"kind":"value","value":"6DB60E0F231654EF9ADE85A8653ACC13"}}
+{"id":"sign-unknown-type-fallback","operation":"pay.sign","result":{"kind":"value","value":"04A62A540CF1EF33B84CEF3A04CE64CF"}}
+{"id":"sign-empty-map","operation":"pay.sign","result":{"kind":"value","value":"FF2F2EAB3BA12B7218240F1F83C6A6EE"}}
+{"id":"sign-special-values","operation":"pay.sign","result":{"kind":"value","value":"779C9183D3ED9845DCE33E5532CF7C05722E76E90C2BDCFE087EFCA8D364A3DA"}}
+{"id":"sign-utf16-key-order","operation":"pay.sign","result":{"kind":"value","value":"D7B9137C43AFFCA6F50505ED7ADCE9E9"}}
+{"id":"sign-utf16-key-order-hmac","operation":"pay.sign","result":{"kind":"value","value":"7DBF8AADB4C0F25ABFF3B3E8B50EA0AD0BBC040D66891DA079B70ACF7397E4F0"}}

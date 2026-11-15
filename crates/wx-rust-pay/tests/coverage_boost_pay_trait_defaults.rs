@@ -381,8 +381,8 @@ fn aes_256_ecb_encrypt_pkcs7(key: &[u8], plain: &[u8]) -> Vec<u8> {
     let pad = 16 - (data.len() % 16);
     data.resize(data.len() + pad, pad as u8);
     let mut out = Vec::with_capacity(data.len());
-    for chunk in data.chunks_exact(16) {
-        let mut block = Block::<Aes256>::try_from(chunk).expect("AES 块长度");
+    for chunk in data.as_chunks::<16>().0 {
+        let mut block = Block::<Aes256>::try_from(chunk.as_slice()).expect("AES 块长度");
         cipher.encrypt_block(&mut block);
         out.extend_from_slice(block.as_slice());
     }

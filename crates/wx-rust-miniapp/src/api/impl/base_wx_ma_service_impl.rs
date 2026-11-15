@@ -24,7 +24,7 @@ use async_trait::async_trait;
 use wx_rust_common::enums::WxType;
 use wx_rust_common::error::{WxError, WxErrorException};
 use wx_rust_common::http::{ReqwestTransport, TransportBody};
-use wx_rust_common::pipeline::{PipelineContext, execute_pipeline};
+use wx_rust_common::pipeline::{PipelineContext, execute_pipeline_with_refresh_and_query};
 use wx_rust_common::util::http::RequestExecutor;
 
 use crate::api::WxMaService;
@@ -107,14 +107,9 @@ where
 /// GET 门面经统一管线的执行入口（供 `WxMaService::get` 委托，对应 Java
 /// `get(url, queryParam)` + `SimpleGetRequestExecutor`）。
 ///
-/// 与原「`SimpleGetRequestExecutor` + `execute_with_retry`」路径等价：
-/// - 原执行器的 query 拼接语义内联于此（data 非空时按 uri 是否已含
-///   `?` 以 `&`/`?` 追加；data 为空不追加）；
-/// - -1 系统繁忙指数退避重试语义共用 [`retry_loop`]。
-///
-/// 已知字节级差异（参数集合不变、HTTP 语义等价）：query 与 access_token
-/// 的追加顺序由原「token 在前、query 在后」变为「query 在前、token 由
-/// 管线追加在后」（管线在组装 URL 时注入 token，无法在其后再追加参数）。
+/// 与 Java `executeInternal` + `SimpleGetRequestExecutor` 的 query 拼接顺序一致：
+/// 先由管线注入 access_token，再追加调用方 queryParam；-1 系统繁忙指数
+/// 退避重试语义共用 [`retry_loop`]。
 pub async fn execute_get_via_pipeline<S>(
     svc: &S,
     uri: &str,
@@ -126,16 +121,10 @@ where
     let config = svc.wx_ma_config();
     let max_retry_times = config.max_retry_times();
     let retry_sleep_millis = config.retry_sleep_millis();
-    // SimpleGetRequestExecutor::execute 的 query 拼接（原样内联）
-    let uri_with_query = if query_param.is_empty() {
-        uri.to_string()
-    } else if uri.contains('?') {
-        format!("{uri}&{query_param}")
-    } else {
-        format!("{uri}?{query_param}")
-    };
+    // Java appends queryParam after BaseWxMaServiceImpl has injected access_token.
+    let query_param = (!query_param.is_empty()).then_some(query_param);
     retry_loop(max_retry_times, retry_sleep_millis, || {
-        execute_via_pipeline(svc, &uri_with_query, TransportBody::None)
+        execute_via_pipeline(svc, uri, TransportBody::None, query_param)
     })
     .await
 }
@@ -158,7 +147,7 @@ where
     let max_retry_times = config.max_retry_times();
     let retry_sleep_millis = config.retry_sleep_millis();
     retry_loop(max_retry_times, retry_sleep_millis, || {
-        execute_via_pipeline(svc, uri, TransportBody::Text(post_data.to_string()))
+        execute_via_pipeline(svc, uri, TransportBody::Text(post_data.to_string()), None)
     })
     .await
 }
@@ -175,10 +164,11 @@ where
 ///   对齐 [`execute_internal`] 的「lock→compare→expire 恒执行、重放仅当
 ///   auto_refresh_token」语义）；
 /// - 稳定 token 双通道选择保留在服务层 `get_access_token`（不在本路径）。
-async fn execute_via_pipeline<S>(
-    svc: &S,
+async fn execute_via_pipeline<'a, S>(
+    svc: &'a S,
     uri: &str,
     body: TransportBody,
+    query_param: Option<&str>,
 ) -> Result<String, WxErrorException>
 where
     S: WxMaService + ?Sized,
@@ -204,7 +194,10 @@ where
 
     // 复用服务层 reqwest::Client（Client 内部 Arc 句柄，克隆廉价——与原
     // get/post 每次调用构造 SimpleGet/SimplePost 执行器同级的开销方式）
-    let transport = ReqwestTransport::new(svc.http_client().clone());
+    let transport = ReqwestTransport::new_with_interceptors(
+        svc.http_client().clone(),
+        svc.http_request_interceptors(),
+    );
 
     // token 失效回调：原样承接 execute_internal 的「加锁比对→置过期」块
     //（返回类型即管线签名中的 `futures_util::future::BoxFuture<'static, ()>`
@@ -225,7 +218,11 @@ where
             })
         };
 
-    execute_pipeline(
+    let refresh_access_token = || -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<String, WxErrorException>> + Send + 'a>> {
+        Box::pin(async { svc.get_access_token().await })
+    };
+
+    execute_pipeline_with_refresh_and_query(
         PipelineContext {
             transport: &transport,
             access_token,
@@ -240,6 +237,8 @@ where
         // from_utf8_lossy 逐字节一致）
         |resp| Ok(String::from_utf8_lossy(&resp.body).into_owned()),
         Some(&on_token_invalid),
+        Some(&refresh_access_token),
+        query_param,
     )
     .await
 }
@@ -253,12 +252,23 @@ where
 /// 自动刷新 + 重试）。
 pub struct QrcodeBytesRequestExecutor {
     client: reqwest::Client,
+    request_interceptors: Vec<wx_rust_common::http::HttpRequestInterceptor>,
 }
 
 impl QrcodeBytesRequestExecutor {
     /// 构建执行器。
     pub fn new(client: reqwest::Client) -> Self {
-        Self { client }
+        Self::new_with_interceptors(client, Vec::new())
+    }
+
+    pub fn new_with_interceptors(
+        client: reqwest::Client,
+        request_interceptors: Vec<wx_rust_common::http::HttpRequestInterceptor>,
+    ) -> Self {
+        Self {
+            client,
+            request_interceptors,
+        }
     }
 }
 
@@ -270,13 +280,12 @@ impl RequestExecutor<Vec<u8>, String> for QrcodeBytesRequestExecutor {
         data: String,
         wx_type: WxType,
     ) -> Result<Vec<u8>, WxErrorException> {
-        let resp = self
-            .client
-            .post(uri)
-            .body(data)
-            .send()
-            .await
-            .map_err(|e| WxErrorException::Http(e.to_string()))?;
+        let resp = wx_rust_common::http::send_with_interceptors(
+            &self.client,
+            self.client.post(uri).body(data),
+            &self.request_interceptors,
+        )
+        .await?;
         let is_json = resp
             .headers()
             .get(reqwest::header::CONTENT_TYPE)
@@ -332,7 +341,7 @@ where
     }
 
     let config = svc.wx_ma_config();
-    let access_token = svc.get_access_token().await?;
+    let mut access_token = svc.get_access_token().await?;
 
     // Java: 配置了自定义域名（apiHostUrl/云托管）时替换默认
     // https://api.weixin.qq.com（`getEffectiveApiHostUrl()`）
@@ -343,16 +352,16 @@ where
         uri.to_string()
     };
 
-    let uri_with_access_token = if uri.contains('?') {
-        format!("{uri}&access_token={access_token}")
-    } else {
-        format!("{uri}?access_token={access_token}")
-    };
-
     // Java 以递归实现单次 token 自动刷新；Rust 以 flag 循环表达
     // 同一语义（doNotAutoRefresh=true 后不再自动重试，防无限递归）
     let mut do_not_auto_refresh = do_not_auto_refresh;
     loop {
+        let uri_with_access_token = if uri.contains('?') {
+            format!("{uri}&access_token={access_token}")
+        } else {
+            format!("{uri}?access_token={access_token}")
+        };
+
         match executor
             .execute(&uri_with_access_token, data.clone(), WxType::MiniApp)
             .await
@@ -363,13 +372,17 @@ where
                 if let Some(code) = code {
                     if wx_rust_common::api::wx_consts::ACCESS_TOKEN_ERROR_CODES.contains(&code) {
                         // 强制设置 access token 过期，下一次请求里就会刷新
-                        let lock = config.access_token_lock();
-                        let _guard = lock.lock().await;
-                        if config.access_token().as_deref() == Some(access_token.as_str()) {
-                            config.expire_access_token();
+                        {
+                            let lock = config.access_token_lock();
+                            let _guard = lock.lock().await;
+                            if config.access_token().as_deref() == Some(access_token.as_str()) {
+                                config.expire_access_token();
+                            }
                         }
                         if config.auto_refresh_token() && !do_not_auto_refresh {
-                            // 下一次不再自动重试（对齐 Java 注释语义）
+                            // Java 递归进入 executeInternal 后重新 getAccessToken(false)，
+                            // 因此必须在释放失效锁后取新 Token 并重建请求 URL。
+                            access_token = svc.get_access_token().await?;
                             do_not_auto_refresh = true;
                             continue;
                         }

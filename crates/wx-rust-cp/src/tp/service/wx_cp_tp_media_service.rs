@@ -23,6 +23,10 @@ pub trait WxCpTpMediaService: Send + Sync {
     ) -> Result<WxMediaUploadResult, WxErrorException>;
 
     /// 上传图片，得到图片 URL（对应 Java `uploadImg(File, String)`，
-    /// 该 URL 永久有效）。
-    async fn upload_img(&self, file_path: &str, corp_id: &str) -> Result<String, WxErrorException>;
+    /// 该 URL 永久有效）。Java 的 getUrl() 可能为 null，Rust 用 Option 保留此语义。
+    async fn upload_img(
+        &self,
+        file_path: &str,
+        corp_id: &str,
+    ) -> Result<Option<String>, WxErrorException>;
 }

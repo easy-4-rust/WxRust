@@ -13,6 +13,32 @@ use futures_util::{Stream, TryStreamExt};
 
 use crate::error::WxErrorException;
 
+/// A synchronous, per-request mutation hook for the final HTTP request.
+///
+/// This is the Rust counterpart for the supported header/URI mutation subset of
+/// Apache HttpRequestInterceptor. The hook runs for every send, including token
+/// acquisition, API calls, retries and multipart uploads.
+pub type HttpRequestInterceptor =
+    Arc<dyn Fn(&mut reqwest::Request) -> Result<(), WxErrorException> + Send + Sync>;
+
+/// Build, mutate and execute one request through ordered per-request interceptors.
+pub async fn send_with_interceptors(
+    client: &reqwest::Client,
+    builder: reqwest::RequestBuilder,
+    interceptors: &[HttpRequestInterceptor],
+) -> Result<reqwest::Response, WxErrorException> {
+    let mut request = builder
+        .build()
+        .map_err(|error| WxErrorException::Http(error.to_string()))?;
+    for interceptor in interceptors {
+        interceptor(&mut request)?;
+    }
+    client
+        .execute(request)
+        .await
+        .map_err(|error| WxErrorException::Http(error.to_string()))
+}
+
 /// 传输请求：与具体 HTTP 后端无关的请求描述。
 ///
 /// RUST_OBLIGATION：传输可注入性——请求以数据形式表达（方法 + URL + 头 + 体），
@@ -90,6 +116,8 @@ pub trait HttpTransport: Send + Sync {
 pub struct ReqwestTransport {
     /// 复用的 reqwest 客户端
     client: reqwest::Client,
+    /// 有序的 per-request interceptor 链
+    interceptors: Vec<HttpRequestInterceptor>,
 }
 
 impl ReqwestTransport {
@@ -98,7 +126,18 @@ impl ReqwestTransport {
     /// # 参数
     /// - `client`：调用方配置好的客户端（超时/代理/连接池等在此客户端上生效）
     pub fn new(client: reqwest::Client) -> Self {
-        Self { client }
+        Self::new_with_interceptors(client, Vec::new())
+    }
+
+    /// 使用调用方配置的 per-request interceptor 链构建传输。
+    pub fn new_with_interceptors(
+        client: reqwest::Client,
+        interceptors: Vec<HttpRequestInterceptor>,
+    ) -> Self {
+        Self {
+            client,
+            interceptors,
+        }
     }
 
     /// 把 [`TransportRequest`] 映射为 reqwest 请求构造器。
@@ -172,7 +211,9 @@ impl ReqwestTransport {
         impl Stream<Item = Result<bytes::Bytes, WxErrorException>> + Send + use<>,
         WxErrorException,
     > {
-        let resp = self.build_request(&req).send().await?;
+        let resp =
+            send_with_interceptors(&self.client, self.build_request(&req), &self.interceptors)
+                .await?;
         let status = resp.status();
         if !status.is_success() {
             // 非 2xx：读取完整错误响应体后以 Http 错误返回（不产出流）
@@ -194,7 +235,9 @@ impl ReqwestTransport {
 #[async_trait]
 impl HttpTransport for ReqwestTransport {
     async fn send(&self, req: TransportRequest) -> Result<TransportResponse, WxErrorException> {
-        let resp = self.build_request(&req).send().await?;
+        let resp =
+            send_with_interceptors(&self.client, self.build_request(&req), &self.interceptors)
+                .await?;
         let status = resp.status().as_u16();
         let headers = resp
             .headers()

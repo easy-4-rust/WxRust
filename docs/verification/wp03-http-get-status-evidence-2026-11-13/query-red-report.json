@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "passed": false,
+  "status": "DIFFERENT",
+  "oracle_commit": "a49d6e1461752c06b752d2afd8aeeb7e6e78cefe",
+  "compatibility_claim": "scenario_only",
+  "steps": [
+    {
+      "step": "java-version",
+      "command": [
+        "D:\\Java\\jdk-17.0.12\\bin\\java.exe",
+        "-version"
+      ],
+      "cwd": "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust",
+      "exit_code": 0,
+      "seconds": 0.062,
+      "stdout": "java-version.stdout.log",
+      "stderr": "java-version.stderr.log"
+    },
+    {
+      "step": "cargo-version",
+      "command": [
+        "cargo",
+        "--version"
+      ],
+      "cwd": "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust",
+      "exit_code": 0,
+      "seconds": 0.063,
+      "stdout": "cargo-version.stdout.log",
+      "stderr": "cargo-version.stderr.log"
+    },
+    {
+      "step": "oracle-build",
+      "command": [
+        "D:\\Java\\maven\\apache-maven-3.9.9\\bin\\mvn.CMD",
+        "-f",
+        "D:\\wxjava-phase1-oracle-20261111\\pom.xml",
+        "-pl",
+        "weixin-java-miniapp",
+        "-am",
+        "-DskipTests",
+        "-Dcheckstyle.skip=true",
+        "-Dspotless.check.skip=true",
+        "clean",
+        "package",
+        "dependency:build-classpath",
+        "-Dmdep.outputFile=target/phase1-http-classpath.txt"
+      ],
+      "cwd": "D:\\wxjava-phase1-oracle-20261111",
+      "exit_code": 0,
+      "seconds": 35.016,
+      "stdout": "oracle-build.stdout.log",
+      "stderr": "oracle-build.stderr.log"
+    },
+    {
+      "step": "java-adapter-build",
+      "command": [
+        "D:\\Java\\jdk-17.0.12\\bin\\javac.exe",
+        "--add-modules",
+        "jdk.httpserver",
+        "-encoding",
+        "UTF-8",
+        "-cp",
+        "D:\\wxjava-phase1-oracle-20261111\\weixin-java-common\\target\\classes;D:\\wxjava-phase1-oracle-20261111\\weixin-java-miniapp\\target\\classes;D:\\wxjava-phase1-oracle-20261111\\weixin-java-common\\target\\weixin-java-common-4.8.4.B.jar;E:\\Java\\.m2\\repository\\org\\slf4j\\slf4j-api\\1.7.30\\slf4j-api-1.7.30.jar;E:\\Java\\.m2\\repository\\com\\thoughtworks\\xstream\\xstream\\1.4.21\\xstream-1.4.21.jar;E:\\Java\\.m2\\repository\\io\\github\\x-stream\\mxparser\\1.2.2\\mxparser-1.2.2.jar;E:\\Java\\.m2\\repository\\xmlpull\\xmlpull\\1.1.3.1\\xmlpull-1.1.3.1.jar;E:\\Java\\.m2\\repository\\org\\slf4j\\jcl-over-slf4j\\1.7.36\\jcl-over-slf4j-1.7.36.jar;E:\\Java\\.m2\\repository\\com\\google\\code\\gson\\gson\\2.13.1\\gson-2.13.1.jar;E:\\Java\\.m2\\repository\\com\\google\\errorprone\\error_prone_annotations\\2.38.0\\error_prone_annotations-2.38.0.jar;E:\\Java\\.m2\\repository\\commons-codec\\commons-codec\\1.13\\commons-codec-1.13.jar;E:\\Java\\.m2\\repository\\commons-io\\commons-io\\2.14.0\\commons-io-2.14.0.jar;E:\\Java\\.m2\\repository\\org\\apache\\commons\\commons-lang3\\3.18.0\\commons-lang3-3.18.0.jar;E:\\Java\\.m2\\repository\\com\\google\\guava\\guava\\33.3.1-jre\\guava-33.3.1-jre.jar;E:\\Java\\.m2\\repository\\com\\google\\guava\\failureaccess\\1.0.2\\failureaccess-1.0.2.jar;E:\\Java\\.m2\\repository\\com\\google\\guava\\listenablefuture\\9999.0-empty-to-avoid-conflict-with-guava\\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;E:\\Java\\.m2\\repository\\org\\checkerframework\\checker-qual\\3.43.0\\checker-qual-3.43.0.jar;E:\\Java\\.m2\\repository\\com\\google\\j2objc\\j2objc-annotations\\3.0.0\\j2objc-annotations-3.0.0.jar;E:\\Java\\.m2\\repository\\org\\dom4j\\dom4j\\2.1.3\\dom4j-2.1.3.jar;E:\\Java\\.m2\\repository\\org\\jodd\\jodd-http\\6.3.0\\jodd-http-6.3.0.jar;E:\\Java\\.m2\\repository\\org\\jodd\\jodd-util\\6.1.0\\jodd-util-6.1.0.jar;E:\\Java\\.m2\\repository\\com\\squareup\\okhttp3\\okhttp\\4.12.0\\okhttp-4.12.0.jar;E:\\Java\\.m2\\repository\\com\\squareup\\okio\\okio\\3.6.0\\okio-3.6.0.jar;E:\\Java\\.m2\\repository\\com\\squareup\\okio\\okio-jvm\\3.6.0\\okio-jvm-3.6.0.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib-common\\1.9.10\\kotlin-stdlib-common-1.9.10.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib-jdk8\\1.8.21\\kotlin-stdlib-jdk8-1.8.21.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib\\1.8.21\\kotlin-stdlib-1.8.21.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\annotations\\13.0\\annotations-13.0.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib-jdk7\\1.8.21\\kotlin-stdlib-jdk7-1.8.21.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\httpclient\\4.5.13\\httpclient-4.5.13.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\httpcore\\4.4.13\\httpcore-4.4.13.jar;E:\\Java\\.m2\\repository\\commons-logging\\commons-logging\\1.2\\commons-logging-1.2.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\httpmime\\4.5.13\\httpmime-4.5.13.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\client5\\httpclient5\\5.5.2\\httpclient5-5.5.2.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\core5\\httpcore5\\5.3.6\\httpcore5-5.3.6.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\core5\\httpcore5-h2\\5.3.6\\httpcore5-h2-5.3.6.jar;E:\\Java\\.m2\\repository\\org\\testng\\testng\\7.5.1\\testng-7.5.1.jar;E:\\Java\\.m2\\repository\\com\\google\\code\\findbugs\\jsr305\\3.0.1\\jsr305-3.0.1.jar;E:\\Java\\.m2\\repository\\com\\beust\\jcommander\\1.78\\jcommander-1.78.jar;E:\\Java\\.m2\\repository\\org\\webjars\\jquery\\3.5.1\\jquery-3.5.1.jar;E:\\Java\\.m2\\repository\\ch\\qos\\logback\\logback-classic\\1.3.12\\logback-classic-1.3.12.jar;E:\\Java\\.m2\\repository\\ch\\qos\\logback\\logback-core\\1.3.12\\logback-core-1.3.12.jar;E:\\Java\\.m2\\repository\\com\\google\\inject\\guice\\4.2.3\\guice-4.2.3.jar;E:\\Java\\.m2\\repository\\javax\\inject\\javax.inject\\1\\javax.inject-1.jar;E:\\Java\\.m2\\repository\\aopalliance\\aopalliance\\1.0\\aopalliance-1.0.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-server\\9.4.57.v20241219\\jetty-server-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\javax\\servlet\\javax.servlet-api\\3.1.0\\javax.servlet-api-3.1.0.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-http\\9.4.57.v20241219\\jetty-http-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-util\\9.4.57.v20241219\\jetty-util-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-io\\9.4.57.v20241219\\jetty-io-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-servlet\\9.4.57.v20241219\\jetty-servlet-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-security\\9.4.57.v20241219\\jetty-security-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-util-ajax\\9.4.57.v20241219\\jetty-util-ajax-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\joda-time\\joda-time\\2.10.6\\joda-time-2.10.6.jar;E:\\Java\\.m2\\repository\\org\\assertj\\assertj-guava\\3.0.0\\assertj-guava-3.0.0.jar;E:\\Java\\.m2\\repository\\org\\assertj\\assertj-core\\3.27.7\\assertj-core-3.27.7.jar;E:\\Java\\.m2\\repository\\redis\\clients\\jedis\\3.3.0\\jedis-3.3.0.jar;E:\\Java\\.m2\\repository\\org\\apache\\commons\\commons-pool2\\2.6.2\\commons-pool2-2.6.2.jar;E:\\Java\\.m2\\repository\\org\\bouncycastle\\bcpkix-jdk18on\\1.84\\bcpkix-jdk18on-1.84.jar;E:\\Java\\.m2\\repository\\org\\bouncycastle\\bcutil-jdk18on\\1.84\\bcutil-jdk18on-1.84.jar;E:\\Java\\.m2\\repository\\org\\bouncycastle\\bcprov-jdk18on\\1.84\\bcprov-jdk18on-1.84.jar;E:\\Java\\.m2\\repository\\org\\projectlombok\\lombok\\1.18.30\\lombok-1.18.30.jar;E:\\Java\\.m2\\repository\\org\\redisson\\redisson\\3.23.3\\redisson-3.23.3.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-common\\4.1.96.Final\\netty-common-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-codec\\4.1.96.Final\\netty-codec-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-buffer\\4.1.96.Final\\netty-buffer-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-transport\\4.1.96.Final\\netty-transport-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-resolver\\4.1.96.Final\\netty-resolver-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-resolver-dns\\4.1.96.Final\\netty-resolver-dns-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-codec-dns\\4.1.96.Final\\netty-codec-dns-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-handler\\4.1.96.Final\\netty-handler-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-transport-native-unix-common\\4.1.96.Final\\netty-transport-native-unix-common-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\javax\\cache\\cache-api\\1.1.1\\cache-api-1.1.1.jar;E:\\Java\\.m2\\repository\\io\\projectreactor\\reactor-core\\3.5.3\\reactor-core-3.5.3.jar;E:\\Java\\.m2\\repository\\io\\reactivex\\rxjava3\\rxjava\\3.1.6\\rxjava-3.1.6.jar;E:\\Java\\.m2\\repository\\org\\jboss\\marshalling\\jboss-marshalling\\2.0.11.Final\\jboss-marshalling-2.0.11.Final.jar;E:\\Java\\.m2\\repository\\org\\jboss\\marshalling\\jboss-marshalling-river\\2.0.11.Final\\jboss-marshalling-river-2.0.11.Final.jar;E:\\Java\\.m2\\repository\\com\\esotericsoftware\\kryo\\5.5.0\\kryo-5.5.0.jar;E:\\Java\\.m2\\repository\\com\\esotericsoftware\\reflectasm\\1.11.9\\reflectasm-1.11.9.jar;E:\\Java\\.m2\\repository\\com\\esotericsoftware\\minlog\\1.3.1\\minlog-1.3.1.jar;E:\\Java\\.m2\\repository\\com\\fasterxml\\jackson\\core\\jackson-annotations\\2.18.4\\jackson-annotations-2.18.4.jar;E:\\Java\\.m2\\repository\\com\\fasterxml\\jackson\\dataformat\\jackson-dataformat-yaml\\2.18.4\\jackson-dataformat-yaml-2.18.4.jar;E:\\Java\\.m2\\repository\\org\\yaml\\snakeyaml\\2.3\\snakeyaml-2.3.jar;E:\\Java\\.m2\\repository\\com\\fasterxml\\jackson\\core\\jackson-databind\\2.18.4\\jackson-databind-2.18.4.jar;E:\\Java\\.m2\\repository\\net\\bytebuddy\\byte-buddy\\1.14.5\\byte-buddy-1.14.5.jar;E:\\Java\\.m2\\repository\\org\\jodd\\jodd-bean\\5.1.6\\jodd-bean-5.1.6.jar;E:\\Java\\.m2\\repository\\com\\github\\jedis-lock\\jedis-lock\\1.0.0\\jedis-lock-1.0.0.jar;E:\\Java\\.m2\\repository\\org\\mockito\\mockito-core\\4.11.0\\mockito-core-4.11.0.jar;E:\\Java\\.m2\\repository\\net\\bytebuddy\\byte-buddy-agent\\1.12.19\\byte-buddy-agent-1.12.19.jar;E:\\Java\\.m2\\repository\\org\\objenesis\\objenesis\\3.3\\objenesis-3.3.jar",
+        "-d",
+        "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust\\artifacts\\phase1-diff\\http-get-query-replay-red-20261113-01\\java-classes",
+        "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust\\tools\\compat\\http\\java\\Phase1HttpOracle.java"
+      ],
+      "cwd": "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust",
+      "exit_code": 0,
+      "seconds": 1.735,
+      "stdout": "java-adapter-build.stdout.log",
+      "stderr": "java-adapter-build.stderr.log"
+    },
+    {
+      "step": "java",
+      "command": [
+        "D:\\Java\\jdk-17.0.12\\bin\\java.exe",
+        "--add-modules",
+        "jdk.httpserver",
+        "-Dfile.encoding=UTF-8",
+        "-cp",
+        "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust\\artifacts\\phase1-diff\\http-get-query-replay-red-20261113-01\\java-classes;D:\\wxjava-phase1-oracle-20261111\\weixin-java-common\\target\\classes;D:\\wxjava-phase1-oracle-20261111\\weixin-java-miniapp\\target\\classes;D:\\wxjava-phase1-oracle-20261111\\weixin-java-common\\target\\weixin-java-common-4.8.4.B.jar;E:\\Java\\.m2\\repository\\org\\slf4j\\slf4j-api\\1.7.30\\slf4j-api-1.7.30.jar;E:\\Java\\.m2\\repository\\com\\thoughtworks\\xstream\\xstream\\1.4.21\\xstream-1.4.21.jar;E:\\Java\\.m2\\repository\\io\\github\\x-stream\\mxparser\\1.2.2\\mxparser-1.2.2.jar;E:\\Java\\.m2\\repository\\xmlpull\\xmlpull\\1.1.3.1\\xmlpull-1.1.3.1.jar;E:\\Java\\.m2\\repository\\org\\slf4j\\jcl-over-slf4j\\1.7.36\\jcl-over-slf4j-1.7.36.jar;E:\\Java\\.m2\\repository\\com\\google\\code\\gson\\gson\\2.13.1\\gson-2.13.1.jar;E:\\Java\\.m2\\repository\\com\\google\\errorprone\\error_prone_annotations\\2.38.0\\error_prone_annotations-2.38.0.jar;E:\\Java\\.m2\\repository\\commons-codec\\commons-codec\\1.13\\commons-codec-1.13.jar;E:\\Java\\.m2\\repository\\commons-io\\commons-io\\2.14.0\\commons-io-2.14.0.jar;E:\\Java\\.m2\\repository\\org\\apache\\commons\\commons-lang3\\3.18.0\\commons-lang3-3.18.0.jar;E:\\Java\\.m2\\repository\\com\\google\\guava\\guava\\33.3.1-jre\\guava-33.3.1-jre.jar;E:\\Java\\.m2\\repository\\com\\google\\guava\\failureaccess\\1.0.2\\failureaccess-1.0.2.jar;E:\\Java\\.m2\\repository\\com\\google\\guava\\listenablefuture\\9999.0-empty-to-avoid-conflict-with-guava\\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;E:\\Java\\.m2\\repository\\org\\checkerframework\\checker-qual\\3.43.0\\checker-qual-3.43.0.jar;E:\\Java\\.m2\\repository\\com\\google\\j2objc\\j2objc-annotations\\3.0.0\\j2objc-annotations-3.0.0.jar;E:\\Java\\.m2\\repository\\org\\dom4j\\dom4j\\2.1.3\\dom4j-2.1.3.jar;E:\\Java\\.m2\\repository\\org\\jodd\\jodd-http\\6.3.0\\jodd-http-6.3.0.jar;E:\\Java\\.m2\\repository\\org\\jodd\\jodd-util\\6.1.0\\jodd-util-6.1.0.jar;E:\\Java\\.m2\\repository\\com\\squareup\\okhttp3\\okhttp\\4.12.0\\okhttp-4.12.0.jar;E:\\Java\\.m2\\repository\\com\\squareup\\okio\\okio\\3.6.0\\okio-3.6.0.jar;E:\\Java\\.m2\\repository\\com\\squareup\\okio\\okio-jvm\\3.6.0\\okio-jvm-3.6.0.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib-common\\1.9.10\\kotlin-stdlib-common-1.9.10.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib-jdk8\\1.8.21\\kotlin-stdlib-jdk8-1.8.21.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib\\1.8.21\\kotlin-stdlib-1.8.21.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\annotations\\13.0\\annotations-13.0.jar;E:\\Java\\.m2\\repository\\org\\jetbrains\\kotlin\\kotlin-stdlib-jdk7\\1.8.21\\kotlin-stdlib-jdk7-1.8.21.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\httpclient\\4.5.13\\httpclient-4.5.13.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\httpcore\\4.4.13\\httpcore-4.4.13.jar;E:\\Java\\.m2\\repository\\commons-logging\\commons-logging\\1.2\\commons-logging-1.2.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\httpmime\\4.5.13\\httpmime-4.5.13.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\client5\\httpclient5\\5.5.2\\httpclient5-5.5.2.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\core5\\httpcore5\\5.3.6\\httpcore5-5.3.6.jar;E:\\Java\\.m2\\repository\\org\\apache\\httpcomponents\\core5\\httpcore5-h2\\5.3.6\\httpcore5-h2-5.3.6.jar;E:\\Java\\.m2\\repository\\org\\testng\\testng\\7.5.1\\testng-7.5.1.jar;E:\\Java\\.m2\\repository\\com\\google\\code\\findbugs\\jsr305\\3.0.1\\jsr305-3.0.1.jar;E:\\Java\\.m2\\repository\\com\\beust\\jcommander\\1.78\\jcommander-1.78.jar;E:\\Java\\.m2\\repository\\org\\webjars\\jquery\\3.5.1\\jquery-3.5.1.jar;E:\\Java\\.m2\\repository\\ch\\qos\\logback\\logback-classic\\1.3.12\\logback-classic-1.3.12.jar;E:\\Java\\.m2\\repository\\ch\\qos\\logback\\logback-core\\1.3.12\\logback-core-1.3.12.jar;E:\\Java\\.m2\\repository\\com\\google\\inject\\guice\\4.2.3\\guice-4.2.3.jar;E:\\Java\\.m2\\repository\\javax\\inject\\javax.inject\\1\\javax.inject-1.jar;E:\\Java\\.m2\\repository\\aopalliance\\aopalliance\\1.0\\aopalliance-1.0.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-server\\9.4.57.v20241219\\jetty-server-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\javax\\servlet\\javax.servlet-api\\3.1.0\\javax.servlet-api-3.1.0.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-http\\9.4.57.v20241219\\jetty-http-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-util\\9.4.57.v20241219\\jetty-util-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-io\\9.4.57.v20241219\\jetty-io-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-servlet\\9.4.57.v20241219\\jetty-servlet-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-security\\9.4.57.v20241219\\jetty-security-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\org\\eclipse\\jetty\\jetty-util-ajax\\9.4.57.v20241219\\jetty-util-ajax-9.4.57.v20241219.jar;E:\\Java\\.m2\\repository\\joda-time\\joda-time\\2.10.6\\joda-time-2.10.6.jar;E:\\Java\\.m2\\repository\\org\\assertj\\assertj-guava\\3.0.0\\assertj-guava-3.0.0.jar;E:\\Java\\.m2\\repository\\org\\assertj\\assertj-core\\3.27.7\\assertj-core-3.27.7.jar;E:\\Java\\.m2\\repository\\redis\\clients\\jedis\\3.3.0\\jedis-3.3.0.jar;E:\\Java\\.m2\\repository\\org\\apache\\commons\\commons-pool2\\2.6.2\\commons-pool2-2.6.2.jar;E:\\Java\\.m2\\repository\\org\\bouncycastle\\bcpkix-jdk18on\\1.84\\bcpkix-jdk18on-1.84.jar;E:\\Java\\.m2\\repository\\org\\bouncycastle\\bcutil-jdk18on\\1.84\\bcutil-jdk18on-1.84.jar;E:\\Java\\.m2\\repository\\org\\bouncycastle\\bcprov-jdk18on\\1.84\\bcprov-jdk18on-1.84.jar;E:\\Java\\.m2\\repository\\org\\projectlombok\\lombok\\1.18.30\\lombok-1.18.30.jar;E:\\Java\\.m2\\repository\\org\\redisson\\redisson\\3.23.3\\redisson-3.23.3.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-common\\4.1.96.Final\\netty-common-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-codec\\4.1.96.Final\\netty-codec-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-buffer\\4.1.96.Final\\netty-buffer-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-transport\\4.1.96.Final\\netty-transport-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-resolver\\4.1.96.Final\\netty-resolver-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-resolver-dns\\4.1.96.Final\\netty-resolver-dns-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-codec-dns\\4.1.96.Final\\netty-codec-dns-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-handler\\4.1.96.Final\\netty-handler-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\io\\netty\\netty-transport-native-unix-common\\4.1.96.Final\\netty-transport-native-unix-common-4.1.96.Final.jar;E:\\Java\\.m2\\repository\\javax\\cache\\cache-api\\1.1.1\\cache-api-1.1.1.jar;E:\\Java\\.m2\\repository\\io\\projectreactor\\reactor-core\\3.5.3\\reactor-core-3.5.3.jar;E:\\Java\\.m2\\repository\\io\\reactivex\\rxjava3\\rxjava\\3.1.6\\rxjava-3.1.6.jar;E:\\Java\\.m2\\repository\\org\\jboss\\marshalling\\jboss-marshalling\\2.0.11.Final\\jboss-marshalling-2.0.11.Final.jar;E:\\Java\\.m2\\repository\\org\\jboss\\marshalling\\jboss-marshalling-river\\2.0.11.Final\\jboss-marshalling-river-2.0.11.Final.jar;E:\\Java\\.m2\\repository\\com\\esotericsoftware\\kryo\\5.5.0\\kryo-5.5.0.jar;E:\\Java\\.m2\\repository\\com\\esotericsoftware\\reflectasm\\1.11.9\\reflectasm-1.11.9.jar;E:\\Java\\.m2\\repository\\com\\esotericsoftware\\minlog\\1.3.1\\minlog-1.3.1.jar;E:\\Java\\.m2\\repository\\com\\fasterxml\\jackson\\core\\jackson-annotations\\2.18.4\\jackson-annotations-2.18.4.jar;E:\\Java\\.m2\\repository\\com\\fasterxml\\jackson\\dataformat\\jackson-dataformat-yaml\\2.18.4\\jackson-dataformat-yaml-2.18.4.jar;E:\\Java\\.m2\\repository\\org\\yaml\\snakeyaml\\2.3\\snakeyaml-2.3.jar;E:\\Java\\.m2\\repository\\com\\fasterxml\\jackson\\core\\jackson-databind\\2.18.4\\jackson-databind-2.18.4.jar;E:\\Java\\.m2\\repository\\net\\bytebuddy\\byte-buddy\\1.14.5\\byte-buddy-1.14.5.jar;E:\\Java\\.m2\\repository\\org\\jodd\\jodd-bean\\5.1.6\\jodd-bean-5.1.6.jar;E:\\Java\\.m2\\repository\\com\\github\\jedis-lock\\jedis-lock\\1.0.0\\jedis-lock-1.0.0.jar;E:\\Java\\.m2\\repository\\org\\mockito\\mockito-core\\4.11.0\\mockito-core-4.11.0.jar;E:\\Java\\.m2\\repository\\net\\bytebuddy\\byte-buddy-agent\\1.12.19\\byte-buddy-agent-1.12.19.jar;E:\\Java\\.m2\\repository\\org\\objenesis\\objenesis\\3.3\\objenesis-3.3.jar",
+        "Phase1HttpOracle",
+        "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust\\tools\\compat\\http\\fixtures.jsonl"
+      ],
+      "cwd": "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust",
+      "exit_code": 0,
+      "seconds": 0.859,
+      "stdout": "java.stdout.log",
+      "stderr": "java.stderr.log"
+    },
+    {
+      "step": "rust-build",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "-p",
+        "wx-rust-miniapp",
+        "--example",
+        "phase1_http_oracle",
+        "--message-format=json"
+      ],
+      "cwd": "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust",
+      "exit_code": 0,
+      "seconds": 15.844,
+      "stdout": "rust-build.stdout.log",
+      "stderr": "rust-build.stderr.log"
+    },
+    {
+      "step": "rust",
+      "command": [
+        "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust\\target\\debug\\examples\\phase1_http_oracle.exe",
+        "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust\\tools\\compat\\http\\fixtures.jsonl"
+      ],
+      "cwd": "E:\\workspaces\\workspace-github-easy-4-rust\\WxRust",
+      "exit_code": 0,
+      "seconds": 1.813,
+      "stdout": "rust.stdout.log",
+      "stderr": "rust.stderr.log"
+    }
+  ],
+  "rust_head": "bc5dbb7ab7bfa7f4e236e9907411edde42e5f0bc",
+  "rust_dirty": true,
+  "fixtures_sha256": "301faf6f51b28e432c66f030793a22dde1bc9320aedcdc84bee43481a46fef2a",
+  "source_sha256": "0c522dd3fb48097841287026b2e0c2ff0c3d6761cda62f4ba29adb3dd0c2bcbe",
+  "jdk": "D:\\Java\\jdk-17.0.12",
+  "fixture_count": 2,
+  "java_provenance": "ORACLE_COMMON_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-common/target/classes/\nORACLE_MINIAPP_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-miniapp/target/classes/\nSLF4J: Failed to load class \"org.slf4j.impl.StaticLoggerBinder\".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\n",
+  "java_class_sha256": {
+    "WxError": "548d25f27bbd369a001e8e811dfd85b99656e5c139c4e11913bcc19f79bee27d",
+    "WxMaServiceImpl": "db0bade10a5259f78095891d1ae671c0dbee16d8131ad5826eec63c23b26020e"
+  },
+  "rust_binary_sha256": "d57c149a013107576503b001f06e2e728de4aaf234c56fa7df167b407566ee72",
+  "counts": {
+    "EQUIVALENT": 1,
+    "DIFFERENT": 1
+  },
+  "case_count": 2,
+  "errors": [],
+  "cases": [
+    {
+      "id": "http-post-token-replay",
+      "operation": "miniapp.http.post-replay",
+      "status": "EQUIVALENT",
+      "java": {
+        "kind": "value",
+        "value": {
+          "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"accepted\":true}}",
+          "request_trace": [
+            {
+              "sequence": 1,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 2,
+              "kind": "api",
+              "method": "POST",
+              "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T1",
+              "content_type": "application/json; charset=UTF-8",
+              "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}"
+            },
+            {
+              "sequence": 3,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 4,
+              "kind": "api",
+              "method": "POST",
+              "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T2",
+              "content_type": "application/json; charset=UTF-8",
+              "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}"
+            }
+          ],
+          "token_calls": 2,
+          "api_calls": 2
+        }
+      },
+      "rust": {
+        "kind": "value",
+        "value": {
+          "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"accepted\":true}}",
+          "request_trace": [
+            {
+              "sequence": 1,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 2,
+              "kind": "api",
+              "method": "POST",
+              "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T1",
+              "content_type": "application/json; charset=UTF-8",
+              "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}"
+            },
+            {
+              "sequence": 3,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 4,
+              "kind": "api",
+              "method": "POST",
+              "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T2",
+              "content_type": "application/json; charset=UTF-8",
+              "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}"
+            }
+          ],
+          "token_calls": 2,
+          "api_calls": 2
+        }
+      }
+    },
+    {
+      "id": "http-get-query-order",
+      "operation": "miniapp.http.get-query-order",
+      "status": "DIFFERENT",
+      "java": {
+        "kind": "value",
+        "value": {
+          "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"method\":\"get\"}}",
+          "request_trace": [
+            {
+              "sequence": 1,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 2,
+              "kind": "api",
+              "method": "GET",
+              "target": "/cgi-bin/compat/http-probe?base=1&access_token=T1&trace=wp03&scene=get",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 3,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 4,
+              "kind": "api",
+              "method": "GET",
+              "target": "/cgi-bin/compat/http-probe?base=1&access_token=T2&trace=wp03&scene=get",
+              "content_type": null,
+              "body": ""
+            }
+          ],
+          "token_calls": 2,
+          "api_calls": 2
+        }
+      },
+      "rust": {
+        "kind": "value",
+        "value": {
+          "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"method\":\"get\"}}",
+          "request_trace": [
+            {
+              "sequence": 1,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 2,
+              "kind": "api",
+              "method": "GET",
+              "target": "/cgi-bin/compat/http-probe?base=1&trace=wp03&scene=get&access_token=T1",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 3,
+              "kind": "token",
+              "method": "GET",
+              "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+              "content_type": null,
+              "body": ""
+            },
+            {
+              "sequence": 4,
+              "kind": "api",
+              "method": "GET",
+              "target": "/cgi-bin/compat/http-probe?base=1&trace=wp03&scene=get&access_token=T2",
+              "content_type": null,
+              "body": ""
+            }
+          ],
+          "token_calls": 2,
+          "api_calls": 2
+        }
+      }
+    }
+  ]
+}

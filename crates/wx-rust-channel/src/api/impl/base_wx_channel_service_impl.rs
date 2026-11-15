@@ -36,7 +36,7 @@ use std::sync::Arc;
 use wx_rust_common::enums::WxType;
 use wx_rust_common::error::WxErrorException;
 use wx_rust_common::http::{ReqwestTransport, TransportBody};
-use wx_rust_common::pipeline::{PipelineContext, execute_pipeline};
+use wx_rust_common::pipeline::{PipelineContext, execute_pipeline_with_refresh};
 use wx_rust_common::util::http::RequestExecutor;
 
 use crate::api::WxChannelService;
@@ -193,10 +193,10 @@ where
 /// - `on_token_invalid` 原样承接「加锁比对→置过期」块（恒执行；是否
 ///   重放由 `replay_on_token_invalid` = `auto_refresh_token()` 决定，
 ///   对齐 [`execute_internal`] 的「lock→compare→expire 恒执行、重放仅当
-///   auto_refresh_token」语义——channel 与 miniapp 同构，重放沿用同一
-///   token 与同一 URL）。
-async fn execute_via_pipeline<S>(
-    svc: &S,
+///   auto_refresh_token」语义——channel 与 miniapp 同构，失效后重新获取
+///   Token 并重建 URL，再进行单次重放）。
+async fn execute_via_pipeline<'a, S>(
+    svc: &'a S,
     uri: &str,
     body: TransportBody,
 ) -> Result<String, WxErrorException>
@@ -244,7 +244,11 @@ where
             })
         };
 
-    execute_pipeline(
+    let refresh_access_token = || -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<String, WxErrorException>> + Send + 'a>> {
+        Box::pin(async { svc.get_access_token().await })
+    };
+
+    execute_pipeline_with_refresh(
         PipelineContext {
             transport: &transport,
             access_token,
@@ -259,6 +263,7 @@ where
         // from_utf8_lossy 逐字节一致）
         |resp| Ok(String::from_utf8_lossy(&resp.body).into_owned()),
         Some(&on_token_invalid),
+        Some(&refresh_access_token),
     )
     .await
 }
@@ -293,7 +298,7 @@ where
     }
 
     let config = svc.wx_channel_config();
-    let access_token = svc.get_access_token().await?;
+    let mut access_token = svc.get_access_token().await?;
 
     // Java: 配置了自定义 apiHostUrl 时替换默认 https://api.weixin.qq.com
     let uri = match config.api_host_url() {
@@ -303,16 +308,16 @@ where
         _ => uri.to_string(),
     };
 
-    let uri_with_access_token = if uri.contains('?') {
-        format!("{uri}&access_token={access_token}")
-    } else {
-        format!("{uri}?access_token={access_token}")
-    };
-
     // Java 以递归实现单次 token 自动刷新；Rust 以 flag 循环表达
     // 同一语义（doNotAutoRefresh=true 后不再自动重试，防无限递归）
     let mut do_not_auto_refresh = do_not_auto_refresh;
     loop {
+        let uri_with_access_token = if uri.contains('?') {
+            format!("{uri}&access_token={access_token}")
+        } else {
+            format!("{uri}?access_token={access_token}")
+        };
+
         match executor
             .execute(&uri_with_access_token, data.clone(), WxType::Channel)
             .await
@@ -323,13 +328,17 @@ where
                 if let Some(code) = code {
                     if wx_rust_common::api::wx_consts::ACCESS_TOKEN_ERROR_CODES.contains(&code) {
                         // 强制设置 access token 过期，下一次请求里就会刷新
-                        let lock = config.access_token_lock();
-                        let _guard = lock.lock().await;
-                        if config.access_token().as_deref() == Some(access_token.as_str()) {
-                            config.expire_access_token();
+                        {
+                            let lock = config.access_token_lock();
+                            let _guard = lock.lock().await;
+                            if config.access_token().as_deref() == Some(access_token.as_str()) {
+                                config.expire_access_token();
+                            }
                         }
                         if config.auto_refresh_token() && !do_not_auto_refresh {
-                            // 下一次不再自动重试（对齐 Java 注释语义）
+                            // Java 递归进入 executeInternal 后重新 getAccessToken(false)，
+                            // 因此必须在释放失效锁后取新 Token 并重建请求 URL。
+                            access_token = svc.get_access_token().await?;
                             do_not_auto_refresh = true;
                             continue;
                         }

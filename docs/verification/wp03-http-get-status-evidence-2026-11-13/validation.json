@@ -1,0 +1,140 @@
+{
+  "source_sha256_before": "446c15e11cfb4b23295d8b51855c2700bdae9dfe33c247c0bc212871285e791b",
+  "source_sha256_after": "446c15e11cfb4b23295d8b51855c2700bdae9dfe33c247c0bc212871285e791b",
+  "results": [
+    {
+      "name": "python-tests",
+      "exit_code": 0,
+      "seconds": 0.45,
+      "command": [
+        "C:\\Users\\hnxyh\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/compat",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\python-tests.log",
+      "log_sha256": "ea87896a1859e06c2731bbb7db5df977131a263b3b49b663e7ce075e8fbc88ea",
+      "executed": 32
+    },
+    {
+      "name": "fmt",
+      "exit_code": 0,
+      "seconds": 3.95,
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "check",
+      "exit_code": 0,
+      "seconds": 27.41,
+      "command": [
+        "cargo",
+        "check",
+        "--workspace",
+        "--all-targets",
+        "--offline",
+        "--locked"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\check.log",
+      "log_sha256": "caea861d8b7a145f404a3a234dacfc1ee745af9b19c1fac3a16ff7d095d10578"
+    },
+    {
+      "name": "clippy",
+      "exit_code": 0,
+      "seconds": 28.42,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--offline",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\clippy.log",
+      "log_sha256": "c77861e723d6274fcc9fb886cec5b5dfa406eded924333b50d2f1c394a884fbc"
+    },
+    {
+      "name": "pipeline-tests",
+      "exit_code": 0,
+      "seconds": 0.52,
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "wx-rust-common",
+        "--test",
+        "execute_pipeline_test"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\pipeline-tests.log",
+      "log_sha256": "5be88cdbdb21b0135f1d84d00f91040357d8950ca2bc89c7bb1f4cbe3be9622c",
+      "summary_groups": 1,
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "workspace-tests",
+      "exit_code": 0,
+      "seconds": 259.62,
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--offline",
+        "--locked"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\workspace-tests.log",
+      "log_sha256": "5a1ee9fbdef8dcb2ca63c30a08741e3784f14fb675a43293cb432022b51ccd6b",
+      "summary_groups": 214,
+      "passed": 5021,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "common-llvm-cov",
+      "exit_code": 0,
+      "seconds": 28.09,
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "--package",
+        "wx-rust-common",
+        "--summary-only",
+        "--offline",
+        "--locked"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\common-llvm-cov.log",
+      "log_sha256": "7706af31720c658c771141ee4e0023ba02e83871e519dd84b702a1c35d9930f6",
+      "coverage": {
+        "regions_total": 4532,
+        "regions_missed": 407,
+        "region_percent": 91.02,
+        "functions_total": 217,
+        "functions_missed": 59,
+        "function_percent": 72.81,
+        "lines_total": 4115,
+        "lines_missed": 287,
+        "line_percent": 93.03
+      }
+    }
+  ],
+  "passed": true
+}

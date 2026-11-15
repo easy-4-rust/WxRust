@@ -35,4 +35,21 @@ pub trait WxMaMediaService: Send + Sync {
     /// Java 将文件保存到本地临时目录并返回 `File`；Rust 返回文件字节
     /// `Vec<u8>`（ADAPTED）。
     async fn get_media(&self, media_id: &str) -> Result<Vec<u8>, WxErrorException>;
+
+    /// 获取与 Java \`getMedia(String)\` 文件返回语义对应的临时文件路径。
+    ///
+    /// 读取 Content-Disposition、创建独立 wxma 临时目录，并分块保存内容。
+    /// 与现有字节接口并存。Rust 调用方负责及时清理返回的文件及其父目录
+    /// （与 Java 的 JVM deleteOnExit 生命周期不同，必须显式处置）。
+    /// 默认返回明确的不支持错误，避免要求既有下游 Trait 实现者新增方法；
+    /// 内置 MiniApp 实现覆盖此方法。
+    async fn get_media_file(
+        &self,
+        _media_id: &str,
+    ) -> Result<std::path::PathBuf, WxErrorException> {
+        Err(WxErrorException::from_code(
+            -99,
+            "当前 WxMaMediaService 实现不支持文件式素材下载",
+        ))
+    }
 }

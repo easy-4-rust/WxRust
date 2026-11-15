@@ -4,17 +4,29 @@
 pub struct WxMediaUploadResult {
     /// url
     #[serde(rename = "url", default)]
-    pub url: String,
+    pub url: Option<String>,
     /// type
     #[serde(rename = "type", default)]
-    pub r#type: String,
+    pub r#type: Option<String>,
     /// mediaId
-    #[serde(rename = "mediaId", default)]
-    pub media_id: String,
+    #[serde(
+        rename(serialize = "mediaId", deserialize = "media_id"),
+        alias = "mediaId",
+        default
+    )]
+    pub media_id: Option<String>,
     /// thumbMediaId
-    #[serde(rename = "thumbMediaId", default)]
-    pub thumb_media_id: String,
+    #[serde(
+        rename(serialize = "thumbMediaId", deserialize = "thumb_media_id"),
+        alias = "thumbMediaId",
+        default
+    )]
+    pub thumb_media_id: Option<String>,
     /// createdAt
-    #[serde(rename = "createdAt", default)]
+    #[serde(
+        rename(serialize = "createdAt", deserialize = "created_at"),
+        alias = "createdAt",
+        default
+    )]
     pub created_at: i64,
 }

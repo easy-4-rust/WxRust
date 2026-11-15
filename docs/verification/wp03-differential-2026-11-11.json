@@ -1,0 +1,1111 @@
+{
+  "date": "2026-11-11",
+  "claim": "scenario-level evidence only; migration not complete",
+  "coverage": {
+    "common_error_scenarios": 16,
+    "pay_sign_scenarios": 11,
+    "cp_native": "NOT_EXECUTED",
+    "http_retry_trace": "NOT_EXECUTED",
+    "sdk_xml": "NOT_EXECUTED",
+    "matrix_verified_status_not_changed": true
+  },
+  "method_references": [
+    {
+      "method_id": "3fb8af85585942406ee136a77c3628c4d0d0607f91b6f9b8c76f39769339df83",
+      "module": "weixin-java-common",
+      "class": "me.chanjar.weixin.common.error.WxError",
+      "method": "fromJson",
+      "descriptor": "(Ljava/lang/String;Lme/chanjar/weixin/common/enums/WxType;)Lme/chanjar/weixin/common/error/WxError;"
+    },
+    {
+      "method_id": "3554d699fae28cbf11230cd0e0ebea491c2d2fbf5b1e8deab23f01f7f0710394",
+      "module": "weixin-java-pay",
+      "class": "com.github.binarywang.wxpay.util.SignUtils",
+      "method": "createSign",
+      "descriptor": "(Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;"
+    }
+  ],
+  "baseline": {
+    "oracle_commit": "a49d6e1461752c06b752d2afd8aeeb7e6e78cefe",
+    "rust_head": "bc5dbb7ab7bfa7f4e236e9907411edde42e5f0bc",
+    "rust_dirty": true,
+    "source_sha256": "496170be269267f03af541d76143723b08b5ab33c26a02baa11625e0c012c9bc",
+    "fixtures_sha256": "17cb2f9bc36cb2aa0de6ec3d08322197d891214cec690d82378d286b879cac54",
+    "java_class_sha256": {
+      "WxError": "548d25f27bbd369a001e8e811dfd85b99656e5c139c4e11913bcc19f79bee27d",
+      "SignUtils": "fe2c68dad580242eb9ae4a030c8102b58da84261244cc8c39f7c1a7e2406fe9e"
+    },
+    "rust_binary_sha256": "c881b3cfc48082fbd3f3ad80b9d8a39c35dbb8473b6cc680ebaf93f2506a8ac9",
+    "java_provenance": "ORACLE_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-common/target/classes/\nPAY_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-pay/target/classes/\nSLF4J: Failed to load class \"org.slf4j.impl.StaticLoggerBinder\".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\n",
+    "counts": {
+      "EQUIVALENT": 19,
+      "DIFFERENT": 8
+    },
+    "case_count": 27,
+    "passed": false,
+    "status": "DIFFERENT",
+    "cases": [
+      {
+        "id": "error-success",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-no-fields",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-unknown-code",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-code-string",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "invalid credential",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{\"errcode\":\"40001\",\"errmsg\":\"invalid credential\"}",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-code-null",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "empty code",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{\"errcode\":null,\"errmsg\":\"empty code\"}",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-message-null",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-message-empty",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-message-number",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "123",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{\"errcode\":40001,\"errmsg\":123}",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-malformed-json",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "exception",
+          "type": "com.google.gson.JsonSyntaxException",
+          "message": "java.io.EOFException: End of input at line 1 column 10 path $.not-json"
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{not-json",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-json-null",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "exception",
+          "type": "java.lang.NullPointerException",
+          "message": "Cannot invoke \"me.chanjar.weixin.common.error.WxError.getErrorCode()\" because \"wxError\" is null"
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：null",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-json-array",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "exception",
+          "type": "com.google.gson.JsonSyntaxException",
+          "message": "java.lang.IllegalStateException: Not a JSON Object: []"
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：[]",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-unknown-extra-fields",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-mp-translation",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "获取 access_token 时 AppSecret 错误，或者 access_token 无效。请开发者认真比对 AppSecret 的正确性，或查看是否正在为恰当的公众号调用接口",
+            "error_msg_en": "invalid credential"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "获取 access_token 时 AppSecret 错误，或者 access_token 无效。请开发者认真比对 AppSecret 的正确性，或查看是否正在为恰当的公众号调用接口",
+            "error_msg_en": "invalid credential"
+          }
+        }
+      },
+      {
+        "id": "error-cp-translation",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 42001,
+            "error_msg": "access_token已过期；access_token有时效性，需要重新获取一次",
+            "error_msg_en": "expired"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 42001,
+            "error_msg": "access_token已过期；access_token有时效性，需要重新获取一次",
+            "error_msg_en": "expired"
+          }
+        }
+      },
+      {
+        "id": "error-miniapp-translation",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40014,
+            "error_msg": "bad token",
+            "error_msg_en": "bad token"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40014,
+            "error_msg": "bad token",
+            "error_msg_en": "bad token"
+          }
+        }
+      },
+      {
+        "id": "error-open-unknown",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": "custom failure"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": "custom failure"
+          }
+        }
+      },
+      {
+        "id": "sign-md5-basic",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "A631543F51B9F5BB6DD0FB70C28AA5E9"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "A631543F51B9F5BB6DD0FB70C28AA5E9"
+        }
+      },
+      {
+        "id": "sign-md5-default",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "0B331D1C510FB5EFDC53DF42C902FA83"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "0B331D1C510FB5EFDC53DF42C902FA83"
+        }
+      },
+      {
+        "id": "sign-hmac-basic",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "056A124FFDB9E4D60DCBD8196434EC537256092814F4E518EC89295FC0C89090"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "056A124FFDB9E4D60DCBD8196434EC537256092814F4E518EC89295FC0C89090"
+        }
+      },
+      {
+        "id": "sign-empty-values",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "E06635DB22609DA5B1849B0DA03FA43B"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "E06635DB22609DA5B1849B0DA03FA43B"
+        }
+      },
+      {
+        "id": "sign-reserved-fields",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        }
+      },
+      {
+        "id": "sign-ignored-fields",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "6DB60E0F231654EF9ADE85A8653ACC13"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "6DB60E0F231654EF9ADE85A8653ACC13"
+        }
+      },
+      {
+        "id": "sign-unknown-type-fallback",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        }
+      },
+      {
+        "id": "sign-empty-map",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "FF2F2EAB3BA12B7218240F1F83C6A6EE"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "FF2F2EAB3BA12B7218240F1F83C6A6EE"
+        }
+      },
+      {
+        "id": "sign-special-values",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "779C9183D3ED9845DCE33E5532CF7C05722E76E90C2BDCFE087EFCA8D364A3DA"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "779C9183D3ED9845DCE33E5532CF7C05722E76E90C2BDCFE087EFCA8D364A3DA"
+        }
+      },
+      {
+        "id": "sign-utf16-key-order",
+        "operation": "pay.sign",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": "13E7095E3558B0A585579764C14841DB"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "D7B9137C43AFFCA6F50505ED7ADCE9E9"
+        }
+      },
+      {
+        "id": "sign-utf16-key-order-hmac",
+        "operation": "pay.sign",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": "7EC82A2FF7914B831D977B8B17D8ABA8DC001668665CFB4473EEB6BB103CEB41"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "7DBF8AADB4C0F25ABFF3B3E8B50EA0AD0BBC040D66891DA079B70ACF7397E4F0"
+        }
+      }
+    ]
+  },
+  "after_pay_utf16_fix": {
+    "oracle_commit": "a49d6e1461752c06b752d2afd8aeeb7e6e78cefe",
+    "rust_head": "bc5dbb7ab7bfa7f4e236e9907411edde42e5f0bc",
+    "rust_dirty": true,
+    "source_sha256": "30fd420383f94bdd562ed3cc54ca50573962e826d0ef2c90e3a2f1ce9ddfb629",
+    "fixtures_sha256": "17cb2f9bc36cb2aa0de6ec3d08322197d891214cec690d82378d286b879cac54",
+    "java_class_sha256": {
+      "WxError": "548d25f27bbd369a001e8e811dfd85b99656e5c139c4e11913bcc19f79bee27d",
+      "SignUtils": "fe2c68dad580242eb9ae4a030c8102b58da84261244cc8c39f7c1a7e2406fe9e"
+    },
+    "rust_binary_sha256": "4b3f413e975574d5d97fe235d2426d8d215952fcf4f3ba78ed9fb25f02e7c62a",
+    "java_provenance": "ORACLE_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-common/target/classes/\nPAY_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-pay/target/classes/\nSLF4J: Failed to load class \"org.slf4j.impl.StaticLoggerBinder\".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\n",
+    "counts": {
+      "EQUIVALENT": 21,
+      "DIFFERENT": 6
+    },
+    "case_count": 27,
+    "passed": false,
+    "status": "DIFFERENT",
+    "cases": [
+      {
+        "id": "error-success",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-no-fields",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-unknown-code",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-code-string",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "invalid credential",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{\"errcode\":\"40001\",\"errmsg\":\"invalid credential\"}",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-code-null",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "empty code",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{\"errcode\":null,\"errmsg\":\"empty code\"}",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-message-null",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": null,
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-message-empty",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-message-number",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "123",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{\"errcode\":40001,\"errmsg\":123}",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-malformed-json",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "exception",
+          "type": "com.google.gson.JsonSyntaxException",
+          "message": "java.io.EOFException: End of input at line 1 column 10 path $.not-json"
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：{not-json",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-json-null",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "exception",
+          "type": "java.lang.NullPointerException",
+          "message": "Cannot invoke \"me.chanjar.weixin.common.error.WxError.getErrorCode()\" because \"wxError\" is null"
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：null",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-json-array",
+        "operation": "common.error",
+        "status": "DIFFERENT",
+        "java": {
+          "kind": "exception",
+          "type": "com.google.gson.JsonSyntaxException",
+          "message": "java.lang.IllegalStateException: Not a JSON Object: []"
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": -99,
+            "error_msg": "JSON 解析失败，原始报文：[]",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-unknown-extra-fields",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 0,
+            "error_msg": "ok",
+            "error_msg_en": null
+          }
+        }
+      },
+      {
+        "id": "error-mp-translation",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "获取 access_token 时 AppSecret 错误，或者 access_token 无效。请开发者认真比对 AppSecret 的正确性，或查看是否正在为恰当的公众号调用接口",
+            "error_msg_en": "invalid credential"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40001,
+            "error_msg": "获取 access_token 时 AppSecret 错误，或者 access_token 无效。请开发者认真比对 AppSecret 的正确性，或查看是否正在为恰当的公众号调用接口",
+            "error_msg_en": "invalid credential"
+          }
+        }
+      },
+      {
+        "id": "error-cp-translation",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 42001,
+            "error_msg": "access_token已过期；access_token有时效性，需要重新获取一次",
+            "error_msg_en": "expired"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 42001,
+            "error_msg": "access_token已过期；access_token有时效性，需要重新获取一次",
+            "error_msg_en": "expired"
+          }
+        }
+      },
+      {
+        "id": "error-miniapp-translation",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 40014,
+            "error_msg": "bad token",
+            "error_msg_en": "bad token"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 40014,
+            "error_msg": "bad token",
+            "error_msg_en": "bad token"
+          }
+        }
+      },
+      {
+        "id": "error-open-unknown",
+        "operation": "common.error",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": "custom failure"
+          }
+        },
+        "rust": {
+          "kind": "value",
+          "value": {
+            "error_code": 987654,
+            "error_msg": "custom failure",
+            "error_msg_en": "custom failure"
+          }
+        }
+      },
+      {
+        "id": "sign-md5-basic",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "A631543F51B9F5BB6DD0FB70C28AA5E9"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "A631543F51B9F5BB6DD0FB70C28AA5E9"
+        }
+      },
+      {
+        "id": "sign-md5-default",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "0B331D1C510FB5EFDC53DF42C902FA83"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "0B331D1C510FB5EFDC53DF42C902FA83"
+        }
+      },
+      {
+        "id": "sign-hmac-basic",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "056A124FFDB9E4D60DCBD8196434EC537256092814F4E518EC89295FC0C89090"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "056A124FFDB9E4D60DCBD8196434EC537256092814F4E518EC89295FC0C89090"
+        }
+      },
+      {
+        "id": "sign-empty-values",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "E06635DB22609DA5B1849B0DA03FA43B"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "E06635DB22609DA5B1849B0DA03FA43B"
+        }
+      },
+      {
+        "id": "sign-reserved-fields",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        }
+      },
+      {
+        "id": "sign-ignored-fields",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "6DB60E0F231654EF9ADE85A8653ACC13"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "6DB60E0F231654EF9ADE85A8653ACC13"
+        }
+      },
+      {
+        "id": "sign-unknown-type-fallback",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "04A62A540CF1EF33B84CEF3A04CE64CF"
+        }
+      },
+      {
+        "id": "sign-empty-map",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "FF2F2EAB3BA12B7218240F1F83C6A6EE"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "FF2F2EAB3BA12B7218240F1F83C6A6EE"
+        }
+      },
+      {
+        "id": "sign-special-values",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "779C9183D3ED9845DCE33E5532CF7C05722E76E90C2BDCFE087EFCA8D364A3DA"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "779C9183D3ED9845DCE33E5532CF7C05722E76E90C2BDCFE087EFCA8D364A3DA"
+        }
+      },
+      {
+        "id": "sign-utf16-key-order",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "13E7095E3558B0A585579764C14841DB"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "13E7095E3558B0A585579764C14841DB"
+        }
+      },
+      {
+        "id": "sign-utf16-key-order-hmac",
+        "operation": "pay.sign",
+        "status": "EQUIVALENT",
+        "java": {
+          "kind": "value",
+          "value": "7EC82A2FF7914B831D977B8B17D8ABA8DC001668665CFB4473EEB6BB103CEB41"
+        },
+        "rust": {
+          "kind": "value",
+          "value": "7EC82A2FF7914B831D977B8B17D8ABA8DC001668665CFB4473EEB6BB103CEB41"
+        }
+      }
+    ]
+  },
+  "validation": {
+    "source_sha256_before": "30fd420383f94bdd562ed3cc54ca50573962e826d0ef2c90e3a2f1ce9ddfb629",
+    "source_sha256_after": "30fd420383f94bdd562ed3cc54ca50573962e826d0ef2c90e3a2f1ce9ddfb629",
+    "results": [
+      {
+        "name": "python-tests",
+        "command": [
+          "C:\\Users\\hnxyh\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/compat",
+          "-p",
+          "test_*.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "seconds": 0.5,
+        "log": "artifacts\\phase1-diff\\validation-20261111-01\\python-tests.log",
+        "log_sha256": "0fb7e81a7709e686d7d06dd8f98fa52f3a2ef9716b94b5ac41a7978d0a04a2cc"
+      },
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "seconds": 5.77,
+        "log": "artifacts\\phase1-diff\\validation-20261111-01\\fmt.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "check",
+        "command": [
+          "cargo",
+          "check",
+          "--workspace",
+          "--all-targets",
+          "--offline",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "seconds": 15.56,
+        "log": "artifacts\\phase1-diff\\validation-20261111-01\\check.log",
+        "log_sha256": "7df99c590a6a328601e8ffd29c04fd078ab43ddd2ff5a3495ce7cfc9c56db492"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--offline",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "seconds": 17.72,
+        "log": "artifacts\\phase1-diff\\validation-20261111-01\\clippy.log",
+        "log_sha256": "f0a504b8f139f8817e2278e805512ede38d5fe9957e5a840f54e62416bfd0301"
+      },
+      {
+        "name": "workspace-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--workspace",
+          "--offline",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "seconds": 294.98,
+        "log": "artifacts\\phase1-diff\\validation-20261111-01\\workspace-tests.log",
+        "log_sha256": "9776298eb6d7eaf2da1ab34a96426eca13cbd3404401d30addd8c429bbde6044",
+        "summary_groups": 212,
+        "passed": 5007,
+        "failed": 0,
+        "ignored": 1
+      }
+    ],
+    "passed": true
+  },
+  "harness_self_tests": 18,
+  "evidence_files_sha256": {
+    "docs/verification/wp03-evidence-2026-11-11/java-before.jsonl": "26d6f6209cb8a962d2355f71b32e09846756f9ca215d945ade9831cebbe4fb92",
+    "docs/verification/wp03-evidence-2026-11-11/rust-before.jsonl": "42c5c0d8d71855b48353acfc6c9fa6c6bec8cd9d384d982d280cd9f9915f4dd5",
+    "docs/verification/wp03-evidence-2026-11-11/java-after.jsonl": "26d6f6209cb8a962d2355f71b32e09846756f9ca215d945ade9831cebbe4fb92",
+    "docs/verification/wp03-evidence-2026-11-11/rust-after.jsonl": "a357ebac83e2d7a4c1d1af2209e49b71fa11c5694d56448d389d150650d38446",
+    "docs/verification/wp03-evidence-2026-11-11/fixtures.jsonl": "17cb2f9bc36cb2aa0de6ec3d08322197d891214cec690d82378d286b879cac54"
+  }
+}

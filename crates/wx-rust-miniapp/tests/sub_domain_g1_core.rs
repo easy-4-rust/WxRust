@@ -477,8 +477,8 @@ async fn media_upload_and_get() {
         .upload_media("image", media_file.to_str().expect("路径字符串"))
         .await
         .expect("上传素材成功");
-    assert_eq!(result.r#type, "image");
-    assert_eq!(result.media_id, "MEDIA_ID");
+    assert_eq!(result.r#type.as_deref(), Some("image"));
+    assert_eq!(result.media_id.as_deref(), Some("MEDIA_ID"));
     assert_eq!(result.created_at, 1388561359);
     let path = server.last_path();
     assert!(

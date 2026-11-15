@@ -1,0 +1,512 @@
+{
+  "date": "2026-11-13",
+  "scope": "WxJava 4.8.4.B vs WxRust: four real MiniApp HTTP loopback scenarios; scenario-level evidence only",
+  "oracle": {
+    "version": "WxJava 4.8.4.B",
+    "commit": "a49d6e1461752c06b752d2afd8aeeb7e6e78cefe",
+    "java_provenance": "ORACLE_COMMON_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-common/target/classes/\nORACLE_MINIAPP_CLASS_SOURCE=file:/D:/wxjava-phase1-oracle-20261111/weixin-java-miniapp/target/classes/\nSLF4J: Failed to load class \"org.slf4j.impl.StaticLoggerBinder\".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\n",
+    "class_sha256": {
+      "WxError": "548d25f27bbd369a001e8e811dfd85b99656e5c139c4e11913bcc19f79bee27d",
+      "WxMaServiceImpl": "db0bade10a5259f78095891d1ae671c0dbee16d8131ad5826eec63c23b26020e"
+    }
+  },
+  "rust": {
+    "branch": "feature/wxjava-1to1-phase1",
+    "head": "bc5dbb7ab7bfa7f4e236e9907411edde42e5f0bc",
+    "worktree_dirty": true,
+    "binary_sha256": "3c1e5445e9e89ef51f8604f03c2dc3126aeb6c0b3609d32cf95f8132c14bad68"
+  },
+  "fixture": {
+    "path": "tools/compat/http/fixtures.jsonl",
+    "sha256": "6eb988f81d93d32d8342e621cd8e41f3db94ea7bcf1c0129868ccb18e26215c4",
+    "count": 4
+  },
+  "red": {
+    "get_query_order": {
+      "EQUIVALENT": 1,
+      "DIFFERENT": 1
+    },
+    "http_status_and_empty_response": {
+      "EQUIVALENT": 2,
+      "DIFFERENT": 2
+    },
+    "query_order_difference": "Java: base=1&access_token=T1&trace=wp03&scene=get; old Rust: base=1&trace=wp03&scene=get&access_token=T1",
+    "non_2xx_difference": "Java HttpResponseException wrapped by WxRuntimeException; old Rust parsed HTTP 503 JSON body as errcode=0 success",
+    "empty_body_difference": "Java NullPointerException after Gson returned null; old Rust returned WxError(-99)"
+  },
+  "green": {
+    "status": "EQUIVALENT",
+    "counts": {
+      "EQUIVALENT": 4
+    },
+    "strict_value_scenarios": 2,
+    "error_category_and_trace_scenarios": 2,
+    "cases": {
+      "http-post-token-replay": {
+        "status": "EQUIVALENT",
+        "comparison": "strict JSON value + full server trace",
+        "java_response": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"accepted\":true}}",
+        "rust_response": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"accepted\":true}}",
+        "java_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "POST",
+            "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T1",
+            "content_type": "application/json; charset=UTF-8",
+            "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}",
+            "response_status": 200,
+            "response_body": "{\"errcode\":40001,\"errmsg\":\"invalid credential\"}"
+          },
+          {
+            "sequence": 3,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T2\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 4,
+            "kind": "api",
+            "method": "POST",
+            "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T2",
+            "content_type": "application/json; charset=UTF-8",
+            "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}",
+            "response_status": 200,
+            "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"accepted\":true}}"
+          }
+        ],
+        "rust_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "POST",
+            "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T1",
+            "content_type": "application/json; charset=UTF-8",
+            "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}",
+            "response_status": 200,
+            "response_body": "{\"errcode\":40001,\"errmsg\":\"invalid credential\"}"
+          },
+          {
+            "sequence": 3,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T2\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 4,
+            "kind": "api",
+            "method": "POST",
+            "target": "/cgi-bin/compat/http-probe?trace=wp03&access_token=T2",
+            "content_type": "application/json; charset=UTF-8",
+            "body": "{\"probe\":\"http-post-replay\",\"sequence\":1}",
+            "response_status": 200,
+            "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"accepted\":true}}"
+          }
+        ],
+        "token_calls": 2,
+        "api_calls": 2
+      },
+      "http-get-query-order": {
+        "status": "EQUIVALENT",
+        "comparison": "strict JSON value + full server trace",
+        "java_response": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"method\":\"get\"}}",
+        "rust_response": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"method\":\"get\"}}",
+        "java_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T1&trace=wp03&scene=get",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"errcode\":40001,\"errmsg\":\"invalid credential\"}"
+          },
+          {
+            "sequence": 3,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T2\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 4,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T2&trace=wp03&scene=get",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"method\":\"get\"}}"
+          }
+        ],
+        "rust_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T1&trace=wp03&scene=get",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"errcode\":40001,\"errmsg\":\"invalid credential\"}"
+          },
+          {
+            "sequence": 3,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T2\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 4,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T2&trace=wp03&scene=get",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"errcode\":0,\"errmsg\":\"ok\",\"data\":{\"method\":\"get\"}}"
+          }
+        ],
+        "token_calls": 2,
+        "api_calls": 2
+      },
+      "http-get-non2xx": {
+        "status": "EQUIVALENT",
+        "comparison": "explicit error category + exact server-observed trace/call counts; original exception types/messages retained below",
+        "java_exception": {
+          "type": "me.chanjar.weixin.common.error.WxRuntimeException",
+          "cause_type": "org.apache.hc.client5.http.HttpResponseException",
+          "category": "http_status",
+          "message": "org.apache.hc.client5.http.HttpResponseException: status code: 503, reason phrase: Service Unavailable"
+        },
+        "rust_exception": {
+          "type": "WxErrorException::Runtime",
+          "category": "http_status",
+          "message": "HTTP response status: 503",
+          "debug": "Runtime(WxRuntimeError { message: \"HTTP response status: 503\" })"
+        },
+        "java_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T1&trace=wp03&scene=non2xx",
+            "content_type": null,
+            "body": "",
+            "response_status": 503,
+            "response_body": "{\"errcode\":0,\"errmsg\":\"upstream unavailable\"}"
+          }
+        ],
+        "rust_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T1&trace=wp03&scene=non2xx",
+            "content_type": null,
+            "body": "",
+            "response_status": 503,
+            "response_body": "{\"errcode\":0,\"errmsg\":\"upstream unavailable\"}"
+          }
+        ],
+        "token_calls": 1,
+        "api_calls": 1
+      },
+      "http-get-empty-body": {
+        "status": "EQUIVALENT",
+        "comparison": "explicit error category + exact server-observed trace/call counts; original exception types/messages retained below",
+        "java_exception": {
+          "type": "java.lang.NullPointerException",
+          "cause_type": null,
+          "category": "empty_response_runtime",
+          "message": "Cannot invoke \"me.chanjar.weixin.common.error.WxError.getErrorCode()\" because \"wxError\" is null"
+        },
+        "rust_exception": {
+          "type": "WxErrorException::Runtime",
+          "category": "empty_response_runtime",
+          "message": "HTTP response body is empty",
+          "debug": "Runtime(WxRuntimeError { message: \"HTTP response body is empty\" })"
+        },
+        "java_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T1&trace=wp03&scene=empty",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": ""
+          }
+        ],
+        "rust_trace": [
+          {
+            "sequence": 1,
+            "kind": "token",
+            "method": "GET",
+            "target": "/cgi-bin/token?grant_type=client_credential&appid=fixture-app&secret=fixture-secret",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": "{\"access_token\":\"T1\",\"expires_in\":7200}"
+          },
+          {
+            "sequence": 2,
+            "kind": "api",
+            "method": "GET",
+            "target": "/cgi-bin/compat/http-probe?base=1&access_token=T1&trace=wp03&scene=empty",
+            "content_type": null,
+            "body": "",
+            "response_status": 200,
+            "response_body": ""
+          }
+        ],
+        "token_calls": 1,
+        "api_calls": 1
+      }
+    }
+  },
+  "production_changes": {
+    "common_pipeline": "Adds HTTP status >=300 rejection as WxRuntimeError and rejects empty response bodies as runtime response failures before WxError JSON parsing.",
+    "get_query_order": "Adds execute_pipeline_with_refresh_and_query so access_token is injected first and GET queryParam is appended afterwards, including after a token refresh/replay.",
+    "post_content_type": "Retains previous Text POST Content-Type: application/json; charset=UTF-8 parity fix."
+  },
+  "validation": {
+    "passed": true,
+    "source_sha256_before": "446c15e11cfb4b23295d8b51855c2700bdae9dfe33c247c0bc212871285e791b",
+    "source_sha256_after": "446c15e11cfb4b23295d8b51855c2700bdae9dfe33c247c0bc212871285e791b",
+    "python_harness_tests": 32,
+    "pipeline_tests": {
+      "name": "pipeline-tests",
+      "exit_code": 0,
+      "seconds": 0.52,
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "wx-rust-common",
+        "--test",
+        "execute_pipeline_test"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\pipeline-tests.log",
+      "log_sha256": "5be88cdbdb21b0135f1d84d00f91040357d8950ca2bc89c7bb1f4cbe3be9622c",
+      "summary_groups": 1,
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    "workspace_tests": {
+      "name": "workspace-tests",
+      "exit_code": 0,
+      "seconds": 259.62,
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--offline",
+        "--locked"
+      ],
+      "log": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\workspace-tests.log",
+      "log_sha256": "5a1ee9fbdef8dcb2ca63c30a08741e3784f14fb675a43293cb432022b51ccd6b",
+      "summary_groups": 214,
+      "passed": 5021,
+      "failed": 0,
+      "ignored": 1
+    },
+    "fmt_exit": 0,
+    "check_exit": 0,
+    "clippy_exit": 0,
+    "common_coverage": {
+      "regions_total": 4532,
+      "regions_missed": 407,
+      "region_percent": 91.02,
+      "functions_total": 217,
+      "functions_missed": 59,
+      "function_percent": 72.81,
+      "lines_total": 4115,
+      "lines_missed": 287,
+      "line_percent": 93.03
+    },
+    "logs": {
+      "python-tests": {
+        "path": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\python-tests.log",
+        "sha256": "ea87896a1859e06c2731bbb7db5df977131a263b3b49b663e7ce075e8fbc88ea",
+        "exit_code": 0
+      },
+      "fmt": {
+        "path": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "exit_code": 0
+      },
+      "check": {
+        "path": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\check.log",
+        "sha256": "caea861d8b7a145f404a3a234dacfc1ee745af9b19c1fac3a16ff7d095d10578",
+        "exit_code": 0
+      },
+      "clippy": {
+        "path": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\clippy.log",
+        "sha256": "c77861e723d6274fcc9fb886cec5b5dfa406eded924333b50d2f1c394a884fbc",
+        "exit_code": 0
+      },
+      "pipeline-tests": {
+        "path": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\pipeline-tests.log",
+        "sha256": "5be88cdbdb21b0135f1d84d00f91040357d8950ca2bc89c7bb1f4cbe3be9622c",
+        "exit_code": 0
+      },
+      "workspace-tests": {
+        "path": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\workspace-tests.log",
+        "sha256": "5a1ee9fbdef8dcb2ca63c30a08741e3784f14fb675a43293cb432022b51ccd6b",
+        "exit_code": 0
+      },
+      "common-llvm-cov": {
+        "path": "artifacts\\phase1-diff\\http-get-status-validation-20261113-01\\common-llvm-cov.log",
+        "sha256": "7706af31720c658c771141ee4e0023ba02e83871e519dd84b702a1c35d9930f6",
+        "exit_code": 0
+      }
+    }
+  },
+  "portable_evidence_sha256": {
+    "fixtures.jsonl": "6eb988f81d93d32d8342e621cd8e41f3db94ea7bcf1c0129868ccb18e26215c4",
+    "query-red-report.json": "1d9d9087b4fe3622978e164aeb0ba30fa9e2265849036d74bbd3e733d48fc97b",
+    "query-red-java.jsonl": "33b62d7c04d5399de2a9fd0c602464715bcbd112b8222e3c64a1ace8a9d244c5",
+    "query-red-rust.jsonl": "5595544240d6dd356ce9dd8b04580a5f44663ea19b954f184c780cde8893eb1c",
+    "query-red-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "query-red-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "query-red-oracle-build.log": "b97a0e6d8edb03740875ed150786ba9506084ddbbe3b8ff36eaa968fdf2df517",
+    "query-red-java-adapter-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "query-red-rust-build.log": "1293051fb204ee417f01fbc86644001986d990d466a9b1559a5629b49a8533d8",
+    "status-empty-red-report.json": "31726b5244785bb26c123a07734018fe1fa455d7f6ce77ea8aa6aec7a6f8d643",
+    "status-empty-red-java.jsonl": "f9c0daceafea138f2ac2fa651b6dc8e6ef793ba8bf2999cab04c7a754c735a9a",
+    "status-empty-red-rust.jsonl": "292742623a41b9a5feb0a7a7951d84721bbdb076f571b6cdff08d55e0d434f98",
+    "status-empty-red-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "status-empty-red-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status-empty-red-oracle-build.log": "a3bb5ad7f07bb21d786245afc3ca6cdc1544b531780c4975e5f9e3b5bd53e6d8",
+    "status-empty-red-java-adapter-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status-empty-red-rust-build.log": "94853e6d10f3636b94bac6ec25922640957446246cbb2449d75acc4242fc92fe",
+    "green-report.json": "bb7155f0396195f6be44e3d429aa90b51ceabcd9b1c5c57920a26a022e8c73ab",
+    "green-java.jsonl": "f9c0daceafea138f2ac2fa651b6dc8e6ef793ba8bf2999cab04c7a754c735a9a",
+    "green-rust.jsonl": "cb22f387eefcbffb9243ac4daee2a90a56ca7b0e9579596a7a582e68a1b3947b",
+    "green-java-stderr.log": "e3ced43e9301e43a11f1785942a885697e32d60fc94326702525cb60b4de8e2b",
+    "green-rust-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "green-oracle-build.log": "dd14e0c33c4899f34f1369300a5b78d80ddd1127b424e3595c758700d3533800",
+    "green-java-adapter-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "green-rust-build.log": "6113fd7ca9f3408ce0917e6ffd97c3677a092ff3316752937879e67e02ccf5e0",
+    "validation.json": "d05f8e0bb205825bd7926c0c642e239e7ef75362de112fa1f9c608cc85c84582",
+    "python-tests.log": "ea87896a1859e06c2731bbb7db5df977131a263b3b49b663e7ce075e8fbc88ea",
+    "fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check.log": "caea861d8b7a145f404a3a234dacfc1ee745af9b19c1fac3a16ff7d095d10578",
+    "clippy.log": "c77861e723d6274fcc9fb886cec5b5dfa406eded924333b50d2f1c394a884fbc",
+    "pipeline-tests.log": "5be88cdbdb21b0135f1d84d00f91040357d8950ca2bc89c7bb1f4cbe3be9622c",
+    "workspace-tests.log": "5a1ee9fbdef8dcb2ca63c30a08741e3784f14fb675a43293cb432022b51ccd6b",
+    "common-llvm-cov.log": "7706af31720c658c771141ee4e0023ba02e83871e519dd84b702a1c35d9930f6"
+  },
+  "method_matrix_verified": 0,
+  "not_verified": [
+    "GET query encoding/ordering edge cases beyond the declared fixture",
+    "GET with null-vs-empty query parameter semantics",
+    "arbitrary caller-supplied headers",
+    "3xx redirect behavior and 1xx informational responses",
+    "non-2xx Token endpoint responses",
+    "compressed/chunked/malformed response bodies beyond empty body",
+    "XML, multipart, binary upload/download, streaming",
+    "concurrent token refresh, cancellation, timeout and Redis/multi-process single-flight",
+    "CP Finance Native session archive and Pay V3 certificate/callback flows",
+    "whole Common module and full WxJava/WxRust method parity"
+  ],
+  "source_sha256_current": "d0b6e56feeeab7f5859de10f8b6b2561a16b4047321122cd1d3182cf5f26867e",
+  "post_validation_documentation_update": {
+    "change": "Only Rust module-level documentation comments in crates/wx-rust-common/src/pipeline/mod.rs were clarified after the full validation run; no executable code changed.",
+    "cargo_fmt_check_after_update": "passed",
+    "git_diff_check_after_update": "passed",
+    "source_sha256_at_full_validation": "446c15e11cfb4b23295d8b51855c2700bdae9dfe33c247c0bc212871285e791b",
+    "source_sha256_after_comment_update": "d0b6e56feeeab7f5859de10f8b6b2561a16b4047321122cd1d3182cf5f26867e"
+  }
+}

@@ -23,7 +23,7 @@ impl SignUtils {
     /// String signKey, String[] ignoredParams)`）。
     ///
     /// 语义（与 Java 逐行对齐）：
-    /// 1. 参数按 key 字典序排序（Java `TreeMap`）；
+    /// 1. 参数按 key 的 UTF-16 单元字典序排序（Java `TreeMap<String, _>`）；
     /// 2. 跳过空值、`ignoredParams` 与 `NO_SIGN_PARAMS` 中的参数；
     /// 3. 拼接 `k=v&k=v&...&key=signKey`；
     /// 4. `HMAC-SHA256` 时对拼接串做 HmacSHA256（十六进制**大写**，
@@ -45,7 +45,9 @@ impl SignUtils {
     ) -> Result<String, WxErrorException> {
         let mut to_sign = String::new();
         let mut keys: Vec<&String> = params.keys().collect();
-        keys.sort();
+        // Java String.compareTo orders UTF-16 code units, not Unicode scalar values.
+        // Supplementary characters sort before BMP U+E000..U+FFFF in Java.
+        keys.sort_by(|left, right| left.encode_utf16().cmp(right.encode_utf16()));
         for key in keys {
             let value = params.get(key).map(String::as_str).unwrap_or_default();
             let should_sign = !value.is_empty()

@@ -405,6 +405,11 @@ EVIDENCE_NA_PACKAGE_INFO = (
     "Java 包级文档文件（package-info.java，仅承载 javadoc/包注解，无运行时类）；"
     "Rust 以模块 mod.rs 的模块级 doc 注释承载同一信息"
 )
+EVIDENCE_PARTIAL_FINANCE = (
+    "部分迁移：Finance.DecryptData 的密码学语义由 wx-rust-cp 纯 Rust RSA+AES 路径替代；"
+    "Finance Native SDK 的 SDK 句柄、私有协议聊天记录拉取、媒体拉取及 DLL/SO 生命周期未实现。"
+    "相关方法必须在方法矩阵中分别标记 ADAPTED/UNSUPPORTED，不得计入 VERIFIED。"
+)
 
 
 def is_http_backend(java_name, java_file):
@@ -576,6 +581,10 @@ def classify(java_name, java_file, rust_path, found_paths, extra_found_paths, ki
     found_paths: 按预期文件名精确匹配的路径列表
     extra_found_paths: 按复合词规范化模糊匹配的路径列表
     """
+    # 0) Finance 是包外 Native SDK：Rust 仅部分重实现，不可因 CP Service 文件存在而误判完整迁移。
+    if module == "weixin-java-cp" and java_name == "Finance":
+        return "PARTIAL", "api/impl/wx_cp_msg_audit_service_impl.rs", EVIDENCE_PARTIAL_FINANCE
+
     # 1) 文件存在性优先（精确路径匹配）
     if rust_path in found_paths:
         return "IMPLEMENTED", rust_path, EVIDENCE_IMPLEMENTED
@@ -768,7 +777,7 @@ def main():
         results.append((module, java_name, kind, rust_path, status, actual, evidence))
 
         if args.verbose:
-            marker = {"IMPLEMENTED": "OK", "PLATFORM_NA": "NA", "DEPENDENCY_REUSED": "RE", "MISSING": "XX"}
+            marker = {"IMPLEMENTED": "OK", "PARTIAL": "PA", "PLATFORM_NA": "NA", "DEPENDENCY_REUSED": "RE", "MISSING": "XX"}
             print(f"  [{marker.get(status, '??')}] {module}::{java_name} ({kind}) -> {rust_path} | {status}")
 
     # ---------- 汇总输出 ----------
@@ -784,25 +793,26 @@ def main():
     print("## 分类统计")
     print(f"| 分类 | 数量 | 占比 |")
     print(f"|---|---:|---:|")
-    for cat in ("IMPLEMENTED", "PLATFORM_NA", "DEPENDENCY_REUSED", "MISSING", "UNEXPECTED_MODULE"):
+    for cat in ("IMPLEMENTED", "PARTIAL", "PLATFORM_NA", "DEPENDENCY_REUSED", "MISSING", "UNEXPECTED_MODULE"):
         cnt = stats.get(cat, 0)
         pct = f"{cnt / total * 100:.1f}%" if total > 0 else "0%"
         print(f"| {cat} | {cnt} | {pct} |")
-    handled = stats["IMPLEMENTED"] + stats.get("PLATFORM_NA", 0) + stats.get("DEPENDENCY_REUSED", 0)
-    print(f"| 合计已处置 | {handled} | {handled / total * 100:.1f}% |")
+    handled = (stats["IMPLEMENTED"] + stats.get("PARTIAL", 0)
+               + stats.get("PLATFORM_NA", 0) + stats.get("DEPENDENCY_REUSED", 0))
+    print(f"| 合计已分类处置（含 PARTIAL/NA/REUSED） | {handled} | {handled / total * 100:.1f}% |")
     print()
 
     # 模块明细
     print("## 模块明细")
-    print(f"| 模块 | crate | 总行数 | IMPLEMENTED | PLATFORM_NA | DEP_REUSED | MISSING |")
-    print(f"|---|---|---:|---:|---:|---:|---:|")
+    print(f"| 模块 | crate | 总行数 | IMPLEMENTED | PARTIAL | PLATFORM_NA | DEP_REUSED | MISSING |")
+    print(f"|---|---|---:|---:|---:|---:|---:|---:|")
     for module in sorted(MODULE_TO_CRATE.keys()):
         crate = MODULE_TO_CRATE[module]
         m = per_module[module]
         t = sum(m.values())
         if t == 0:
             continue
-        print(f"| {module} | {crate} | {t} | {m.get('IMPLEMENTED', 0)} | {m.get('PLATFORM_NA', 0)} | {m.get('DEPENDENCY_REUSED', 0)} | {m.get('MISSING', 0)} |")
+        print(f"| {module} | {crate} | {t} | {m.get('IMPLEMENTED', 0)} | {m.get('PARTIAL', 0)} | {m.get('PLATFORM_NA', 0)} | {m.get('DEPENDENCY_REUSED', 0)} | {m.get('MISSING', 0)} |")
     # 未知模块
     if unexpected_modules:
         for mod, cnt in unexpected_modules.items():
@@ -811,12 +821,12 @@ def main():
 
     # 类型明细
     print("## 类型明细")
-    print(f"| kind | 总行数 | IMPLEMENTED | PLATFORM_NA | DEP_REUSED | MISSING |")
-    print(f"|---|---:|---:|---:|---:|---:|")
+    print(f"| kind | 总行数 | IMPLEMENTED | PARTIAL | PLATFORM_NA | DEP_REUSED | MISSING |")
+    print(f"|---|---:|---:|---:|---:|---:|---:|")
     for kind in sorted(per_kind.keys()):
         k = per_kind[kind]
         t = sum(k.values())
-        print(f"| {kind} | {t} | {k.get('IMPLEMENTED', 0)} | {k.get('PLATFORM_NA', 0)} | {k.get('DEPENDENCY_REUSED', 0)} | {k.get('MISSING', 0)} |")
+        print(f"| {kind} | {t} | {k.get('IMPLEMENTED', 0)} | {k.get('PARTIAL', 0)} | {k.get('PLATFORM_NA', 0)} | {k.get('DEPENDENCY_REUSED', 0)} | {k.get('MISSING', 0)} |")
     print()
 
     # MISSING 清单
@@ -836,9 +846,9 @@ def main():
     print()
 
     # 结论
-    impl_rate = (stats["IMPLEMENTED"] + stats.get("PLATFORM_NA", 0) + stats.get("DEPENDENCY_REUSED", 0)) / total * 100 if total > 0 else 0
+    impl_rate = handled / total * 100 if total > 0 else 0
     print("=" * 72)
-    print(f"结论：{total} 对象中 {handled} 已处置（{impl_rate:.1f}%），{stats.get('MISSING', 0)} MISSING。")
+    print(f"结论：{total} 个源文件中 {handled} 个已分类处置（{impl_rate:.1f}%），其中 PARTIAL={stats.get('PARTIAL', 0)}，{stats.get('MISSING', 0)} MISSING。")
     if stats.get("MISSING", 0) == 0:
         print("MISSING 清零，静态结构审计通过。")
     else:
